@@ -1,0 +1,68 @@
+{
+  "app": {
+    "name": "CleanSpot",
+    "tagline": "Kaçak çöp dökümlerini bildirin ve birlikte temizleyelim."
+  },
+  "nav": {
+    "main": "Ana gezinme",
+    "map": "Harita",
+    "report": "Bildir",
+    "profile": "Profil",
+    "skipToContent": "İçeriğe geç"
+  },
+  "common": {
+    "loading": "Yükleniyor …",
+    "retry": "Tekrar dene",
+    "close": "Kapat",
+    "cancel": "İptal",
+    "save": "Kaydet",
+    "comingSoon": "Bu bölüm hâlâ yapım aşamasında."
+  },
+  "language": {
+    "label": "Dil"
+  },
+  "landing": {
+    "title": "Doğamızda daha az çöp",
+    "intro": "CleanSpot ile kaçak çöp dökümlerini bir dakikadan kısa sürede fotoğraf ve konumla bildirirsiniz. Gerisini gönüllüler ve belediye halleder.",
+    "openApp": "Uygulamayı aç"
+  },
+  "map": {
+    "title": "Harita"
+  },
+  "report": {
+    "title": "Çöp bildir"
+  },
+  "profile": {
+    "title": "Profil"
+  },
+  "auth": {
+    "signIn": "Giriş yap",
+    "signUp": "Hesap oluştur",
+    "signOut": "Çıkış yap",
+    "email": "E-posta adresi",
+    "password": "Şifre",
+    "passwordHint": "En az 8 karakter",
+    "signedInAs": "{{email}} olarak giriş yapıldı",
+    "noSession": "Giriş yapmadınız. Hesap olmadan da bildirim yapabilirsiniz.",
+    "anonymousSession": "CleanSpot’u hesapsız kullanıyorsunuz. Bildirimleriniz bu cihaza bağlıdır.",
+    "upgradeHint": "Bir hesapla bildirimleri onaylayabilir ve temizliğe yardım edebilirsiniz. Mevcut bildirimleriniz korunur.",
+    "switchToSignUp": "Henüz hesabınız yok mu? Kaydolun",
+    "switchToSignIn": "Zaten hesabınız var mı? Giriş yapın",
+    "checkEmail": "Neredeyse bitti: Lütfen size gönderdiğimiz bağlantıyla e-posta adresinizi onaylayın.",
+    "errors": {
+      "invalidCredentials": "E-posta adresi veya şifre yanlış.",
+      "weakPassword": "Şifre en az 8 karakter olmalıdır.",
+      "emailTaken": "Bu e-posta adresiyle zaten bir hesap var.",
+      "rateLimited": "Çok fazla deneme. Lütfen biraz bekleyin.",
+      "network": "Bağlantı yok. Lütfen internet bağlantınızı kontrol edin.",
+      "unknown": "Bir şeyler ters gitti. Lütfen tekrar deneyin."
+    }
+  },
+  "errors": {
+    "backendNotConfigured": "Sunucu yapılandırılmamış. Harita ve bildirimler kullanılamıyor."
+  },
+  "notFound": {
+    "title": "Sayfa bulunamadı",
+    "back": "Ana sayfaya dön"
+  }
+}

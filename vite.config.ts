@@ -18,6 +18,7 @@ export default defineConfig({
       'src/**/*.test.{ts,tsx}',
       'supabase/tests/lite/**/*.test.ts',
       'supabase/functions/_shared/**/*.test.ts',
+      'tests/static/**/*.test.ts',
     ],
     testTimeout: 20_000,
     css: false,

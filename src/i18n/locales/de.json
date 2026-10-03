@@ -1,0 +1,68 @@
+{
+  "app": {
+    "name": "CleanSpot",
+    "tagline": "Illegale Müllablagerungen melden und gemeinsam beseitigen."
+  },
+  "nav": {
+    "main": "Hauptnavigation",
+    "map": "Karte",
+    "report": "Melden",
+    "profile": "Profil",
+    "skipToContent": "Zum Inhalt springen"
+  },
+  "common": {
+    "loading": "Wird geladen …",
+    "retry": "Erneut versuchen",
+    "close": "Schließen",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "comingSoon": "Dieser Bereich wird gerade gebaut."
+  },
+  "language": {
+    "label": "Sprache"
+  },
+  "landing": {
+    "title": "Weniger Müll in unserer Landschaft",
+    "intro": "Mit CleanSpot melden Sie wilde Müllablagerungen in unter einer Minute – mit Foto und Standort. Freiwillige und die Gemeinde kümmern sich darum.",
+    "openApp": "App öffnen"
+  },
+  "map": {
+    "title": "Karte"
+  },
+  "report": {
+    "title": "Müll melden"
+  },
+  "profile": {
+    "title": "Profil"
+  },
+  "auth": {
+    "signIn": "Anmelden",
+    "signUp": "Konto erstellen",
+    "signOut": "Abmelden",
+    "email": "E-Mail-Adresse",
+    "password": "Passwort",
+    "passwordHint": "Mindestens 8 Zeichen",
+    "signedInAs": "Angemeldet als {{email}}",
+    "noSession": "Sie sind nicht angemeldet. Melden geht auch ohne Konto.",
+    "anonymousSession": "Sie nutzen CleanSpot ohne Konto. Ihre Meldungen sind mit diesem Gerät verknüpft.",
+    "upgradeHint": "Mit einem Konto können Sie Meldungen bestätigen und beim Aufräumen helfen. Ihre bisherigen Meldungen bleiben erhalten.",
+    "switchToSignUp": "Noch kein Konto? Jetzt registrieren",
+    "switchToSignIn": "Schon ein Konto? Anmelden",
+    "checkEmail": "Fast geschafft: Bitte bestätigen Sie Ihre E-Mail-Adresse über den Link, den wir Ihnen geschickt haben.",
+    "errors": {
+      "invalidCredentials": "E-Mail-Adresse oder Passwort ist falsch.",
+      "weakPassword": "Das Passwort muss mindestens 8 Zeichen lang sein.",
+      "emailTaken": "Für diese E-Mail-Adresse gibt es bereits ein Konto.",
+      "rateLimited": "Zu viele Versuche. Bitte warten Sie einen Moment.",
+      "network": "Keine Verbindung. Bitte prüfen Sie Ihre Internetverbindung.",
+      "unknown": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+    }
+  },
+  "errors": {
+    "backendNotConfigured": "Der Server ist nicht eingerichtet. Karte und Meldungen sind nicht verfügbar."
+  },
+  "notFound": {
+    "title": "Seite nicht gefunden",
+    "back": "Zur Startseite"
+  }
+}

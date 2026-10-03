@@ -1,0 +1,68 @@
+{
+  "app": {
+    "name": "CleanSpot",
+    "tagline": "Report illegal waste dumps and clear them together."
+  },
+  "nav": {
+    "main": "Main navigation",
+    "map": "Map",
+    "report": "Report",
+    "profile": "Profile",
+    "skipToContent": "Skip to content"
+  },
+  "common": {
+    "loading": "Loading …",
+    "retry": "Try again",
+    "close": "Close",
+    "cancel": "Cancel",
+    "save": "Save",
+    "comingSoon": "This section is under construction."
+  },
+  "language": {
+    "label": "Language"
+  },
+  "landing": {
+    "title": "Less litter in our countryside",
+    "intro": "With CleanSpot you report illegal waste dumps in under a minute – with a photo and location. Volunteers and the municipality take care of the rest.",
+    "openApp": "Open the app"
+  },
+  "map": {
+    "title": "Map"
+  },
+  "report": {
+    "title": "Report waste"
+  },
+  "profile": {
+    "title": "Profile"
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "signUp": "Create account",
+    "signOut": "Sign out",
+    "email": "Email address",
+    "password": "Password",
+    "passwordHint": "At least 8 characters",
+    "signedInAs": "Signed in as {{email}}",
+    "noSession": "You are not signed in. You can report without an account.",
+    "anonymousSession": "You are using CleanSpot without an account. Your reports are linked to this device.",
+    "upgradeHint": "With an account you can confirm reports and help clean up. Your existing reports are kept.",
+    "switchToSignUp": "No account yet? Sign up",
+    "switchToSignIn": "Already have an account? Sign in",
+    "checkEmail": "Almost done: please confirm your email address using the link we sent you.",
+    "errors": {
+      "invalidCredentials": "Email address or password is incorrect.",
+      "weakPassword": "The password must be at least 8 characters long.",
+      "emailTaken": "An account with this email address already exists.",
+      "rateLimited": "Too many attempts. Please wait a moment.",
+      "network": "No connection. Please check your internet connection.",
+      "unknown": "Something went wrong. Please try again."
+    }
+  },
+  "errors": {
+    "backendNotConfigured": "The server is not set up. Map and reports are unavailable."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "back": "Back to home"
+  }
+}

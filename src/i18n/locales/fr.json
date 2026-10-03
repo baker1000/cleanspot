@@ -1,0 +1,68 @@
+{
+  "app": {
+    "name": "CleanSpot",
+    "tagline": "Signalez les dépôts sauvages de déchets et nettoyons-les ensemble."
+  },
+  "nav": {
+    "main": "Navigation principale",
+    "map": "Carte",
+    "report": "Signaler",
+    "profile": "Profil",
+    "skipToContent": "Aller au contenu"
+  },
+  "common": {
+    "loading": "Chargement …",
+    "retry": "Réessayer",
+    "close": "Fermer",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "comingSoon": "Cette section est en cours de construction."
+  },
+  "language": {
+    "label": "Langue"
+  },
+  "landing": {
+    "title": "Moins de déchets dans nos paysages",
+    "intro": "Avec CleanSpot, vous signalez un dépôt sauvage en moins d’une minute, avec photo et position. Les bénévoles et la commune s’occupent du reste.",
+    "openApp": "Ouvrir l’application"
+  },
+  "map": {
+    "title": "Carte"
+  },
+  "report": {
+    "title": "Signaler des déchets"
+  },
+  "profile": {
+    "title": "Profil"
+  },
+  "auth": {
+    "signIn": "Se connecter",
+    "signUp": "Créer un compte",
+    "signOut": "Se déconnecter",
+    "email": "Adresse e-mail",
+    "password": "Mot de passe",
+    "passwordHint": "Au moins 8 caractères",
+    "signedInAs": "Connecté en tant que {{email}}",
+    "noSession": "Vous n’êtes pas connecté. Vous pouvez signaler sans compte.",
+    "anonymousSession": "Vous utilisez CleanSpot sans compte. Vos signalements sont liés à cet appareil.",
+    "upgradeHint": "Avec un compte, vous pouvez confirmer des signalements et aider au nettoyage. Vos signalements existants sont conservés.",
+    "switchToSignUp": "Pas encore de compte ? S’inscrire",
+    "switchToSignIn": "Déjà un compte ? Se connecter",
+    "checkEmail": "Presque fini : veuillez confirmer votre adresse e-mail grâce au lien que nous vous avons envoyé.",
+    "errors": {
+      "invalidCredentials": "Adresse e-mail ou mot de passe incorrect.",
+      "weakPassword": "Le mot de passe doit contenir au moins 8 caractères.",
+      "emailTaken": "Un compte existe déjà avec cette adresse e-mail.",
+      "rateLimited": "Trop de tentatives. Veuillez patienter un instant.",
+      "network": "Pas de connexion. Veuillez vérifier votre connexion Internet.",
+      "unknown": "Une erreur s’est produite. Veuillez réessayer."
+    }
+  },
+  "errors": {
+    "backendNotConfigured": "Le serveur n’est pas configuré. La carte et les signalements ne sont pas disponibles."
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "back": "Retour à l’accueil"
+  }
+}

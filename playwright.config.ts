@@ -11,6 +11,8 @@ export default defineConfig({
   use: {
     baseURL: `http://127.0.0.1:${PORT}`,
     trace: 'on-first-retry',
+    // German is the default UI language; tests that need another locale override this.
+    locale: 'de-DE',
   },
   projects: [
     // Low-end Android phone is the primary target.

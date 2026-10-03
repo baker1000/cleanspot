@@ -1,21 +1,28 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
+import { AuthProvider, type AuthClient } from '@/features/auth/AuthProvider';
+import { AppLayout } from './AppLayout';
+import { LandingPage, MapPage, NotFoundPage, ProfilePage, ReportPage } from './pages';
 
-// Placeholder shell. Real screens (map, report flow, admin) arrive in later steps.
-function Home() {
+export function AppRoutes() {
   return (
-    <main className="mx-auto flex min-h-dvh max-w-xl flex-col items-center justify-center gap-4 p-6 text-center">
-      <h1 className="text-3xl font-bold text-brand-900">CleanSpot</h1>
-      <p className="text-slate-700">Illegale Müllablagerungen melden und gemeinsam beseitigen.</p>
-    </main>
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/app" element={<AppLayout />}>
+        <Route index element={<MapPage />} />
+        <Route path="report" element={<ReportPage />} />
+        <Route path="profile" element={<ProfilePage />} />
+      </Route>
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
   );
 }
 
-export function App() {
+export function App({ authClient }: { authClient?: AuthClient | null }) {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="*" element={<Home />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider client={authClient}>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </AuthProvider>
   );
 }

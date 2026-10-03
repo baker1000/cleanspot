@@ -8,6 +8,7 @@ Items that **must** be done before a public release (Play Store production or a 
 - [ ] **Account deletion deletes the user's photos.** Deleting an account must remove every file the user uploaded (storage objects through the Storage API, not only rows), plus the `report_photos` rows. Today `reporter_id` / `uploaded_by` are only set to null.
 - [ ] **Spatial index for the map query.** `reports_in_bbox` filters on computed lng/lat and does not use `reports_location_gix`. Rewrite it to use `location && ST_MakeEnvelope(...)` and check with `EXPLAIN` **before generating the pitch dataset**.
 - [ ] **Maintenance job scheduled** in each environment (claim expiry runs via pg_cron automatically; orphan cleanup needs the setup in `supabase/functions/maintenance/README.md`).
+- [ ] **Translations reviewed by native speakers** (ar, fr, tr, uk were written by the developer/AI; German uses the formal "Sie"). English should be proofread too.
 - [ ] **Legal texts reviewed by a lawyer** (Impressum, Datenschutzerklärung, Nutzungsbedingungen).
 
 ## Product decisions already agreed (implement in the named step)
