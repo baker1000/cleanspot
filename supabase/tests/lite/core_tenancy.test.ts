@@ -261,3 +261,19 @@ describe('memberships RLS', () => {
     expect(rows).toHaveLength(0);
   });
 });
+
+describe('memberships delete', () => {
+  it('users can leave; admins can remove members of their tenant only', async () => {
+    const del = (actor: string, user: string, tenant: string) =>
+      asActor(
+        db,
+        { sub: actor },
+        `delete from memberships where user_id = $1 and tenant_id = $2 returning user_id`,
+        [user, tenant],
+      );
+    expect(await del(ALICE, ALICE, harburg)).toHaveLength(1);
+    expect(await del(ADMIN_HARBURG, ALICE, harburg)).toHaveLength(1);
+    expect(await del(BOB, ALICE, harburg)).toHaveLength(0);
+    expect(await del(ADMIN_HARBURG, STAFF_OTHER, other)).toHaveLength(0);
+  });
+});
