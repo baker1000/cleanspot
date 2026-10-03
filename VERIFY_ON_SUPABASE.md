@@ -6,10 +6,13 @@ Every RLS rule, grant and RPC below has so far been tested **only in PGlite** (`
 
 ## How to verify
 
-1. `npm run db:start` (Docker) or link a cloud project (`npx supabase link`), then `npm run db:reset`.
-2. Run the planned pgTAP suite (`npm run db:test`). Its tests will be named like the PGlite tests listed below.
-3. Run the API-level checks (marked **API**) with supabase-js against the running stack. These go through PostgREST/Storage, which PGlite cannot imitate.
-4. Tick the boxes here and note the date and the stack (Docker version or cloud project ref).
+1. Fill in `.env.supabase-cloud` (template: `supabase-cloud.env.example`), then `npm run cloud:link` and `npm run cloud:push` (row A4).
+2. `npm run cloud:maintenance` (needed for D6).
+3. `npm run verify:remote` runs:
+   - **B, C, D (SQL level):** the same test files as PGlite, against the real database, as the real `anon` / `authenticated` / `service_role` roles with JWT claims set like PostgREST does. Everything runs in one transaction per file and is rolled back.
+   - **Rows marked API:** `tests/remote-api/api.test.ts` through PostgREST, Storage and the Edge Function with real sessions.
+4. Rows marked **manual** are checked in the dashboard.
+5. Tick the boxes and note the date + project ref (the ref is not secret).
 
 ## A. Shim assumptions (check these first)
 
@@ -26,7 +29,7 @@ If any of these is wrong, rows in B–D may be passing in PGlite for the wrong r
 | A7  | RAISE with SQLSTATE `PT429` becomes HTTP 429 in PostgREST; custom `CSxxx` codes reach the client in `error.code`                | **API**: call `submit_report` six times as anonymous                 | ⬜     |
 | A8  | Supabase's default grants on new `public` objects are narrowed by our `revoke` statements (anon cannot `select * from reports`) | **API**: anon `from('reports').select()` returns an error            | ⬜     |
 | A9  | `revoke execute … from public, anon` really hides internal helpers from the API                                                 | **API**: anon `rpc('attach_photo')` / `rpc('log_report_event')` fail | ⬜     |
-| A10 | Anonymous sign-in rate limit (`config.toml`: 30/h per IP) is active                                                             | Cloud dashboard / local config                                       | ⬜     |
+| A10 | **manual**: anonymous sign-in rate limit is active (Authentication → Rate Limits; `config.toml` only applies locally)           | Cloud dashboard / local config                                       | ⬜     |
 
 ## B. Migration 1 — tenancy (`core_tenancy.test.ts`)
 

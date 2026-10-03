@@ -14,6 +14,7 @@
   },
   "include": [
     "vite.config.ts",
+    "vitest.remote.config.ts",
     "playwright.config.ts",
     "e2e",
     "supabase/tests/lite",
