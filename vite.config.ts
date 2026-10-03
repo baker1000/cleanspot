@@ -14,7 +14,11 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
-    include: ['src/**/*.test.{ts,tsx}', 'supabase/tests/lite/**/*.test.ts'],
+    include: [
+      'src/**/*.test.{ts,tsx}',
+      'supabase/tests/lite/**/*.test.ts',
+      'supabase/functions/_shared/**/*.test.ts',
+    ],
     testTimeout: 20_000,
     css: false,
   },

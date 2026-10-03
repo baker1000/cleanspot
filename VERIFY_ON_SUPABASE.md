@@ -109,3 +109,15 @@ If any of these is wrong, rows in B–D may be passing in PGlite for the wrong r
 | C38 | `report_photos_upload`: blocked users cannot upload                                            | blocked users cannot upload          | ⬜     |
 | C39 | `report_photos_read` / `can_read_photo`: pending photos unreadable for anon, approved readable | after N confirmations…               | ⬜     |
 | C40 | Bucket limits: 5 MiB, `image/webp` + `image/jpeg` only                                         | **API only**, not testable in PGlite | ⬜     |
+
+## D. Migration 3 — maintenance (`maintenance.test.ts`, `functions/_shared/maintenance.test.ts`)
+
+| #   | Rule / function                                                                                                                                                 | PGlite / unit test                                                                 | Status |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ------ |
+| D1  | `expire_stale_claims`: > 72 h released to reported/confirmed, ≤ 72 h kept, `unclaimed` event with reason `expired`                                              | expire_stale_claims › releases claims older than 72 h…                             | ⬜     |
+| D2  | `expire_stale_claims`: per-tenant `claim_expiry_hours`                                                                                                          | uses the tenant claim_expiry_hours setting                                         | ⬜     |
+| D3  | `expire_stale_claims`, `orphan_photo_paths`: service role only                                                                                                  | is not callable by API users (2 tests)                                             | ⬜     |
+| D4  | `orphan_photo_paths`: old + unattached + bucket `report-photos` only                                                                                            | lists old unattached photos only                                                   | ⬜     |
+| D5  | pg_cron job `cleanspot-expire-claims` is created by the migration (skipped in PGlite)                                                                           | **real stack only**: `select * from cron.job`                                      | ⬜     |
+| D6  | `maintenance` Edge Function: 401 without / with wrong `x-maintenance-secret`; deletes orphan files through the Storage API (file really gone, not only the row) | unit tests cover logic only; **API**: call function, then try to download the file | ⬜     |
+| D7  | pg_cron + pg_net schedule from `functions/maintenance/README.md` works with Vault secrets                                                                       | **real stack only**                                                                | ⬜     |

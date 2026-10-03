@@ -102,6 +102,8 @@ export interface Actor {
   /** auth.uid(); null = anon role */
   sub: string | null;
   anonymous?: boolean;
+  /** Override the API role, e.g. 'service_role' for cron / Edge Function calls. */
+  role?: 'anon' | 'authenticated' | 'service_role';
 }
 
 /**
@@ -115,7 +117,7 @@ export async function asActor<T = Record<string, unknown>>(
   params: unknown[] = [],
   opts: { commit?: boolean } = {},
 ): Promise<T[]> {
-  const role = actor.sub ? 'authenticated' : 'anon';
+  const role = actor.role ?? (actor.sub ? 'authenticated' : 'anon');
   const claims = JSON.stringify({ sub: actor.sub, role, is_anonymous: actor.anonymous ?? false });
   await db.exec('begin');
   try {
