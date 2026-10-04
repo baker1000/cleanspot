@@ -706,3 +706,41 @@ describe('registered rate limit', () => {
     }
   });
 });
+
+describe('tenant_at_point (migration 6)', () => {
+  const sql = `select tenant_id, kind, name, bulky_waste_url from tenant_at_point($1, $2)`;
+
+  it('names the municipality for anon and matches submit_report routing', async () => {
+    await db.query(
+      `update tenants set settings = settings || '{"bulky_waste_url": "https://example.org/sperrmuell"}' where id = $1`,
+      [harburg],
+    );
+    try {
+      const [row] = await rpc(as(null), sql, [10.11, 53.38]);
+      expect(row).toEqual({
+        tenant_id: harburg,
+        kind: 'municipality',
+        name: 'Landkreis Harburg',
+        bulky_waste_url: 'https://example.org/sperrmuell',
+      });
+      const { id } = await newReport(reporter, { lng: 10.11, lat: 53.38 });
+      const { rows } = await db.query(`select tenant_id from reports where id = $1`, [id]);
+      expect(rows[0]).toEqual({ tenant_id: harburg });
+    } finally {
+      await db.query(`update tenants set settings = settings - 'bulky_waste_url' where id = $1`, [
+        harburg,
+      ]);
+    }
+  });
+
+  it('falls back to the public tenant outside every municipality', async () => {
+    const [row] = await rpc(as(REPORTER), sql, [-30, 40]);
+    expect(row).toEqual(
+      expect.objectContaining({ tenant_id: publicTenant, kind: 'public', bulky_waste_url: null }),
+    );
+  });
+
+  it('rejects invalid coordinates', async () => {
+    await expect(rpc(as(null), sql, [200, 40])).rejects.toEqual(code('CS007'));
+  });
+});
