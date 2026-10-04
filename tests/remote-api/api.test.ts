@@ -12,6 +12,11 @@ import { randomUUID } from 'node:crypto';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import pg from 'pg';
 import { loadCloudEnv, pgSslOptions } from '../../supabase/tests/lite/harness';
+import {
+  createSupabaseSubmitApi,
+  photoPath,
+  type SubmitClient,
+} from '../../src/features/report/api';
 
 loadCloudEnv();
 const env = (key: string) => {
@@ -182,6 +187,64 @@ describe('A — platform assumptions', () => {
     const other = await anon.rpc('reports_in_bbox', { ...box, p_categories: ['bulky'] });
     expect(other.error).toBeNull();
     expect((other.data as { id: string }[]).map((r) => r.id)).not.toContain(id);
+  });
+
+  it('F3: anon calls tenant_at_point like the report form does', async () => {
+    const inside = await anon.rpc('tenant_at_point', { p_lng: SPOT.lng, p_lat: SPOT.lat });
+    expect(inside.error).toBeNull();
+    expect(inside.data).toEqual([
+      { tenant_id: tenantId, kind: 'municipality', name: 'Verify run', bulky_waste_url: null },
+    ]);
+    const outside = await anon.rpc('tenant_at_point', { p_lng: -30, p_lat: 40 });
+    expect(outside.error).toBeNull();
+    expect((outside.data as { kind: string }[])[0]!.kind).toBe('public');
+  });
+
+  it('F4: the app submit pipeline works end to end for an anonymous user (and retries)', async () => {
+    const client = newClient();
+    const a = await client.auth.signInAnonymously();
+    expect(a.error).toBeNull();
+    const uid = a.data.user!.id;
+    createdUserIds.push(uid);
+    const api = createSupabaseSubmitApi(async () => client as unknown as SubmitClient);
+    const photo = {
+      id: randomUUID(),
+      blob: new Blob([webp(256)], { type: 'image/webp' }),
+      ext: 'webp' as const,
+    };
+    uploaded.push(photoPath(uid, photo));
+    const draft = {
+      clientId: randomUUID(),
+      lng: SPOT.lng + 0.004,
+      lat: SPOT.lat,
+      accuracyM: 7,
+      category: 'hazardous' as const,
+      hazardType: 'batteries' as const,
+      size: 'bag' as const,
+      comment: ' verify run ',
+      photos: [photo],
+    };
+
+    const id = await api.submit(draft, uid);
+    // A retry (e.g. after a lost response) returns the same report and adds nothing.
+    await expect(api.submit(draft, uid)).resolves.toBe(id);
+
+    const { rows } = await sql.query(
+      `select r.tenant_id, r.reporter_id, r.hazard_type, r.comment, r.accuracy_m,
+              (select count(*)::int from public.report_photos p where p.report_id = r.id) as photos,
+              (select p.storage_path from public.report_photos p where p.report_id = r.id) as path
+       from public.reports r where r.id = $1`,
+      [id],
+    );
+    expect(rows[0]).toEqual({
+      tenant_id: tenantId,
+      reporter_id: uid,
+      hazard_type: 'batteries',
+      comment: 'verify run',
+      accuracy_m: 7,
+      photos: 1,
+      path: photoPath(uid, photo),
+    });
   });
 
   it('A8: anon cannot read base tables; other users get no rows', async () => {

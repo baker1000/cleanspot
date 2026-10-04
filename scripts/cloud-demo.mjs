@@ -4,6 +4,8 @@
 //   npm run cloud:demo -- seed     adds the demo reports (replaces earlier demo reports)
 //   npm run cloud:demo -- remove   deletes them again (and their timeline events)
 //   npm run cloud:demo -- status   counts them
+//   npm run cloud:demo -- remove-test   deletes all NON-demo reports (own test submissions),
+//                                       so verify:remote can run; photo files stay in storage
 //
 // Every demo report has a client_id starting with DEMO_PREFIX and a comment starting with
 // "[Demo]", so removal never touches real reports. They belong to the public tenant and have
@@ -14,8 +16,8 @@ import pg from 'pg';
 
 const DEMO_PREFIX = 'de30de30-';
 const command = process.argv[2];
-if (!['seed', 'remove', 'status'].includes(command ?? '')) {
-  console.error('Usage: npm run cloud:demo -- seed | remove | status');
+if (!['seed', 'remove', 'remove-test', 'status'].includes(command ?? '')) {
+  console.error('Usage: npm run cloud:demo -- seed | remove | remove-test | status');
   process.exit(1);
 }
 
@@ -80,6 +82,14 @@ try {
       [`${DEMO_PREFIX}%`],
     );
     console.log(`${rows[0].n} demo reports on the project.`);
+  } else if (command === 'remove-test') {
+    const { rowCount } = await sql.query(
+      `delete from public.reports where client_id::text not like $1`,
+      [`${DEMO_PREFIX}%`],
+    );
+    console.log(
+      `Removed ${rowCount} non-demo reports (photos rows and timeline events with them).`,
+    );
   } else if (command === 'remove') {
     const { rowCount } = await removeDemo();
     console.log(`Removed ${rowCount} demo reports (timeline events are deleted with them).`);

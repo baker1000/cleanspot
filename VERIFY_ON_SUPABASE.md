@@ -16,6 +16,13 @@ Every RLS rule, grant and RPC below has so far been tested **only in PGlite** (`
 
 ## Run log
 
+### 2026-10-04 (fifth run) — migration 6, same project
+
+- **Migration 6** (`20261004000006_tenant_at_point.sql`) pushed; local = remote for all six.
+- Before the run: demo reports removed and 2 own test submissions from the report form deleted with `npm run cloud:demo -- remove-test` (their photo files are left to the hourly orphan cleanup, D7).
+- `verify:remote`: **87 / 87 passed**, including the new API tests **F3** (anon calls `tenant_at_point` like the report form) and **F4** (the app's submit pipeline end to end for an anonymous user, retry returns the same report).
+- Afterwards: 15 demo reports seeded again with `npm run cloud:demo -- seed`.
+
 ### 2026-10-04 (fourth run) — migration 5, same project
 
 - **Migration 5** (`20261004000005_bbox_index.sql`) pushed; local = remote for all five.
