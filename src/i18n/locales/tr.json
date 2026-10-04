@@ -301,12 +301,38 @@
       "submit": "Temizlendi olarak işaretle",
       "submitting": "Gönderiliyor …"
     },
+    "bags": {
+      "section": "Toplanacak torbalar",
+      "intro": "Dolu çöp torbalarını kolay ulaşılabilir bir yere, örneğin yol kenarına mı bıraktınız? Belediyenin toplaması için bildirin.",
+      "noService": "Burada torbaları toplayan bir belediye yok. Lütfen torbaları bir toplama noktasına götürün veya kendi çöp kutunuza atın.",
+      "count": "Torba sayısı",
+      "countHint": "1 ile {{max}} arası",
+      "title": "Bırakılan torbaların fotoğrafı",
+      "hint": "Fotoğrafı torbaların bulunduğu yerde çekin. Yer, bildirime en fazla {{radius}} m uzaklıkta olmalıdır.",
+      "take": "Torbaların fotoğrafını çek",
+      "retake": "Başka bir fotoğraf çek",
+      "preview": "Torba fotoğrafının önizlemesi",
+      "tooFar": "Bu, bildirimden {{radius}} m’den daha uzak. Lütfen torbaları daha yakına bırakın veya konumunuzu güncelleyin.",
+      "submit": "Torbaları toplama için bildir",
+      "submitting": "Gönderiliyor …",
+      "reported": "Bildirilen torbalar",
+      "item": "Torba: {{count}} – {{status}}",
+      "status": {
+        "open": "toplanacak",
+        "collected": "toplandı",
+        "cancelled": "geri çekildi"
+      },
+      "cancel": "Geri çek",
+      "cancelLabel": "{{count}} torbalık bildirimi geri çek"
+    },
     "notices": {
       "confirmed": "Onayınız için teşekkürler.",
       "joined": "Gönüllü olarak hoş geldiniz!",
       "claimed": "Teşekkürler! Bildirim artık “Devam ediyor” olarak işaretlendi.",
       "unclaimed": "Bildirim yeniden açık.",
-      "cleared": "Teşekkürler! Bildirim temizlendi olarak işaretlendi."
+      "cleared": "Teşekkürler! Bildirim temizlendi olarak işaretlendi.",
+      "bagsReported": "Teşekkürler! Belediye torbaları artık toplama listesinde görüyor.",
+      "pickupCancelled": "Toplama geri çekildi."
     },
     "errors": {
       "too_far": "Fotoğraf çöpten {{meters}} m uzakta çekildi; en fazla {{max}} m’ye izin veriliyor.",
@@ -320,7 +346,8 @@
       "photo": "Fotoğraf yüklenemedi. Lütfen tekrar deneyin.",
       "rate_limited": "Kısa sürede çok fazla işlem. Lütfen daha sonra tekrar deneyin.",
       "network": "Bağlantı yok. Tekrar çevrimiçi olduğunuzda lütfen yeniden deneyin.",
-      "server": "Gönderirken bir sorun oluştu. Lütfen tekrar deneyin."
+      "server": "Gönderirken bir sorun oluştu. Lütfen tekrar deneyin.",
+      "no_pickup": "Burada torbaları toplayan bir belediye yok."
     },
     "timeline": {
       "title": "Geçmiş",
@@ -335,9 +362,42 @@
         "photo_added": "Fotoğraf eklendi",
         "photo_approved": "Fotoğraf onaylandı",
         "photo_rejected": "Fotoğraf reddedildi",
-        "published": "Yayınlandı"
+        "published": "Yayınlandı",
+        "bags_reported": "Torbalar toplama için bildirildi",
+        "bags_collected": "Torbalar toplandı"
       }
     }
+  },
+  "pickups": {
+    "title": "Torba toplama",
+    "intro": "Belediyenizin açık toplamaları, kısa bir sıraya konmuş hâlde.",
+    "needsAccount": "Lütfen personel hesabınızla giriş yapın.",
+    "staffOnly": "Bu sayfa belediye personeli içindir.",
+    "tenant": "Belediye",
+    "loadError": "Toplamalar yüklenemedi.",
+    "empty": "Şu anda açık toplama yok.",
+    "summary": "Durak: {{stops}} · Torba: {{bags}} · yaklaşık {{kg}} kg · kuş uçuşu {{distance}}",
+    "startHere": "Konumumdan başla",
+    "startSet": "Rota konumunuzdan başlıyor.",
+    "clearStart": "Başlangıç noktası olmadan planla",
+    "openRoute": "Rotayı aç (routing.openstreetmap.de)",
+    "routeHint": "Sıralama kuş uçuşu mesafeye göre optimize edilmiştir. Yolları rota planlayıcı hesaplar.",
+    "stop": "{{number}}. {{category}}",
+    "bags": "Torba: {{count}} (yaklaşık {{kg}} kg)",
+    "leg": "Önceki duraktan {{distance}}",
+    "legFromStart": "Konumunuzdan {{distance}}",
+    "reportedOn": "{{date}} tarihinde bildirildi",
+    "photoAlt": "{{number}}. duraktaki torbaların fotoğrafı",
+    "report": "Bildirime git",
+    "collected": "Toplandı",
+    "collectedLabel": "{{number}}. durağı toplandı olarak işaretle",
+    "notThere": "Yerinde yok",
+    "notThereLabel": "{{number}}. durak: torbalar yerinde yok",
+    "notices": {
+      "collected": "Durak toplandı olarak işaretlendi.",
+      "cancelled": "Toplama kaldırıldı: torbalar yerinde yok."
+    },
+    "profileLink": "Torba toplama rotası"
   },
   "enums": {
     "status": {

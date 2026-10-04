@@ -9,6 +9,7 @@ describe('availableActions', () => {
       confirm: 'needs_account',
       claim: 'needs_account',
       cleanup: false,
+      bags: 'hidden',
     });
     // An anonymous session has a viewer, but still no account.
     expect(availableActions(detail({ viewer: viewer() }), false).claim).toBe('needs_account');
@@ -19,6 +20,7 @@ describe('availableActions', () => {
       confirm: 'available',
       claim: 'available',
       cleanup: false,
+      bags: 'hidden',
     });
     expect(availableActions(detail({ status: 'confirmed', viewer: viewer() }), true).claim).toBe(
       'available',
@@ -58,7 +60,7 @@ describe('availableActions', () => {
       detail({ status: 'in_progress', isClaimed: true, claimedByMe: true, viewer: viewer() }),
       true,
     );
-    expect(mine).toEqual({ confirm: 'hidden', claim: 'mine', cleanup: true });
+    expect(mine).toEqual({ confirm: 'hidden', claim: 'mine', cleanup: true, bags: 'hidden' });
     expect(availableActions(detail({ status: 'in_progress', isClaimed: true }), false).claim).toBe(
       'taken',
     );
@@ -69,7 +71,35 @@ describe('availableActions', () => {
       confirm: 'hidden',
       claim: 'hidden',
       cleanup: false,
+      bags: 'hidden',
     });
+  });
+});
+
+describe('bags for pickup', () => {
+  const cleared = { status: 'cleared' as const, isClaimed: true };
+  it('the person who cleared it (or staff), where a municipality collects', () => {
+    expect(
+      availableActions(detail({ ...cleared, claimedByMe: true, viewer: viewer() }), true).bags,
+    ).toBe('available');
+    expect(
+      availableActions(detail({ ...cleared, viewer: viewer({ role: 'staff' }) }), true).bags,
+    ).toBe('available');
+  });
+  it('nobody collects in the public area', () => {
+    expect(
+      availableActions(
+        detail({ ...cleared, claimedByMe: true, tenantKind: 'public', viewer: viewer() }),
+        true,
+      ).bags,
+    ).toBe('no_service');
+  });
+  it('others, visitors and open reports: hidden', () => {
+    expect(availableActions(detail({ ...cleared, viewer: viewer() }), true).bags).toBe('hidden');
+    expect(availableActions(detail({ ...cleared, claimedByMe: true }), false).bags).toBe('hidden');
+    expect(availableActions(detail({ claimedByMe: true, viewer: viewer() }), true).bags).toBe(
+      'hidden',
+    );
   });
 });
 
@@ -92,6 +122,7 @@ describe('classifyActionError', () => {
     ['42501', 'not_allowed'],
     ['PT429', 'rate_limited'],
     ['CS006', 'photo'],
+    ['CS010', 'no_pickup'],
   ])('%s is %s', (code, reason) => {
     expect(classifyActionError({ code, message: 'x' }).reason).toBe(reason);
   });

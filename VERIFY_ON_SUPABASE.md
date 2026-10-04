@@ -16,6 +16,12 @@ Every RLS rule, grant and RPC below has so far been tested **only in PGlite** (`
 
 ## Run log
 
+### 2026-10-05 (eighth run) — migration 7: bag pickup (step 8), same project
+
+- **Migration 7** (`20261005000007_bag_pickup.sql`) pushed; local = remote for all seven.
+- `verify:remote`: **101 / 101 passed** — the new DB suite `pickups.test.ts` (G1–G9 below, run inside a rolled-back transaction on the cloud database) and API test **F7** (volunteer reports bags through the detail API: ~400 m refused with CS002 and the distance, ~130 m accepted, kg estimate 3 × 6; staff list the stop through `open_pickup_tasks` with a working signed photo URL; the volunteer cannot; collect works once; timeline `bags_reported`, `bags_collected`).
+- Before the run: demo reports and 1 own test submission removed (`cloud:demo -- remove`, `remove-test`); demo reports seeded again afterwards.
+
 ### 2026-10-05 (seventh run) — report detail page (step 7), same project
 
 - No new migration. `verify:remote`: **89 / 89 passed**, including the new API tests **F5** (the detail page reads a report through the public views like the app: reporter sees own photo under review with a working signed URL, visitor sees none; after approval the signed URL serves the file; timeline) and **F6** (a registered user joins the public tenant as volunteer, claims, a second volunteer cannot take over, the after-photo ~65 m away is refused with CS002 and the measured distance, ~7 m away clears the report).
@@ -190,3 +196,17 @@ If any of these is wrong, rows in B–D may be passing in PGlite for the wrong r
 | F1  | `reports_in_bbox` (security definer) is callable by anon and returns only `reports_public` rows | reports_in_bbox returns reports in the box…         | ✅     |
 | F2  | `p_categories` filter; exact lng/lat rectangle with inclusive edges, also for wide viewports    | filters by category / is an exact lng/lat rectangle | ✅     |
 | F3  | The bbox predicate uses `reports_location_geom_gix`                                             | the bbox filter … can use the spatial index         | ✅     |
+
+## G. Migration 7 — bag pickup (`pickups.test.ts`)
+
+| #   | Rule / function                                                                                                 | PGlite test                                           | Status |
+| --- | --------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ------ |
+| G1  | `report_bags`: task with bags photo (pending), kg = bags × `kg_per_bag`, report kg from bags, `bags_reported`   | creates a pickup task with photo, kg estimate…        | ✅     |
+| G2  | `report_bags`: several drops add up (`refresh_report_kg`)                                                       | several drops add up                                  | ✅     |
+| G3  | `report_bags`: cleared reports only (CS001)                                                                     | only for cleared reports                              | ✅     |
+| G4  | `report_bags`: the person who cleared it or staff (42501); anon role cannot execute                             | only the person who cleared it… / anonymous visitors… | ✅     |
+| G5  | `report_bags`: public tenant → CS010; bag count 1..`max_bags_per_drop` (CS007); `bag_drop_radius_m` 300 (CS002) | no pickup service… / validates the number of bags…    | ✅     |
+| G6  | `pickup_tasks_select`: creator + staff of the tenant; others and anon none; no direct writes                    | RLS: the creator and the tenant staff see a task…     | ✅     |
+| G7  | `open_pickup_tasks`: staff of the tenant only (42501), returns lng/lat and photo path                           | open_pickup_tasks: staff of the tenant only…          | ✅     |
+| G8  | `collect_pickup`: staff only, once (CS001), `bags_collected` event, leaves the open list, kg still counted      | collect_pickup: staff only, once…                     | ✅     |
+| G9  | `cancel_pickup`: creator while open or staff; kg falls back to the size estimate                                | cancel_pickup: the creator while open, or staff…      | ✅     |

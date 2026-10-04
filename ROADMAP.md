@@ -31,9 +31,22 @@ map screen) were done before this file existed; see `git log`.
       prove the photo came from the camera, so the location is what is verified (native camera
       in step 11); no small map on the page (coordinates + route links); staff actions
       (moderation, status, assign) are Milestone 2; leaving the volunteer role → step 9.
-- [ ] **8. Bag pickup + pickup route** — "X bags placed here" with photo + location creates a pickup
-      task for municipality staff; optimized pickup route for the day. (Cleanup verification
-      within 50 m with timestamp was done in step 7.)
+- [x] **8. Bag pickup + pickup route** — migration 7 (`pickup_tasks`, `report_bags`,
+      `collect_pickup`, `cancel_pickup`, `open_pickup_tasks`; RLS: creator + tenant staff). After
+      clearing, the volunteer reports "X bags placed here" on the detail page with a photo and the
+      location of the bags (within 300 m of the report, max 30 bags, configurable per tenant); the
+      report's kg estimate then comes from the bags (6 kg each). Only where a municipality is
+      responsible (CS010 in the public area; the app says so). Staff page `/app/pickups` (linked on
+      the profile page for staff): open stops ordered into a route (nearest neighbour from every
+      first stop + 2-opt + Or-opt, straight-line distances; optional start at the staff's
+      location), summary of stops/bags/kg/km, navigation per stop, "Collected" / "Not there",
+      whole route on routing.openstreetmap.de (FOSSGIS, OSM). Tested: PGlite + cloud DB suite
+      (pickups.test.ts), route heuristic within 5 % of the optimum, page/API unit tests, e2e incl.
+      axe (de + ar), verify:remote F7 (101/101).
+      Known limits: route order uses straight-line distances (the router plans the roads, and
+      may cap the number of stops in one link); no depot setting yet (start = staff location or
+      free); bags photo is not queued offline; volunteers are not notified when bags are collected
+      (notifications: Milestone 2).
 - [ ] **9. Profile + DSGVO** — account deletion including photos; user data export; leave the
       volunteer role; privacy
       policy, imprint and terms of use (Nutzungsbedingungen) pages (templates marked "must be

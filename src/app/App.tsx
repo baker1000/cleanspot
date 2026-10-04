@@ -3,6 +3,9 @@ import { AuthProvider, type AuthClient } from '@/features/auth/AuthProvider';
 import type { DetailApi } from '@/features/detail/api';
 import { DetailApiProvider } from '@/features/detail/DetailApiContext';
 import { DetailPage } from '@/features/detail/DetailPage';
+import type { PickupsApi } from '@/features/pickups/api';
+import { PickupsApiProvider } from '@/features/pickups/PickupsApiContext';
+import { PickupsPage } from '@/features/pickups/PickupsPage';
 import { MapPage } from '@/features/map/MapPage';
 import type { ReportsApi } from '@/features/map/reports';
 import { ReportsApiProvider } from '@/features/map/ReportsApiContext';
@@ -22,6 +25,7 @@ export function AppRoutes() {
         <Route path="report" element={<ReportPage />} />
         <Route path="reports/:id" element={<DetailPage />} />
         <Route path="profile" element={<ProfilePage />} />
+        <Route path="pickups" element={<PickupsPage />} />
       </Route>
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
@@ -33,11 +37,13 @@ export function App({
   reportsApi,
   submitApi,
   detailApi,
+  pickupsApi,
 }: {
   authClient?: AuthClient | null;
   reportsApi?: ReportsApi | null;
   submitApi?: ReportSubmitApi | null;
   detailApi?: DetailApi | null;
+  pickupsApi?: PickupsApi | null;
 }) {
   return (
     <AuthProvider client={authClient}>
@@ -45,9 +51,11 @@ export function App({
         <ReportSubmitApiProvider api={submitApi}>
           <OutboxProvider>
             <DetailApiProvider api={detailApi}>
-              <BrowserRouter>
-                <AppRoutes />
-              </BrowserRouter>
+              <PickupsApiProvider api={pickupsApi}>
+                <BrowserRouter>
+                  <AppRoutes />
+                </BrowserRouter>
+              </PickupsApiProvider>
             </DetailApiProvider>
           </OutboxProvider>
         </ReportSubmitApiProvider>

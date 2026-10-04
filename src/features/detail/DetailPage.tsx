@@ -10,15 +10,10 @@ import type { PreparedPhoto } from '@/features/report/photo';
 import type { Position } from '@/lib/geolocation';
 import { availableActions, navigationLinks, type Actions } from './actions';
 import type { ActionError } from './api';
-import {
-  classifyActionError,
-  type CleanupInput,
-  type DetailEvent,
-  type DetailPhoto,
-  type ReportDetail,
-} from './api';
-import { CleanupForm } from './CleanupForm';
+import { classifyActionError, type DetailEvent, type DetailPhoto, type ReportDetail } from './api';
+import { BagsSection } from './BagsSection';
 import { useDetailApi } from './DetailApiContext';
+import { PhotoLocationForm } from './PhotoLocationForm';
 
 type Load =
   | { kind: 'loading' }
@@ -26,14 +21,16 @@ type Load =
   | { kind: 'error' }
   | { kind: 'ready'; report: ReportDetail };
 
-type Busy = 'confirm' | 'join' | 'claim' | 'unclaim' | 'cleanup' | null;
-type Notice = 'confirmed' | 'joined' | 'claimed' | 'unclaimed' | 'cleared';
+type Busy =
+  'confirm' | 'join' | 'claim' | 'unclaim' | 'cleanup' | 'bags' | `cancel:${string}` | null;
+type Notice =
+  'confirmed' | 'joined' | 'claimed' | 'unclaimed' | 'cleared' | 'bagsReported' | 'pickupCancelled';
 
 const linkButton =
   'inline-flex min-h-11 items-center rounded-lg border border-slate-400 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-100';
 
 export interface DetailPageProps {
-  /** Test seams for the browser-only parts of the after-photo. */
+  /** Test seams for the browser-only parts of the after-photo and the bags photo. */
   preparePhoto?: (file: Blob) => Promise<PreparedPhoto>;
   locate?: () => Promise<Position>;
 }
@@ -231,18 +228,37 @@ export function DetailPage({ preparePhoto, locate }: DetailPageProps) {
       />
 
       {actions.cleanup && (
-        <CleanupForm
-          report={report}
+        <PhotoLocationForm
+          texts="reportDetail.cleanup"
+          target={report}
+          radiusM={report.cleanupRadiusM}
           busy={busy === 'cleanup'}
           prepare={preparePhoto}
           locate={locate}
-          onSubmit={(input: Omit<CleanupInput, 'reportId'>) =>
+          onSubmit={(input) =>
             void run('cleanup', 'cleared', (uid) =>
               api.submitCleanup({ ...input, reportId: report.id }, uid),
             )
           }
         />
       )}
+
+      <BagsSection
+        report={report}
+        action={actions.bags}
+        busy={busy === 'bags'}
+        cancelling={busy?.startsWith('cancel:') ? busy.slice(7) : null}
+        prepare={preparePhoto}
+        locate={locate}
+        onSubmit={(input) =>
+          void run('bags', 'bagsReported', (uid) =>
+            api.reportBags({ ...input, reportId: report.id }, uid),
+          )
+        }
+        onCancel={(taskId) =>
+          void run(`cancel:${taskId}`, 'pickupCancelled', () => api.cancelPickup(taskId))
+        }
+      />
 
       {notice && <Alert tone="success">{t(`reportDetail.notices.${notice}`)}</Alert>}
       {error && <Alert tone="error">{errorText(t, error)}</Alert>}

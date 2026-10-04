@@ -1,14 +1,14 @@
-import { useEffect, useId, useRef, useState, type ChangeEvent } from 'react';
+import { useEffect, useId, useRef, useState, type ChangeEvent, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CameraIcon } from '@/components/icons';
 import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Spinner';
 import { distanceMeters } from '@/features/map/reports';
+import type { DraftPhoto } from '@/features/report/api';
 import { PhotoError, preparePhoto, type PreparedPhoto } from '@/features/report/photo';
 import { LocateFailure, locateOnce, type Position } from '@/lib/geolocation';
 import { uuid } from '@/lib/uuid';
-import type { CleanupInput, ReportDetail } from './api';
 
 type Locating =
   | { kind: 'idle' }
@@ -23,21 +23,44 @@ interface Picked {
   takenAt: string;
 }
 
+export interface PhotoAtLocation {
+  photo: DraftPhoto;
+  lng: number;
+  lat: number;
+  accuracyM: number | null;
+  /** When the photo was taken (ISO). */
+  takenAt: string;
+}
+
 /**
- * After-photo of the cleaned spot. The location is read when the photo is taken; the server
- * accepts it only within the tenant's cleanup radius (default 50 m). Browsers cannot prove a
- * photo came from the camera, so the location (not the file) is what is verified.
+ * A photo plus the location of the moment it was taken, checked against a radius around the
+ * report before sending (the server checks again). Used for the after-photo (cleanup) and the
+ * photo of bags left for pickup. Browsers cannot prove a photo came from the camera, so the
+ * location (not the file) is what is verified.
+ *
+ * Texts come from `${texts}.title|hint|take|retake|preview|tooFar|submit|submitting`; the
+ * location messages are shared (reportDetail.cleanup.*).
  */
-export function CleanupForm({
-  report,
+export function PhotoLocationForm({
+  texts,
+  target,
+  radiusM,
   busy,
+  canSubmit = true,
+  children,
   onSubmit,
   prepare = preparePhoto,
   locate = locateOnce,
 }: {
-  report: ReportDetail;
+  texts: 'reportDetail.cleanup' | 'reportDetail.bags';
+  /** The report location the distance is measured to. */
+  target: { lng: number; lat: number };
+  radiusM: number;
   busy: boolean;
-  onSubmit(input: Omit<CleanupInput, 'reportId'>): void;
+  /** Extra fields (e.g. the number of bags) must be valid too. */
+  canSubmit?: boolean;
+  children?: ReactNode;
+  onSubmit(input: PhotoAtLocation): void;
   prepare?: (file: Blob) => Promise<PreparedPhoto>;
   locate?: () => Promise<Position>;
 }) {
@@ -89,23 +112,25 @@ export function CleanupForm({
   }
 
   const position = locating.kind === 'done' ? locating.position : null;
-  const distance = position ? Math.round(distanceMeters(position, report)) : null;
-  const tooFar = distance !== null && distance > report.cleanupRadiusM;
-  const ready = picked && position && !tooFar;
+  const distance = position ? Math.round(distanceMeters(position, target)) : null;
+  const tooFar = distance !== null && distance > radiusM;
+  const ready = picked && position && !tooFar && canSubmit;
 
   return (
     <section aria-labelledby={headingId} className="flex flex-col gap-3">
       <h3 id={headingId} className="text-lg font-semibold">
-        {t('reportDetail.cleanup.title')}
+        {t(`${texts}.title`)}
       </h3>
       <p id={hintId} className="text-sm text-slate-700">
-        {t('reportDetail.cleanup.hint', { radius: report.cleanupRadiusM })}
+        {t(`${texts}.hint`, { radius: radiusM })}
       </p>
+
+      {children}
 
       {picked && (
         <img
           src={picked.url}
-          alt={t('reportDetail.cleanup.preview')}
+          alt={t(`${texts}.preview`)}
           className="max-h-64 w-full max-w-sm rounded-lg border border-slate-300 object-cover"
         />
       )}
@@ -113,9 +138,9 @@ export function CleanupForm({
       {preparing ? (
         <Spinner label={t('report.photos.processing')} />
       ) : (
-        <label className="inline-flex min-h-11 w-fit cursor-pointer items-center gap-2 rounded-lg border border-slate-400 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-100 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-brand-700">
+        <label className="inline-flex min-h-11 w-fit cursor-pointer items-center gap-2 rounded-lg border border-slate-400 bg-white px-4 py-2 font-semibold text-slate-900 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-brand-700 hover:bg-slate-100">
           <CameraIcon />
-          {t(picked ? 'reportDetail.cleanup.retake' : 'reportDetail.cleanup.take')}
+          {t(picked ? `${texts}.retake` : `${texts}.take`)}
           <input
             type="file"
             accept="image/*"
@@ -135,7 +160,7 @@ export function CleanupForm({
       {distance !== null && (
         <Alert tone={tooFar ? 'warning' : 'info'}>
           <p>{t('reportDetail.cleanup.distance', { meters: distance })}</p>
-          {tooFar && <p>{t('reportDetail.cleanup.tooFar', { radius: report.cleanupRadiusM })}</p>}
+          {tooFar && <p>{t(`${texts}.tooFar`, { radius: radiusM })}</p>}
         </Alert>
       )}
       {picked && (locating.kind === 'failed' || tooFar) && (
@@ -159,7 +184,7 @@ export function CleanupForm({
             })
           }
         >
-          {busy ? t('reportDetail.cleanup.submitting') : t('reportDetail.cleanup.submit')}
+          {busy ? t(`${texts}.submitting`) : t(`${texts}.submit`)}
         </Button>
       )}
     </section>

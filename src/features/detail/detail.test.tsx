@@ -287,3 +287,85 @@ describe('report detail page', () => {
     });
   });
 });
+
+describe('bags for pickup', () => {
+  const cleared = (over: Partial<ReportDetail> = {}) =>
+    volunteer({ status: 'cleared', isClaimed: true, claimedByMe: true, ...over });
+  const photo = () => new File(['jpeg'], 'IMG_0010.jpg', { type: 'image/jpeg' });
+
+  it('after clearing: number of bags + photo where they are -> pickup task', async () => {
+    const api = fakeDetailApi(cleared());
+    const { user } = setup(api, { registered: true });
+    const count = await screen.findByLabelText('Anzahl der Säcke');
+    await user.clear(count);
+    await user.type(count, '4');
+    await user.upload(screen.getByLabelText('Foto der Säcke aufnehmen'), photo());
+    await screen.findByText('Sie sind etwa 11 m entfernt.');
+
+    api.load.mockResolvedValue(
+      cleared({ pickups: [{ id: 'task-1', bagCount: 4, status: 'open', createdAt: 'x' }] }),
+    );
+    await user.click(screen.getByRole('button', { name: 'Säcke zur Abholung melden' }));
+    expect(api.reportBags).toHaveBeenCalledWith(
+      expect.objectContaining({ reportId: ID, bagCount: 4, lng: NEAR.lng, lat: NEAR.lat }),
+      UID,
+    );
+    expect(
+      await screen.findByText('Danke! Die Kommune sieht die Säcke jetzt in ihrer Abholliste.'),
+    ).toBeInTheDocument();
+    expect(screen.getByText('Säcke: 4 – wird abgeholt')).toBeInTheDocument();
+    // The form starts over for the next drop.
+    expect(screen.queryByRole('button', { name: 'Säcke zur Abholung melden' })).toBeNull();
+  });
+
+  it('an invalid number of bags blocks sending', async () => {
+    const { user } = setup(fakeDetailApi(cleared({ maxBags: 30 })), { registered: true });
+    const count = await screen.findByLabelText('Anzahl der Säcke');
+    await user.upload(screen.getByLabelText('Foto der Säcke aufnehmen'), photo());
+    await screen.findByText('Sie sind etwa 11 m entfernt.');
+    await user.clear(count);
+    await user.type(count, '31');
+    expect(count).toHaveAttribute('aria-invalid', 'true');
+    expect(screen.getByRole('button', { name: 'Säcke zur Abholung melden' })).toBeDisabled();
+  });
+
+  it('bags may lie further away than the after-photo (300 m), not more', async () => {
+    const far = { lng: 10.1105, lat: 53.3842 + 0.0036, accuracy: 6 }; // ~400 m
+    const { user } = setup(fakeDetailApi(cleared()), {
+      registered: true,
+      locate: vi.fn(async () => far),
+    });
+    await user.upload(await screen.findByLabelText('Foto der Säcke aufnehmen'), photo());
+    expect(await screen.findByText(/mehr als 300 m von der Meldung entfernt/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Säcke zur Abholung melden' })).toBeDisabled();
+  });
+
+  it('in the public area nobody collects: says so instead of offering the form', async () => {
+    setup(fakeDetailApi(cleared({ tenantKind: 'public' })), { registered: true });
+    expect(await screen.findByText(/Hier holt keine Kommune Säcke ab/)).toBeInTheDocument();
+    expect(screen.queryByLabelText('Anzahl der Säcke')).toBeNull();
+  });
+
+  it('withdraw an open pickup', async () => {
+    const api = fakeDetailApi(
+      cleared({
+        pickups: [
+          { id: 't1', bagCount: 2, status: 'open', createdAt: 'x' },
+          { id: 't2', bagCount: 3, status: 'collected', createdAt: 'y' },
+        ],
+      }),
+    );
+    const { user } = setup(api, { registered: true });
+    expect(await screen.findByText('Säcke: 3 – abgeholt')).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: /zurückziehen/ })).toHaveLength(1);
+    await user.click(screen.getByRole('button', { name: 'Meldung über 2 Säcke zurückziehen' }));
+    expect(api.cancelPickup).toHaveBeenCalledWith('t1');
+    expect(await screen.findByText('Die Abholung wurde zurückgezogen.')).toBeInTheDocument();
+  });
+
+  it('not offered to others', async () => {
+    setup(fakeDetailApi(cleared({ claimedByMe: false })), { registered: true });
+    await screen.findByRole('heading', { level: 1 });
+    expect(screen.queryByText('Säcke zur Abholung')).toBeNull();
+  });
+});

@@ -6,6 +6,8 @@ import { AppRoutes } from '@/app/App';
 import { AuthProvider, type AuthClient } from '@/features/auth/AuthProvider';
 import type { DetailApi } from '@/features/detail/api';
 import { DetailApiProvider } from '@/features/detail/DetailApiContext';
+import type { PickupsApi } from '@/features/pickups/api';
+import { PickupsApiProvider } from '@/features/pickups/PickupsApiContext';
 import type { ReportsApi } from '@/features/map/reports';
 import { ReportsApiProvider } from '@/features/map/ReportsApiContext';
 import type { ReportSubmitApi } from '@/features/report/api';
@@ -22,6 +24,7 @@ export function renderWithProviders(
     submitApi = null,
     outboxStore = createMemoryStore(),
     detailApi = null,
+    pickupsApi = null,
   }: RenderOptions = {},
 ) {
   return {
@@ -32,7 +35,9 @@ export function renderWithProviders(
           <ReportSubmitApiProvider api={submitApi}>
             <OutboxProvider store={outboxStore}>
               <DetailApiProvider api={detailApi}>
-                <MemoryRouter initialEntries={[route]}>{ui}</MemoryRouter>
+                <PickupsApiProvider api={pickupsApi}>
+                  <MemoryRouter initialEntries={[route]}>{ui}</MemoryRouter>
+                </PickupsApiProvider>
               </DetailApiProvider>
             </OutboxProvider>
           </ReportSubmitApiProvider>
@@ -50,6 +55,7 @@ export interface RenderOptions {
   /** Offline queue; a fresh in-memory store per render by default, `null` = no queue. */
   outboxStore?: OutboxStore | null;
   detailApi?: DetailApi | null;
+  pickupsApi?: PickupsApi | null;
 }
 
 export const renderApp = (opts: RenderOptions = {}) => renderWithProviders(<AppRoutes />, opts);

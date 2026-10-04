@@ -301,12 +301,38 @@
       "submit": "Mark as cleared",
       "submitting": "Sending …"
     },
+    "bags": {
+      "section": "Bags for pickup",
+      "intro": "Did you leave full bin bags somewhere easy to reach, for example at the roadside? Report them so the municipality collects them.",
+      "noService": "No municipality collects bags here. Please take the bags to a collection point or put them in your own residual waste bin.",
+      "count": "Number of bags",
+      "countHint": "1 to {{max}}",
+      "title": "Photo of the bags",
+      "hint": "Take the photo where the bags are. The spot must be within {{radius}} m of the report.",
+      "take": "Take photo of the bags",
+      "retake": "Take another photo",
+      "preview": "Preview of the photo of the bags",
+      "tooFar": "That is more than {{radius}} m from the report. Please leave the bags closer or update your location.",
+      "submit": "Report bags for pickup",
+      "submitting": "Sending …",
+      "reported": "Reported bags",
+      "item": "Bags: {{count}} – {{status}}",
+      "status": {
+        "open": "to be collected",
+        "collected": "collected",
+        "cancelled": "withdrawn"
+      },
+      "cancel": "Withdraw",
+      "cancelLabel": "Withdraw report of {{count}} bags"
+    },
     "notices": {
       "confirmed": "Thank you for confirming.",
       "joined": "Welcome aboard as a volunteer!",
       "claimed": "Thank you! The report is now marked as in progress.",
       "unclaimed": "The report is open again.",
-      "cleared": "Thank you! The report is marked as cleared."
+      "cleared": "Thank you! The report is marked as cleared.",
+      "bagsReported": "Thank you! The municipality now sees the bags in its pickup list.",
+      "pickupCancelled": "The pickup has been withdrawn."
     },
     "errors": {
       "too_far": "The photo was taken {{meters}} m from the waste; at most {{max}} m is allowed.",
@@ -320,7 +346,8 @@
       "photo": "The photo could not be uploaded. Please try again.",
       "rate_limited": "Too many actions in a short time. Please try again later.",
       "network": "No connection. Please try again once you are back online.",
-      "server": "Something went wrong while sending. Please try again."
+      "server": "Something went wrong while sending. Please try again.",
+      "no_pickup": "No municipality collects bags here."
     },
     "timeline": {
       "title": "History",
@@ -335,9 +362,42 @@
         "photo_added": "Photo added",
         "photo_approved": "Photo approved",
         "photo_rejected": "Photo rejected",
-        "published": "Published"
+        "published": "Published",
+        "bags_reported": "Bags reported for pickup",
+        "bags_collected": "Bags collected"
       }
     }
+  },
+  "pickups": {
+    "title": "Bag pickup",
+    "intro": "Your municipality's open pickups, put into a short order.",
+    "needsAccount": "Please sign in with your staff account.",
+    "staffOnly": "This page is for municipality staff.",
+    "tenant": "Municipality",
+    "loadError": "The pickups could not be loaded.",
+    "empty": "There are no open pickups at the moment.",
+    "summary": "Stops: {{stops}} · Bags: {{bags}} · about {{kg}} kg · {{distance}} straight line",
+    "startHere": "Start from my location",
+    "startSet": "The route starts at your location.",
+    "clearStart": "Plan without a starting point",
+    "openRoute": "Open route (routing.openstreetmap.de)",
+    "routeHint": "The order is optimised by straight-line distance. The route planner works out the roads.",
+    "stop": "{{number}}. {{category}}",
+    "bags": "Bags: {{count}} (about {{kg}} kg)",
+    "leg": "{{distance}} from the previous stop",
+    "legFromStart": "{{distance}} from your location",
+    "reportedOn": "Reported on {{date}}",
+    "photoAlt": "Photo of the bags at stop {{number}}",
+    "report": "View report",
+    "collected": "Collected",
+    "collectedLabel": "Mark stop {{number}} as collected",
+    "notThere": "Not there",
+    "notThereLabel": "Stop {{number}}: bags not there",
+    "notices": {
+      "collected": "Stop marked as collected.",
+      "cancelled": "Pickup removed: bags not there."
+    },
+    "profileLink": "Bag pickup route"
   },
   "enums": {
     "status": {

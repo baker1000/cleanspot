@@ -29,6 +29,8 @@ function reply(route: Route, json: unknown) {
 interface State {
   status: 'confirmed' | 'in_progress' | 'cleared';
   calls: { fn: string; body: unknown }[];
+  /** Pickup tasks the signed-in user reported (pickup_tasks, RLS: own). */
+  pickups?: { id: string; bag_count: number; status: string; created_at: string }[];
 }
 
 /** A tiny real WebP, so the signed photo URL renders as an image. */
@@ -95,10 +97,17 @@ async function routeDetail(page: Page, state: State, { signedIn }: { signedIn: b
       route,
       url.includes('kind=eq.public')
         ? [{ id: PUBLIC_TENANT }]
-        : [{ name: 'CleanSpot Community', settings: { cleanup_radius_m: 50 } }],
+        : [
+            {
+              name: 'Landkreis Harburg',
+              kind: 'municipality',
+              settings: { cleanup_radius_m: 50, bag_drop_radius_m: 300, max_bags_per_drop: 30 },
+            },
+          ],
     );
   });
   await rest('report_photos', () => []);
+  await rest('pickup_tasks', () => state.pickups ?? []);
   await rest('report_confirmations', () => []);
   await rest('memberships', () => [{ tenant_id: PUBLIC_TENANT, role: 'volunteer' }]);
 
@@ -136,6 +145,18 @@ async function routeDetail(page: Page, state: State, { signedIn }: { signedIn: b
   await rpc('submit_cleanup', () => {
     state.status = 'cleared';
     return { photo_id: 'after-1', distance_m: 11.1 };
+  });
+  await rpc('report_bags', () => {
+    const body = state.calls.at(-1)!.body as { p_bag_count: number };
+    state.pickups = [
+      {
+        id: 'task-1',
+        bag_count: body.p_bag_count,
+        status: 'open',
+        created_at: new Date().toISOString(),
+      },
+    ];
+    return 'task-1';
   });
 }
 
@@ -231,6 +252,30 @@ test.describe('volunteer', () => {
       p_lat: SPOT.lat + 0.0001,
       p_accuracy_m: 6,
       p_taken_at: expect.stringMatching(/^\d{4}-\d\d-\d\dT/),
+    });
+
+    // Then: the bags left at the roadside, for the municipality to collect.
+    await expect(page.getByRole('heading', { name: 'Säcke zur Abholung' })).toBeVisible();
+    await page.getByLabel('Anzahl der Säcke').fill('3');
+    await page.getByLabel('Foto der Säcke aufnehmen').setInputFiles({
+      name: 'bags.webp',
+      mimeType: 'image/webp',
+      buffer: await webpBytes(page),
+    });
+    await expect(page.getByRole('img', { name: 'Vorschau des Fotos der Säcke' })).toBeVisible();
+    await expectNoA11yViolations(page);
+    await page.getByRole('button', { name: 'Säcke zur Abholung melden' }).click();
+    await expect(
+      page.getByText('Danke! Die Kommune sieht die Säcke jetzt in ihrer Abholliste.'),
+    ).toBeVisible();
+    await expect(page.getByText('Säcke: 3 – wird abgeholt')).toBeVisible();
+    expect(state.calls.at(-1)).toMatchObject({
+      fn: 'report_bags',
+      body: {
+        p_report_id: REPORT_ID,
+        p_bag_count: 3,
+        p_photo_path: expect.stringMatching(new RegExp(`^${USER_ID}/[0-9a-f-]{36}\\.webp$`)),
+      },
     });
   });
 });

@@ -13,8 +13,10 @@ import {
 
 /** Signed photo URLs are requested per page view; one hour is plenty. */
 export const PHOTO_URL_TTL_S = 3600;
-/** Fallback when the tenant setting cannot be read; the server checks the real value. */
+/** Fallbacks when the tenant settings cannot be read; the server checks the real values. */
 export const DEFAULT_CLEANUP_RADIUS_M = 50;
+export const DEFAULT_BAG_RADIUS_M = 300;
+export const DEFAULT_MAX_BAGS = 30;
 
 export type PhotoKind = 'before' | 'after' | 'bags';
 
@@ -39,7 +41,17 @@ export type EventType =
   | 'photo_added'
   | 'photo_approved'
   | 'photo_rejected'
-  | 'published';
+  | 'published'
+  | 'bags_reported'
+  | 'bags_collected';
+
+/** Bags the viewer reported for pickup (RLS: own tasks; staff see all of the tenant). */
+export interface DetailPickup {
+  id: string;
+  bagCount: number;
+  status: 'open' | 'collected' | 'cancelled';
+  createdAt: string;
+}
 
 export interface DetailEvent {
   id: string;
@@ -63,6 +75,8 @@ export interface ReportDetail {
   id: string;
   tenantId: string;
   tenantName: string | null;
+  /** public = nobody collects bags here. null if unknown. */
+  tenantKind: 'public' | 'municipality' | null;
   lng: number;
   lat: number;
   status: ReportStatus;
@@ -81,6 +95,9 @@ export interface ReportDetail {
   createdAt: string;
   clearedAt: string | null;
   cleanupRadiusM: number;
+  bagRadiusM: number;
+  maxBags: number;
+  pickups: DetailPickup[];
   photos: DetailPhoto[];
   events: DetailEvent[];
   /** null when nobody is signed in (not even anonymously). */
@@ -97,6 +114,7 @@ export type ActionErrorReason =
   | 'invalid'
   | 'photo'
   | 'rate_limited'
+  | 'no_pickup'
   | 'network'
   | 'server';
 
@@ -122,6 +140,10 @@ export interface CleanupInput {
   takenAt: string;
 }
 
+export interface BagsInput extends CleanupInput {
+  bagCount: number;
+}
+
 export interface DetailApi {
   /** null if the report does not exist or is not public (rejected, duplicate). */
   load(id: string, viewerId: string | null, signal?: AbortSignal): Promise<ReportDetail | null>;
@@ -132,6 +154,10 @@ export interface DetailApi {
   joinAsVolunteer(userId: string, publicTenantId: string): Promise<void>;
   /** Uploads the after-photo and marks the report cleared; returns the distance in metres. */
   submitCleanup(input: CleanupInput, userId: string): Promise<number>;
+  /** Uploads the photo of the bags and creates a pickup task; returns its id. */
+  reportBags(input: BagsInput, userId: string): Promise<string>;
+  /** Withdraws an open pickup task (e.g. reported by mistake). */
+  cancelPickup(taskId: string): Promise<void>;
 }
 
 interface PgError {
@@ -153,6 +179,7 @@ export function classifyActionError(error: unknown): ActionError {
     CS007: 'invalid',
     CS008: 'account',
     CS009: 'account',
+    CS010: 'no_pickup',
     '42501': 'not_allowed',
   };
   const reason = (e.code && byCode[e.code]) || fromSubmitReason(classifyError(error));
@@ -236,6 +263,13 @@ interface PhotoRow {
   moderation?: 'pending' | 'approved' | 'rejected';
 }
 
+interface PickupRow {
+  id: string;
+  bag_count: number;
+  status: DetailPickup['status'];
+  created_at: string;
+}
+
 interface EventRow {
   id: string;
   type: EventType;
@@ -289,9 +323,13 @@ export function createSupabaseDetailApi(getClient: () => Promise<DetailClient>):
       ]);
       if (!report) return null;
 
-      const [tenant, ownPhotos, viewer] = await Promise.all([
-        query<{ name: string; settings: Record<string, unknown> | null } | null>(
-          sel('tenants', 'name, settings').eq('id', report.tenant_id).maybeSingle(),
+      const [tenant, ownPhotos, viewer, pickups] = await Promise.all([
+        query<{
+          name: string;
+          kind: 'public' | 'municipality';
+          settings: Record<string, unknown> | null;
+        } | null>(
+          sel('tenants', 'name, kind, settings').eq('id', report.tenant_id).maybeSingle(),
         ).catch(() => null),
         // RLS: own uploads (and everything for staff), including those under review.
         viewerId
@@ -302,6 +340,13 @@ export function createSupabaseDetailApi(getClient: () => Promise<DetailClient>):
             ).catch(() => [])
           : Promise.resolve([]),
         viewerId ? loadViewer(sel, id, viewerId, report.tenant_id) : Promise.resolve(null),
+        viewerId
+          ? query<PickupRow[]>(
+              sel('pickup_tasks', 'id, bag_count, status, created_at')
+                .eq('report_id', id)
+                .order('created_at'),
+            ).catch(() => [])
+          : Promise.resolve([]),
       ]);
 
       const seen = new Set(publicPhotos.map((p) => p.id));
@@ -320,11 +365,15 @@ export function createSupabaseDetailApi(getClient: () => Promise<DetailClient>):
         for (const s of data ?? []) if (s.path && s.signedUrl) urls.set(s.path, s.signedUrl);
       }
 
-      const radius = Number(tenant?.settings?.cleanup_radius_m);
+      const setting = (key: string, fallback: number) => {
+        const value = Number(tenant?.settings?.[key]);
+        return Number.isFinite(value) && value > 0 ? value : fallback;
+      };
       return {
         id: report.id,
         tenantId: report.tenant_id,
         tenantName: tenant?.name ?? null,
+        tenantKind: tenant?.kind ?? null,
         lng: report.lng,
         lat: report.lat,
         status: report.status,
@@ -341,7 +390,15 @@ export function createSupabaseDetailApi(getClient: () => Promise<DetailClient>):
         reportedByMe: report.reported_by_me,
         createdAt: report.created_at,
         clearedAt: report.cleared_at,
-        cleanupRadiusM: Number.isFinite(radius) && radius > 0 ? radius : DEFAULT_CLEANUP_RADIUS_M,
+        cleanupRadiusM: setting('cleanup_radius_m', DEFAULT_CLEANUP_RADIUS_M),
+        bagRadiusM: setting('bag_drop_radius_m', DEFAULT_BAG_RADIUS_M),
+        maxBags: setting('max_bags_per_drop', DEFAULT_MAX_BAGS),
+        pickups: pickups.map((p) => ({
+          id: p.id,
+          bagCount: p.bag_count,
+          status: p.status,
+          createdAt: p.created_at,
+        })),
         photos: photoRows.map((p) => ({
           id: p.id,
           kind: p.kind,
@@ -381,19 +438,7 @@ export function createSupabaseDetailApi(getClient: () => Promise<DetailClient>):
     },
 
     async submitCleanup(input, userId) {
-      const c = await client();
-      const path = photoPath(userId, input.photo);
-      const { error: uploadError } = await c.storage
-        .from(PHOTO_BUCKET)
-        .upload(path, input.photo.blob, {
-          contentType: input.photo.ext === 'webp' ? 'image/webp' : 'image/jpeg',
-          upsert: false,
-        });
-      const e = (uploadError ?? null) as (PgError & { statusCode?: string | number }) | null;
-      const alreadyThere =
-        e && (Number(e.statusCode) === 409 || /already exists|duplicate/i.test(e.message ?? ''));
-      if (uploadError && !alreadyThere) throw classifyActionError(uploadError);
-
+      const path = await uploadPhoto(await client(), userId, input.photo);
       const data = (await rpc('submit_cleanup', {
         p_report_id: input.reportId,
         p_photo_path: path,
@@ -404,7 +449,40 @@ export function createSupabaseDetailApi(getClient: () => Promise<DetailClient>):
       })) as { distance_m?: number } | null;
       return Number(data?.distance_m ?? 0);
     },
+
+    async reportBags(input, userId) {
+      const path = await uploadPhoto(await client(), userId, input.photo);
+      return String(
+        await rpc('report_bags', {
+          p_report_id: input.reportId,
+          p_bag_count: input.bagCount,
+          p_photo_path: path,
+          p_lng: input.lng,
+          p_lat: input.lat,
+          p_taken_at: input.takenAt,
+          p_accuracy_m: input.accuracyM,
+        }),
+      );
+    },
+
+    async cancelPickup(taskId) {
+      await rpc('cancel_pickup', { p_task_id: taskId });
+    },
   };
+}
+
+/** Uploads into the user's own folder; "already exists" (a retry) counts as done. */
+async function uploadPhoto(c: DetailClient, userId: string, photo: DraftPhoto) {
+  const path = photoPath(userId, photo);
+  const { error } = await c.storage.from(PHOTO_BUCKET).upload(path, photo.blob, {
+    contentType: photo.ext === 'webp' ? 'image/webp' : 'image/jpeg',
+    upsert: false,
+  });
+  const e = (error ?? null) as (PgError & { statusCode?: string | number }) | null;
+  const alreadyThere =
+    e && (Number(e.statusCode) === 409 || /already exists|duplicate/i.test(e.message ?? ''));
+  if (error && !alreadyThere) throw classifyActionError(error);
+  return path;
 }
 
 async function loadViewer(

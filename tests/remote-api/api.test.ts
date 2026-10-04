@@ -17,6 +17,7 @@ import {
   createSupabaseDetailApi,
   type DetailClient,
 } from '../../src/features/detail/api';
+import { createSupabasePickupsApi } from '../../src/features/pickups/api';
 import {
   createSupabaseSubmitApi,
   photoPath,
@@ -369,6 +370,86 @@ describe('A — platform assumptions', () => {
       'photo_added',
       'cleared',
     ]);
+  });
+
+  it('F7: bags for pickup: volunteer reports them, staff see the stop and collect it', async () => {
+    const { data: reportId } = await submitReport(reporter, 0.04);
+    const report = { lng: SPOT.lng + 0.04, lat: SPOT.lat };
+    const v = await signedInUser('bagger');
+    const detail = createSupabaseDetailApi(async () => v.client as unknown as DetailClient);
+    const publicTenantId = (await detail.load(reportId, v.id))!.viewer!.publicTenantId!;
+    await detail.joinAsVolunteer(v.id, publicTenantId);
+
+    const photo = () => {
+      const id = randomUUID();
+      uploaded.push(`${v.id}/${id}.webp`);
+      return { id, blob: new Blob([webp(180)], { type: 'image/webp' }), ext: 'webp' as const };
+    };
+    const takenAt = new Date().toISOString();
+    await detail.submitCleanup(
+      { reportId, photo: photo(), lng: report.lng, lat: report.lat, accuracyM: 5, takenAt },
+      v.id,
+    );
+
+    // ~400 m away: too far for bags (300 m), with the measured distance.
+    await expect(
+      detail.reportBags(
+        {
+          reportId,
+          bagCount: 2,
+          photo: photo(),
+          lng: report.lng,
+          lat: report.lat + 0.0036,
+          accuracyM: 5,
+          takenAt,
+        },
+        v.id,
+      ),
+    ).rejects.toMatchObject({ reason: 'too_far', distance: { maxMeters: 300 } });
+    // ~130 m away (at the road): fine.
+    const taskId = await detail.reportBags(
+      {
+        reportId,
+        bagCount: 3,
+        photo: photo(),
+        lng: report.lng + 0.002,
+        lat: report.lat,
+        accuracyM: 5,
+        takenAt,
+      },
+      v.id,
+    );
+    const mine = await detail.load(reportId, v.id);
+    expect(mine).toMatchObject({
+      tenantKind: 'municipality',
+      bagRadiusM: 300,
+      estimatedKg: 18,
+      pickups: [{ id: taskId, bagCount: 3, status: 'open' }],
+    });
+
+    // Staff of the tenant: the stop with coordinates and a working photo URL.
+    const staffApi = createSupabasePickupsApi(async () => staff as unknown as DetailClient);
+    expect(await staffApi.staffTenants(ids.staff!)).toEqual([{ id: tenantId, name: 'Verify run' }]);
+    const stops = await staffApi.openTasks(tenantId);
+    const stop = stops.find((x) => x.id === taskId)!;
+    expect(stop).toMatchObject({ reportId, bagCount: 3, estimatedKg: 18, category: 'mixed' });
+    expect(stop.lng).toBeCloseTo(report.lng + 0.002, 6);
+    expect((await fetch(stop.photoUrl!)).status).toBe(200);
+    // Not for the volunteer, not for others.
+    const volunteerPickups = createSupabasePickupsApi(
+      async () => v.client as unknown as DetailClient,
+    );
+    expect(await volunteerPickups.staffTenants(v.id)).toEqual([]);
+    await expect(volunteerPickups.openTasks(tenantId)).rejects.toMatchObject({
+      reason: 'not_allowed',
+    });
+
+    await staffApi.collect(taskId);
+    await expect(staffApi.collect(taskId)).rejects.toMatchObject({ reason: 'status' });
+    expect((await staffApi.openTasks(tenantId)).map((x) => x.id)).not.toContain(taskId);
+    const after = await detail.load(reportId, v.id);
+    expect(after!.pickups).toMatchObject([{ id: taskId, status: 'collected' }]);
+    expect(after!.events.map((e) => e.type).slice(-2)).toEqual(['bags_reported', 'bags_collected']);
   });
 
   it('A8: anon cannot read base tables; other users get no rows', async () => {

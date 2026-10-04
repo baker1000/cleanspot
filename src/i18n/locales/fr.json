@@ -305,12 +305,38 @@
       "submit": "Marquer comme nettoyé",
       "submitting": "Envoi en cours …"
     },
+    "bags": {
+      "section": "Sacs à collecter",
+      "intro": "Avez-vous déposé des sacs pleins à un endroit facile d’accès, par exemple au bord de la route ? Signalez-les pour que la commune les collecte.",
+      "noService": "Aucune commune ne collecte de sacs ici. Veuillez apporter les sacs à un point de collecte ou les mettre dans votre propre poubelle d’ordures ménagères.",
+      "count": "Nombre de sacs",
+      "countHint": "De 1 à {{max}}",
+      "title": "Photo des sacs déposés",
+      "hint": "Prenez la photo là où se trouvent les sacs. L’endroit doit se situer à {{radius}} m maximum du signalement.",
+      "take": "Prendre une photo des sacs",
+      "retake": "Prendre une autre photo",
+      "preview": "Aperçu de la photo des sacs",
+      "tooFar": "C’est à plus de {{radius}} m du signalement. Veuillez déposer les sacs plus près ou mettre à jour votre position.",
+      "submit": "Signaler les sacs à collecter",
+      "submitting": "Envoi en cours …",
+      "reported": "Sacs signalés",
+      "item": "Sacs : {{count}} – {{status}}",
+      "status": {
+        "open": "à collecter",
+        "collected": "collectés",
+        "cancelled": "retirés"
+      },
+      "cancel": "Retirer",
+      "cancelLabel": "Retirer le signalement de {{count}} sacs"
+    },
     "notices": {
       "confirmed": "Merci pour votre confirmation.",
       "joined": "Bienvenue parmi les bénévoles !",
       "claimed": "Merci ! Le signalement est maintenant marqué « En cours ».",
       "unclaimed": "Le signalement est de nouveau ouvert.",
-      "cleared": "Merci ! Le signalement est marqué comme nettoyé."
+      "cleared": "Merci ! Le signalement est marqué comme nettoyé.",
+      "bagsReported": "Merci ! La commune voit maintenant les sacs dans sa liste de collecte.",
+      "pickupCancelled": "La collecte a été retirée."
     },
     "errors": {
       "too_far": "La photo a été prise à {{meters}} m des déchets ; {{max}} m maximum sont autorisés.",
@@ -324,7 +350,8 @@
       "photo": "La photo n’a pas pu être envoyée. Veuillez réessayer.",
       "rate_limited": "Trop d’actions en peu de temps. Veuillez réessayer plus tard.",
       "network": "Pas de connexion. Veuillez réessayer dès que vous serez de nouveau en ligne.",
-      "server": "Une erreur s’est produite lors de l’envoi. Veuillez réessayer."
+      "server": "Une erreur s’est produite lors de l’envoi. Veuillez réessayer.",
+      "no_pickup": "Aucune commune ne collecte de sacs ici."
     },
     "timeline": {
       "title": "Historique",
@@ -339,9 +366,42 @@
         "photo_added": "Photo ajoutée",
         "photo_approved": "Photo validée",
         "photo_rejected": "Photo refusée",
-        "published": "Publié"
+        "published": "Publié",
+        "bags_reported": "Sacs signalés pour collecte",
+        "bags_collected": "Sacs collectés"
       }
     }
+  },
+  "pickups": {
+    "title": "Collecte des sacs",
+    "intro": "Les collectes ouvertes de votre commune, dans un ordre court.",
+    "needsAccount": "Veuillez vous connecter avec votre compte d’agent.",
+    "staffOnly": "Cette page est réservée aux agents de la commune.",
+    "tenant": "Commune",
+    "loadError": "Les collectes n’ont pas pu être chargées.",
+    "empty": "Aucune collecte ouverte pour le moment.",
+    "summary": "Arrêts : {{stops}} · Sacs : {{bags}} · environ {{kg}} kg · {{distance}} à vol d’oiseau",
+    "startHere": "Partir de ma position",
+    "startSet": "L’itinéraire commence à votre position.",
+    "clearStart": "Planifier sans point de départ",
+    "openRoute": "Ouvrir l’itinéraire (routing.openstreetmap.de)",
+    "routeHint": "L’ordre est optimisé à vol d’oiseau. Le calculateur d’itinéraire détermine les routes.",
+    "stop": "{{number}}. {{category}}",
+    "bags": "Sacs : {{count}} (environ {{kg}} kg)",
+    "leg": "{{distance}} depuis l’arrêt précédent",
+    "legFromStart": "{{distance}} depuis votre position",
+    "reportedOn": "Signalé le {{date}}",
+    "photoAlt": "Photo des sacs à l’arrêt {{number}}",
+    "report": "Voir le signalement",
+    "collected": "Collecté",
+    "collectedLabel": "Marquer l’arrêt {{number}} comme collecté",
+    "notThere": "Absents",
+    "notThereLabel": "Arrêt {{number}} : sacs absents",
+    "notices": {
+      "collected": "Arrêt marqué comme collecté.",
+      "cancelled": "Collecte supprimée : sacs absents."
+    },
+    "profileLink": "Itinéraire de collecte des sacs"
   },
   "enums": {
     "status": {

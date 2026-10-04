@@ -256,4 +256,54 @@ describe('actions', () => {
       p_accuracy_m: 8,
     });
   });
+
+  it('bags: upload into the own folder, then report_bags with count, location and time', async () => {
+    const { api, upload, rpc } = fakeClient({}, { report_bags: { data: 'task-9', error: null } });
+    const P = 'eeeeeeee-0000-4000-8000-000000000002';
+    const id = await api.reportBags(
+      {
+        reportId: ID,
+        bagCount: 3,
+        photo: { id: P, blob: new Blob(['x']), ext: 'webp' },
+        lng: 10.1,
+        lat: 53.3,
+        accuracyM: 7,
+        takenAt: '2026-10-05T09:00:00.000Z',
+      },
+      UID,
+    );
+    expect(id).toBe('task-9');
+    expect(upload).toHaveBeenCalledWith(`${UID}/${P}.webp`, expect.any(Blob), {
+      contentType: 'image/webp',
+      upsert: false,
+    });
+    expect(rpc).toHaveBeenCalledWith('report_bags', {
+      p_report_id: ID,
+      p_bag_count: 3,
+      p_photo_path: `${UID}/${P}.webp`,
+      p_lng: 10.1,
+      p_lat: 53.3,
+      p_taken_at: '2026-10-05T09:00:00.000Z',
+      p_accuracy_m: 7,
+    });
+  });
+
+  it('bags: no pickup service (CS010); withdraw calls cancel_pickup', async () => {
+    const { api, rpc } = fakeClient(
+      {},
+      { report_bags: { data: null, error: { code: 'CS010', message: 'No pickup service' } } },
+    );
+    const input = {
+      reportId: ID,
+      bagCount: 1,
+      photo: { id: 'p', blob: new Blob(['x']), ext: 'webp' as const },
+      lng: 1,
+      lat: 2,
+      accuracyM: null,
+      takenAt: 't',
+    };
+    await expect(api.reportBags(input, UID)).rejects.toMatchObject({ reason: 'no_pickup' });
+    await api.cancelPickup('task-1');
+    expect(rpc).toHaveBeenLastCalledWith('cancel_pickup', { p_task_id: 'task-1' });
+  });
 });

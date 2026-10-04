@@ -6,6 +6,7 @@ export function detail(over: Partial<ReportDetail> = {}): ReportDetail {
     id: 'r0000000-0000-4000-8000-000000000001',
     tenantId: 't1',
     tenantName: 'Landkreis Harburg',
+    tenantKind: 'municipality',
     lng: 10.1105,
     lat: 53.3842,
     status: 'reported',
@@ -23,6 +24,9 @@ export function detail(over: Partial<ReportDetail> = {}): ReportDetail {
     createdAt: '2026-10-01T10:00:00Z',
     clearedAt: null,
     cleanupRadiusM: 50,
+    bagRadiusM: 300,
+    maxBags: 30,
+    pickups: [],
     photos: [],
     events: [],
     viewer: null,
@@ -51,6 +55,8 @@ export function fakeDetailApi(
     unclaim: vi.fn<DetailApi['unclaim']>(async () => {}),
     joinAsVolunteer: vi.fn<DetailApi['joinAsVolunteer']>(async () => {}),
     submitCleanup: vi.fn<DetailApi['submitCleanup']>(async () => 12),
+    reportBags: vi.fn<DetailApi['reportBags']>(async () => 'task-1'),
+    cancelPickup: vi.fn<DetailApi['cancelPickup']>(async () => {}),
     ...over,
   };
 }

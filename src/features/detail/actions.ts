@@ -7,11 +7,15 @@ export type ConfirmAction = 'hidden' | 'own' | 'needs_account' | 'done' | 'avail
 export type ClaimAction =
   'hidden' | 'needs_account' | 'hazardous' | 'join' | 'available' | 'mine' | 'taken';
 
+export type BagsAction = 'hidden' | 'available' | 'no_service';
+
 export interface Actions {
   confirm: ConfirmAction;
   claim: ClaimAction;
   /** The claimer (or staff) can upload the after-photo now. */
   cleanup: boolean;
+  /** After clearing: report bags left for pickup (only where a municipality collects them). */
+  bags: BagsAction;
 }
 
 export function availableActions(report: ReportDetail, registered: boolean): Actions {
@@ -37,7 +41,13 @@ export function availableActions(report: ReportDetail, registered: boolean): Act
     else claim = 'available';
   }
 
-  return { confirm, claim, cleanup: claim === 'mine' };
+  // report_bags: the person who cleared it (claimedByMe stays true after clearing) or staff.
+  let bags: BagsAction = 'hidden';
+  if (report.status === 'cleared' && registered && (report.claimedByMe || staff)) {
+    bags = report.tenantKind === 'public' ? 'no_service' : 'available';
+  }
+
+  return { confirm, claim, cleanup: claim === 'mine', bags };
 }
 
 /** Route in the browser (OpenStreetMap) or in a map app via a geo: link. */

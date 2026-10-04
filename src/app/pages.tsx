@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { LanguageSelect } from '@/components/LanguageSelect';
 import { AccountPanel } from '@/features/auth/AccountPanel';
+import { StaffPickupLink } from '@/features/pickups/PickupsPage';
 
 export function ProfilePage() {
   const { t } = useTranslation();
@@ -10,6 +11,7 @@ export function ProfilePage() {
     <div className="mx-auto flex max-w-md flex-col gap-4">
       <h1 className="text-2xl font-bold">{t('profile.title')}</h1>
       <AccountPanel />
+      <StaffPickupLink />
     </div>
   );
 }

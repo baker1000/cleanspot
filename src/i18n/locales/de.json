@@ -301,12 +301,38 @@
       "submit": "Als beseitigt melden",
       "submitting": "Wird gesendet …"
     },
+    "bags": {
+      "section": "Säcke zur Abholung",
+      "intro": "Haben Sie volle Müllsäcke an einer gut erreichbaren Stelle abgelegt, zum Beispiel am Straßenrand? Melden Sie sie, damit die Kommune sie abholt.",
+      "noService": "Hier holt keine Kommune Säcke ab. Bitte bringen Sie die Säcke zu einer Sammelstelle oder geben Sie sie in Ihre eigene Restmülltonne.",
+      "count": "Anzahl der Säcke",
+      "countHint": "1 bis {{max}}",
+      "title": "Foto der abgelegten Säcke",
+      "hint": "Machen Sie das Foto dort, wo die Säcke liegen. Der Ort darf höchstens {{radius}} m von der Meldung entfernt sein.",
+      "take": "Foto der Säcke aufnehmen",
+      "retake": "Anderes Foto aufnehmen",
+      "preview": "Vorschau des Fotos der Säcke",
+      "tooFar": "Das ist mehr als {{radius}} m von der Meldung entfernt. Bitte legen Sie die Säcke näher ab oder aktualisieren Sie den Standort.",
+      "submit": "Säcke zur Abholung melden",
+      "submitting": "Wird gesendet …",
+      "reported": "Gemeldete Säcke",
+      "item": "Säcke: {{count}} – {{status}}",
+      "status": {
+        "open": "wird abgeholt",
+        "collected": "abgeholt",
+        "cancelled": "zurückgezogen"
+      },
+      "cancel": "Zurückziehen",
+      "cancelLabel": "Meldung über {{count}} Säcke zurückziehen"
+    },
     "notices": {
       "confirmed": "Danke für Ihre Bestätigung.",
       "joined": "Willkommen als Freiwillige/r!",
       "claimed": "Danke! Die Meldung ist jetzt als „In Arbeit“ markiert.",
       "unclaimed": "Die Meldung ist wieder offen.",
-      "cleared": "Danke! Die Meldung ist als beseitigt markiert."
+      "cleared": "Danke! Die Meldung ist als beseitigt markiert.",
+      "bagsReported": "Danke! Die Kommune sieht die Säcke jetzt in ihrer Abholliste.",
+      "pickupCancelled": "Die Abholung wurde zurückgezogen."
     },
     "errors": {
       "too_far": "Das Foto wurde {{meters}} m vom Müll entfernt aufgenommen; erlaubt sind höchstens {{max}} m.",
@@ -320,7 +346,8 @@
       "photo": "Das Foto konnte nicht hochgeladen werden. Bitte versuchen Sie es erneut.",
       "rate_limited": "Zu viele Aktionen in kurzer Zeit. Bitte versuchen Sie es später erneut.",
       "network": "Keine Verbindung. Bitte versuchen Sie es erneut, sobald Sie wieder online sind.",
-      "server": "Beim Senden ist etwas schiefgelaufen. Bitte versuchen Sie es erneut."
+      "server": "Beim Senden ist etwas schiefgelaufen. Bitte versuchen Sie es erneut.",
+      "no_pickup": "Hier holt keine Kommune Säcke ab."
     },
     "timeline": {
       "title": "Verlauf",
@@ -335,9 +362,42 @@
         "photo_added": "Foto hinzugefügt",
         "photo_approved": "Foto freigegeben",
         "photo_rejected": "Foto abgelehnt",
-        "published": "Veröffentlicht"
+        "published": "Veröffentlicht",
+        "bags_reported": "Säcke zur Abholung gemeldet",
+        "bags_collected": "Säcke abgeholt"
       }
     }
+  },
+  "pickups": {
+    "title": "Abholung von Müllsäcken",
+    "intro": "Offene Abholungen Ihrer Kommune, in eine kurze Reihenfolge gebracht.",
+    "needsAccount": "Bitte melden Sie sich mit Ihrem Konto als Mitarbeiterin oder Mitarbeiter an.",
+    "staffOnly": "Diese Seite ist für Mitarbeitende der Kommune.",
+    "tenant": "Kommune",
+    "loadError": "Die Abholungen konnten nicht geladen werden.",
+    "empty": "Zurzeit gibt es keine offenen Abholungen.",
+    "summary": "Stopps: {{stops}} · Säcke: {{bags}} · etwa {{kg}} kg · {{distance}} Luftlinie",
+    "startHere": "Von meinem Standort starten",
+    "startSet": "Die Route beginnt an Ihrem Standort.",
+    "clearStart": "Ohne Startpunkt planen",
+    "openRoute": "Route öffnen (routing.openstreetmap.de)",
+    "routeHint": "Die Reihenfolge ist nach Luftlinie optimiert. Die Straßenroute berechnet der Routenplaner.",
+    "stop": "{{number}}. {{category}}",
+    "bags": "Säcke: {{count}} (etwa {{kg}} kg)",
+    "leg": "{{distance}} vom vorherigen Stopp",
+    "legFromStart": "{{distance}} von Ihrem Standort",
+    "reportedOn": "Gemeldet am {{date}}",
+    "photoAlt": "Foto der Säcke bei Stopp {{number}}",
+    "report": "Zur Meldung",
+    "collected": "Abgeholt",
+    "collectedLabel": "Stopp {{number}} als abgeholt markieren",
+    "notThere": "Nicht vorhanden",
+    "notThereLabel": "Stopp {{number}}: Säcke nicht vorhanden",
+    "notices": {
+      "collected": "Stopp als abgeholt markiert.",
+      "cancelled": "Abholung entfernt: Säcke nicht vorhanden."
+    },
+    "profileLink": "Abholroute für Müllsäcke"
   },
   "enums": {
     "status": {
