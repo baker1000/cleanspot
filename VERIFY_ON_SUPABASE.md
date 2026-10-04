@@ -1,6 +1,6 @@
 # Verify on real Supabase
 
-Every RLS rule, grant and RPC below has so far been tested **only in PGlite** (`supabase/tests/lite/`), on a hand-written shim of Supabase's `auth` and `storage` schemas and API roles. Each one must be re-run against a real Supabase stack (local Docker or a cloud project in Frankfurt / eu-central-1) **before Milestone 1 is finished**.
+Every RLS rule, grant and RPC below has so far been tested **only in PGlite** (`supabase/tests/lite/`), on a hand-written shim of Supabase's `auth` and `storage` schemas and API roles. Each one must be re-run against a real Supabase stack (local Docker or a Supabase cloud project in the EU; the current test project is in West EU / Ireland, eu-west-1) **before Milestone 1 is finished**.
 
 **Status legend:** ⬜ PGlite only · ✅ verified on real Supabase · ❌ failed on real Supabase (see notes)
 

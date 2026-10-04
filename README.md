@@ -33,6 +33,7 @@ npm run dev
 ### Verifying against a Supabase cloud project
 
 1. Copy `supabase-cloud.env.example` to `.env.supabase-cloud` (git-ignored) and fill it in; the example explains where each value is in the dashboard.
+   `npm run cloud:status` shows which values are filled and whether they look right, without printing them.
 2. `npm run cloud:link`, then `npm run cloud:push:dry` (shows what would be applied) and `npm run cloud:push`.
 3. `npm run cloud:maintenance` deploys the maintenance Edge Function and sets its secret.
 4. `npm run verify:remote` runs the same DB test suites inside a transaction that is rolled back, plus API tests through PostgREST/Storage/Edge Functions. Those create `verify-*` users, a tenant and files and delete them afterwards. Run it on an empty project, before seeding demo data.
