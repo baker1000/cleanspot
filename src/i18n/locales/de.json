@@ -244,7 +244,100 @@
     "back": "Zur Startseite"
   },
   "reportDetail": {
-    "title": "Meldung"
+    "title": "Meldung",
+    "back": "Zurück zur Karte",
+    "notFound": "Diese Meldung gibt es nicht oder sie ist nicht mehr öffentlich.",
+    "loadError": "Die Meldung konnte nicht geladen werden.",
+    "weight": "Geschätztes Gewicht",
+    "weightValue": "etwa {{kg}} kg",
+    "responsible": "Zuständig",
+    "comment": "Kommentar",
+    "notPublished": "Fotos und Kommentar werden nach der Prüfung öffentlich angezeigt.",
+    "photos": {
+      "before": "Fotos",
+      "after": "Nach der Beseitigung",
+      "alt": "Foto {{number}}",
+      "afterAlt": "Foto nach der Beseitigung {{number}}",
+      "pending": "Wird geprüft: Nur Sie sehen dieses Foto.",
+      "unavailable": "Foto kann nicht geladen werden.",
+      "none": "Noch keine Fotos sichtbar."
+    },
+    "location": {
+      "title": "Ort",
+      "route": "Route (OpenStreetMap)",
+      "app": "In Karten-App öffnen"
+    },
+    "actions": {
+      "title": "Mithelfen",
+      "confirmHint": "Bestätigen Sie, dass der Müll noch da ist.",
+      "confirm": "Ich sehe das auch",
+      "confirmed": "Sie haben diese Meldung bestätigt.",
+      "hazardous": "Gefährlicher Abfall wird nur von Fachleuten der Kommune beseitigt.",
+      "joinHint": "Als Freiwillige oder Freiwilliger können Sie Meldungen übernehmen und mit einem Foto als beseitigt melden.",
+      "join": "Als Freiwillige/r mitmachen",
+      "claimHint": "Andere sehen dann, dass sich jemand kümmert. Wenn Sie es doch nicht schaffen, geben Sie die Meldung wieder ab.",
+      "claim": "Ich räume das auf",
+      "mine": "Sie kümmern sich darum. Laden Sie danach ein Foto der sauberen Stelle hoch.",
+      "unclaim": "Wieder abgeben",
+      "taken": "Jemand kümmert sich bereits darum.",
+      "cleared": "Beseitigt am {{date}}.",
+      "needsAccount": "Zum Bestätigen und Aufräumen brauchen Sie ein Konto.",
+      "toAccount": "Zum Konto"
+    },
+    "cleanup": {
+      "title": "Foto der sauberen Stelle",
+      "hint": "Machen Sie das Foto vor Ort. Ihr Standort wird geprüft: Er muss höchstens {{radius}} m von der Meldung entfernt sein.",
+      "take": "Foto nach der Beseitigung aufnehmen",
+      "retake": "Anderes Foto aufnehmen",
+      "preview": "Vorschau des Fotos nach der Beseitigung",
+      "locating": "Standort wird bestimmt …",
+      "location": {
+        "denied": "Für die Bestätigung wird Ihr Standort benötigt. Bitte erlauben Sie den Zugriff in den Browser-Einstellungen.",
+        "unavailable": "Ihr Standort konnte nicht bestimmt werden. Bitte versuchen Sie es erneut."
+      },
+      "distance": "Sie sind etwa {{meters}} m entfernt.",
+      "tooFar": "Das ist mehr als {{radius}} m. Bitte gehen Sie näher heran und aktualisieren Sie den Standort.",
+      "relocate": "Standort aktualisieren",
+      "submit": "Als beseitigt melden",
+      "submitting": "Wird gesendet …"
+    },
+    "notices": {
+      "confirmed": "Danke für Ihre Bestätigung.",
+      "joined": "Willkommen als Freiwillige/r!",
+      "claimed": "Danke! Die Meldung ist jetzt als „In Arbeit“ markiert.",
+      "unclaimed": "Die Meldung ist wieder offen.",
+      "cleared": "Danke! Die Meldung ist als beseitigt markiert."
+    },
+    "errors": {
+      "too_far": "Das Foto wurde {{meters}} m vom Müll entfernt aufgenommen; erlaubt sind höchstens {{max}} m.",
+      "too_far_unknown": "Das Foto wurde zu weit vom Müll entfernt aufgenommen.",
+      "claimed": "Jemand anderes kümmert sich bereits um diese Meldung.",
+      "hazardous": "Gefährlicher Abfall wird nur von Fachleuten der Kommune beseitigt.",
+      "status": "Die Meldung hat sich inzwischen geändert. Die Seite wurde aktualisiert.",
+      "account": "Bitte legen Sie zuerst ein Konto an.",
+      "not_allowed": "Das ist Ihnen nicht erlaubt. Ihr Konto ist eventuell gesperrt, oder Freiwillige dürfen hier keine Meldungen übernehmen.",
+      "invalid": "Die Angaben konnten nicht verarbeitet werden.",
+      "photo": "Das Foto konnte nicht hochgeladen werden. Bitte versuchen Sie es erneut.",
+      "rate_limited": "Zu viele Aktionen in kurzer Zeit. Bitte versuchen Sie es später erneut.",
+      "network": "Keine Verbindung. Bitte versuchen Sie es erneut, sobald Sie wieder online sind.",
+      "server": "Beim Senden ist etwas schiefgelaufen. Bitte versuchen Sie es erneut."
+    },
+    "timeline": {
+      "title": "Verlauf",
+      "events": {
+        "created": "Gemeldet",
+        "confirmed": "Von jemandem bestätigt",
+        "claimed": "Jemand hat die Beseitigung übernommen",
+        "unclaimed": "Wieder abgegeben",
+        "cleared": "Beseitigt",
+        "status_changed": "Status geändert: {{status}}",
+        "marked_duplicate": "Als doppelt markiert",
+        "photo_added": "Foto hinzugefügt",
+        "photo_approved": "Foto freigegeben",
+        "photo_rejected": "Foto abgelehnt",
+        "published": "Veröffentlicht"
+      }
+    }
   },
   "enums": {
     "status": {

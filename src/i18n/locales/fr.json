@@ -248,7 +248,100 @@
     "back": "Retour à l’accueil"
   },
   "reportDetail": {
-    "title": "Signalement"
+    "title": "Signalement",
+    "back": "Retour à la carte",
+    "notFound": "Ce signalement n’existe pas ou n’est plus public.",
+    "loadError": "Le signalement n’a pas pu être chargé.",
+    "weight": "Poids estimé",
+    "weightValue": "environ {{kg}} kg",
+    "responsible": "Responsable",
+    "comment": "Commentaire",
+    "notPublished": "Les photos et le commentaire sont affichés publiquement après vérification.",
+    "photos": {
+      "before": "Photos",
+      "after": "Après le nettoyage",
+      "alt": "Photo {{number}}",
+      "afterAlt": "Photo après nettoyage {{number}}",
+      "pending": "En cours de vérification : vous seul·e voyez cette photo.",
+      "unavailable": "Impossible de charger la photo.",
+      "none": "Aucune photo visible pour le moment."
+    },
+    "location": {
+      "title": "Lieu",
+      "route": "Itinéraire (OpenStreetMap)",
+      "app": "Ouvrir dans une application de cartes"
+    },
+    "actions": {
+      "title": "Aider",
+      "confirmHint": "Confirmez que les déchets sont toujours là.",
+      "confirm": "Je le vois aussi",
+      "confirmed": "Vous avez confirmé ce signalement.",
+      "hazardous": "Les déchets dangereux sont enlevés uniquement par des professionnels de la commune.",
+      "joinHint": "En tant que bénévole, vous pouvez prendre en charge des signalements et les marquer comme nettoyés avec une photo.",
+      "join": "Devenir bénévole",
+      "claimHint": "Les autres verront que quelqu’un s’en occupe. Si vous n’y arrivez finalement pas, rendez le signalement.",
+      "claim": "Je m’en occupe",
+      "mine": "Vous vous en occupez. Ensuite, envoyez une photo de l’endroit propre.",
+      "unclaim": "Rendre le signalement",
+      "taken": "Quelqu’un s’en occupe déjà.",
+      "cleared": "Nettoyé le {{date}}.",
+      "needsAccount": "Vous avez besoin d’un compte pour confirmer et nettoyer des signalements.",
+      "toAccount": "Aller au compte"
+    },
+    "cleanup": {
+      "title": "Photo de l’endroit propre",
+      "hint": "Prenez la photo sur place. Votre position est vérifiée : elle doit se trouver à {{radius}} m maximum du signalement.",
+      "take": "Prendre la photo après nettoyage",
+      "retake": "Prendre une autre photo",
+      "preview": "Aperçu de la photo après nettoyage",
+      "locating": "Localisation en cours …",
+      "location": {
+        "denied": "Votre position est nécessaire pour confirmer le nettoyage. Veuillez autoriser l’accès dans les paramètres du navigateur.",
+        "unavailable": "Votre position n’a pas pu être déterminée. Veuillez réessayer."
+      },
+      "distance": "Vous êtes à environ {{meters}} m.",
+      "tooFar": "C’est plus de {{radius}} m. Veuillez vous rapprocher et mettre à jour votre position.",
+      "relocate": "Mettre à jour la position",
+      "submit": "Marquer comme nettoyé",
+      "submitting": "Envoi en cours …"
+    },
+    "notices": {
+      "confirmed": "Merci pour votre confirmation.",
+      "joined": "Bienvenue parmi les bénévoles !",
+      "claimed": "Merci ! Le signalement est maintenant marqué « En cours ».",
+      "unclaimed": "Le signalement est de nouveau ouvert.",
+      "cleared": "Merci ! Le signalement est marqué comme nettoyé."
+    },
+    "errors": {
+      "too_far": "La photo a été prise à {{meters}} m des déchets ; {{max}} m maximum sont autorisés.",
+      "too_far_unknown": "La photo a été prise trop loin des déchets.",
+      "claimed": "Quelqu’un d’autre s’occupe déjà de ce signalement.",
+      "hazardous": "Les déchets dangereux sont enlevés uniquement par des professionnels de la commune.",
+      "status": "Le signalement a changé entre-temps. La page a été mise à jour.",
+      "account": "Veuillez d’abord créer un compte.",
+      "not_allowed": "Vous n’êtes pas autorisé·e à faire cela. Votre compte est peut-être bloqué, ou les bénévoles ne peuvent pas prendre en charge de signalements ici.",
+      "invalid": "Les informations n’ont pas pu être traitées.",
+      "photo": "La photo n’a pas pu être envoyée. Veuillez réessayer.",
+      "rate_limited": "Trop d’actions en peu de temps. Veuillez réessayer plus tard.",
+      "network": "Pas de connexion. Veuillez réessayer dès que vous serez de nouveau en ligne.",
+      "server": "Une erreur s’est produite lors de l’envoi. Veuillez réessayer."
+    },
+    "timeline": {
+      "title": "Historique",
+      "events": {
+        "created": "Signalé",
+        "confirmed": "Confirmé par quelqu’un",
+        "claimed": "Quelqu’un a pris en charge le nettoyage",
+        "unclaimed": "Rendu",
+        "cleared": "Nettoyé",
+        "status_changed": "Statut modifié : {{status}}",
+        "marked_duplicate": "Marqué comme doublon",
+        "photo_added": "Photo ajoutée",
+        "photo_approved": "Photo validée",
+        "photo_rejected": "Photo refusée",
+        "published": "Publié"
+      }
+    }
   },
   "enums": {
     "status": {

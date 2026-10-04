@@ -1,20 +1,8 @@
-// Placeholder pages; each is replaced by its feature module in later steps.
+// Simple pages; each moves to its feature module when it grows (profile: step 9).
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { LanguageSelect } from '@/components/LanguageSelect';
 import { AccountPanel } from '@/features/auth/AccountPanel';
-
-function Placeholder({ titleKey }: { titleKey: string }) {
-  const { t } = useTranslation();
-  return (
-    <>
-      <h1 className="mb-2 text-2xl font-bold">{t(titleKey)}</h1>
-      <p className="text-slate-700">{t('common.comingSoon')}</p>
-    </>
-  );
-}
-
-export const ReportDetailPage = () => <Placeholder titleKey="reportDetail.title" />;
 
 export function ProfilePage() {
   const { t } = useTranslation();

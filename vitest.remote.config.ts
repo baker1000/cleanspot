@@ -1,8 +1,13 @@
 // Runs the DB test suites and the API suite against the real Supabase project configured in
 // .env.supabase-cloud. Sequential on purpose: each DB test file holds one open transaction.
+import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
+  // Same alias as vite.config.ts: the API suite imports the app's own API modules.
+  resolve: {
+    alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
+  },
   test: {
     environment: 'node',
     globals: true,

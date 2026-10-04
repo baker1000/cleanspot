@@ -244,7 +244,100 @@
     "back": "Back to home"
   },
   "reportDetail": {
-    "title": "Report"
+    "title": "Report",
+    "back": "Back to the map",
+    "notFound": "This report does not exist or is no longer public.",
+    "loadError": "The report could not be loaded.",
+    "weight": "Estimated weight",
+    "weightValue": "about {{kg}} kg",
+    "responsible": "Responsible",
+    "comment": "Comment",
+    "notPublished": "Photos and comment are shown publicly after review.",
+    "photos": {
+      "before": "Photos",
+      "after": "After the cleanup",
+      "alt": "Photo {{number}}",
+      "afterAlt": "After-photo {{number}}",
+      "pending": "Under review: only you can see this photo.",
+      "unavailable": "Photo cannot be loaded.",
+      "none": "No photos visible yet."
+    },
+    "location": {
+      "title": "Location",
+      "route": "Route (OpenStreetMap)",
+      "app": "Open in map app"
+    },
+    "actions": {
+      "title": "Help out",
+      "confirmHint": "Confirm that the waste is still there.",
+      "confirm": "I see this too",
+      "confirmed": "You have confirmed this report.",
+      "hazardous": "Hazardous waste is removed by municipality professionals only.",
+      "joinHint": "As a volunteer you can take on reports and mark them as cleared with a photo.",
+      "join": "Join as a volunteer",
+      "claimHint": "Others will see that someone is on it. If you can't make it after all, give the report back.",
+      "claim": "I'll clear this",
+      "mine": "You are taking care of this. Afterwards, upload a photo of the clean spot.",
+      "unclaim": "Give it back",
+      "taken": "Someone is already taking care of this.",
+      "cleared": "Cleared on {{date}}.",
+      "needsAccount": "You need an account to confirm and clear reports.",
+      "toAccount": "Go to account"
+    },
+    "cleanup": {
+      "title": "Photo of the clean spot",
+      "hint": "Take the photo on site. Your location is checked: it must be within {{radius}} m of the report.",
+      "take": "Take after-photo",
+      "retake": "Take another photo",
+      "preview": "Preview of the after-photo",
+      "locating": "Determining your location …",
+      "location": {
+        "denied": "Your location is needed to confirm the cleanup. Please allow access in your browser settings.",
+        "unavailable": "Your location could not be determined. Please try again."
+      },
+      "distance": "You are about {{meters}} m away.",
+      "tooFar": "That is more than {{radius}} m. Please move closer and update your location.",
+      "relocate": "Update location",
+      "submit": "Mark as cleared",
+      "submitting": "Sending …"
+    },
+    "notices": {
+      "confirmed": "Thank you for confirming.",
+      "joined": "Welcome aboard as a volunteer!",
+      "claimed": "Thank you! The report is now marked as in progress.",
+      "unclaimed": "The report is open again.",
+      "cleared": "Thank you! The report is marked as cleared."
+    },
+    "errors": {
+      "too_far": "The photo was taken {{meters}} m from the waste; at most {{max}} m is allowed.",
+      "too_far_unknown": "The photo was taken too far from the waste.",
+      "claimed": "Someone else is already taking care of this report.",
+      "hazardous": "Hazardous waste is removed by municipality professionals only.",
+      "status": "The report has changed in the meantime. The page has been updated.",
+      "account": "Please create an account first.",
+      "not_allowed": "You are not allowed to do this. Your account may be blocked, or volunteers cannot take on reports here.",
+      "invalid": "The details could not be processed.",
+      "photo": "The photo could not be uploaded. Please try again.",
+      "rate_limited": "Too many actions in a short time. Please try again later.",
+      "network": "No connection. Please try again once you are back online.",
+      "server": "Something went wrong while sending. Please try again."
+    },
+    "timeline": {
+      "title": "History",
+      "events": {
+        "created": "Reported",
+        "confirmed": "Confirmed by someone",
+        "claimed": "Someone took on the cleanup",
+        "unclaimed": "Given back",
+        "cleared": "Cleared",
+        "status_changed": "Status changed: {{status}}",
+        "marked_duplicate": "Marked as duplicate",
+        "photo_added": "Photo added",
+        "photo_approved": "Photo approved",
+        "photo_rejected": "Photo rejected",
+        "published": "Published"
+      }
+    }
   },
   "enums": {
     "status": {

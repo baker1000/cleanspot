@@ -4,6 +4,8 @@ import type { ReactElement } from 'react';
 import { MemoryRouter } from 'react-router';
 import { AppRoutes } from '@/app/App';
 import { AuthProvider, type AuthClient } from '@/features/auth/AuthProvider';
+import type { DetailApi } from '@/features/detail/api';
+import { DetailApiProvider } from '@/features/detail/DetailApiContext';
 import type { ReportsApi } from '@/features/map/reports';
 import { ReportsApiProvider } from '@/features/map/ReportsApiContext';
 import type { ReportSubmitApi } from '@/features/report/api';
@@ -19,6 +21,7 @@ export function renderWithProviders(
     reportsApi = null,
     submitApi = null,
     outboxStore = createMemoryStore(),
+    detailApi = null,
   }: RenderOptions = {},
 ) {
   return {
@@ -28,7 +31,9 @@ export function renderWithProviders(
         <ReportsApiProvider api={reportsApi}>
           <ReportSubmitApiProvider api={submitApi}>
             <OutboxProvider store={outboxStore}>
-              <MemoryRouter initialEntries={[route]}>{ui}</MemoryRouter>
+              <DetailApiProvider api={detailApi}>
+                <MemoryRouter initialEntries={[route]}>{ui}</MemoryRouter>
+              </DetailApiProvider>
             </OutboxProvider>
           </ReportSubmitApiProvider>
         </ReportsApiProvider>
@@ -44,6 +49,7 @@ export interface RenderOptions {
   submitApi?: ReportSubmitApi | null;
   /** Offline queue; a fresh in-memory store per render by default, `null` = no queue. */
   outboxStore?: OutboxStore | null;
+  detailApi?: DetailApi | null;
 }
 
 export const renderApp = (opts: RenderOptions = {}) => renderWithProviders(<AppRoutes />, opts);

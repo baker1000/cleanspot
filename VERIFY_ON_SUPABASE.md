@@ -16,6 +16,11 @@ Every RLS rule, grant and RPC below has so far been tested **only in PGlite** (`
 
 ## Run log
 
+### 2026-10-05 (seventh run) — report detail page (step 7), same project
+
+- No new migration. `verify:remote`: **89 / 89 passed**, including the new API tests **F5** (the detail page reads a report through the public views like the app: reporter sees own photo under review with a working signed URL, visitor sees none; after approval the signed URL serves the file; timeline) and **F6** (a registered user joins the public tenant as volunteer, claims, a second volunteer cannot take over, the after-photo ~65 m away is refused with CS002 and the measured distance, ~7 m away clears the report).
+- Demo reports removed before and seeded again after the run.
+
 ### 2026-10-04 (sixth run) — offline queue (step 6), same project
 
 - No new migration. `verify:remote`: **87 / 87 passed**; F4 now also sends `p_taken_at` (as the offline queue does) and checks the stored photo time.

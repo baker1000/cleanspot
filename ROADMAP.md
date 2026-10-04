@@ -20,12 +20,22 @@ map screen) were done before this file existed; see `git log`.
       Known limits: sends only while the app is open (Background Sync → step 10); queued reports
       are not shown on the map; without IndexedDB there is no queue (sent directly, errors shown
       as before).
-- [ ] **7. Report detail page** — photos, history timeline, actions: confirm, navigate,
-      "I'll clear this", upload after-photo.
-- [ ] **8. Cleanup + bag pickup + pickup route** — after-photo must be taken within 50 m, timestamp
-      stored; "X bags placed here" with photo + location creates a pickup task for municipality
-      staff; optimized pickup route for the day.
-- [ ] **9. Profile + DSGVO** — account deletion including photos; user data export; privacy
+- [x] **7. Report detail page** — photos (approved ones; own photos under review marked as such),
+      history timeline, estimated kg, responsible authority; actions: confirm (registered, not own
+      report), navigate (OpenStreetMap route + geo: link), join as volunteer (explicit opt-in to the
+      public tenant), "I'll clear this" / give back, after-photo with the location of that moment:
+      distance shown before sending, server enforces the tenant radius (default 50 m) and stores
+      the timestamp. Hazardous reports: no claim for volunteers. All 6 languages. Tested: unit,
+      component, e2e in Chromium incl. axe (de + ar/RTL), verify:remote F5/F6 (89/89).
+      Known limits: the after-photo needs a connection (not queued offline); a browser cannot
+      prove the photo came from the camera, so the location is what is verified (native camera
+      in step 11); no small map on the page (coordinates + route links); staff actions
+      (moderation, status, assign) are Milestone 2; leaving the volunteer role → step 9.
+- [ ] **8. Bag pickup + pickup route** — "X bags placed here" with photo + location creates a pickup
+      task for municipality staff; optimized pickup route for the day. (Cleanup verification
+      within 50 m with timestamp was done in step 7.)
+- [ ] **9. Profile + DSGVO** — account deletion including photos; user data export; leave the
+      volunteer role; privacy
       policy, imprint and terms of use (Nutzungsbedingungen) pages (templates marked "must be
       reviewed by a lawyer").
 - [ ] **10. PWA** — installable, offline-capable, offline caching of viewed map areas; Background

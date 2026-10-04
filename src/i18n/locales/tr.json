@@ -244,7 +244,100 @@
     "back": "Ana sayfaya dön"
   },
   "reportDetail": {
-    "title": "Bildirim"
+    "title": "Bildirim",
+    "back": "Haritaya dön",
+    "notFound": "Bu bildirim mevcut değil veya artık herkese açık değil.",
+    "loadError": "Bildirim yüklenemedi.",
+    "weight": "Tahmini ağırlık",
+    "weightValue": "yaklaşık {{kg}} kg",
+    "responsible": "Sorumlu",
+    "comment": "Yorum",
+    "notPublished": "Fotoğraflar ve yorum kontrol edildikten sonra herkese gösterilir.",
+    "photos": {
+      "before": "Fotoğraflar",
+      "after": "Temizlikten sonra",
+      "alt": "Fotoğraf {{number}}",
+      "afterAlt": "Temizlik sonrası fotoğraf {{number}}",
+      "pending": "İnceleniyor: Bu fotoğrafı yalnızca siz görebilirsiniz.",
+      "unavailable": "Fotoğraf yüklenemiyor.",
+      "none": "Henüz görünür fotoğraf yok."
+    },
+    "location": {
+      "title": "Konum",
+      "route": "Rota (OpenStreetMap)",
+      "app": "Harita uygulamasında aç"
+    },
+    "actions": {
+      "title": "Yardım edin",
+      "confirmHint": "Çöpün hâlâ orada olduğunu onaylayın.",
+      "confirm": "Ben de görüyorum",
+      "confirmed": "Bu bildirimi onayladınız.",
+      "hazardous": "Tehlikeli atıklar yalnızca belediyenin uzmanları tarafından kaldırılır.",
+      "joinHint": "Gönüllü olarak bildirimleri üstlenebilir ve bir fotoğrafla temizlendi olarak işaretleyebilirsiniz.",
+      "join": "Gönüllü ol",
+      "claimHint": "Diğerleri birinin ilgilendiğini görür. Yine de yapamazsanız bildirimi geri bırakın.",
+      "claim": "Bunu ben temizlerim",
+      "mine": "Bununla siz ilgileniyorsunuz. Sonrasında temiz yerin fotoğrafını yükleyin.",
+      "unclaim": "Geri bırak",
+      "taken": "Biri zaten bununla ilgileniyor.",
+      "cleared": "{{date}} tarihinde temizlendi.",
+      "needsAccount": "Bildirimleri onaylamak ve temizlemek için bir hesaba ihtiyacınız var.",
+      "toAccount": "Hesaba git"
+    },
+    "cleanup": {
+      "title": "Temiz yerin fotoğrafı",
+      "hint": "Fotoğrafı yerinde çekin. Konumunuz kontrol edilir: bildirime en fazla {{radius}} m uzaklıkta olmalıdır.",
+      "take": "Temizlik sonrası fotoğraf çek",
+      "retake": "Başka bir fotoğraf çek",
+      "preview": "Temizlik sonrası fotoğrafın önizlemesi",
+      "locating": "Konumunuz belirleniyor …",
+      "location": {
+        "denied": "Temizliği onaylamak için konumunuz gerekiyor. Lütfen tarayıcı ayarlarından erişime izin verin.",
+        "unavailable": "Konumunuz belirlenemedi. Lütfen tekrar deneyin."
+      },
+      "distance": "Yaklaşık {{meters}} m uzaktasınız.",
+      "tooFar": "Bu {{radius}} m’den fazla. Lütfen yaklaşın ve konumunuzu güncelleyin.",
+      "relocate": "Konumu güncelle",
+      "submit": "Temizlendi olarak işaretle",
+      "submitting": "Gönderiliyor …"
+    },
+    "notices": {
+      "confirmed": "Onayınız için teşekkürler.",
+      "joined": "Gönüllü olarak hoş geldiniz!",
+      "claimed": "Teşekkürler! Bildirim artık “Devam ediyor” olarak işaretlendi.",
+      "unclaimed": "Bildirim yeniden açık.",
+      "cleared": "Teşekkürler! Bildirim temizlendi olarak işaretlendi."
+    },
+    "errors": {
+      "too_far": "Fotoğraf çöpten {{meters}} m uzakta çekildi; en fazla {{max}} m’ye izin veriliyor.",
+      "too_far_unknown": "Fotoğraf çöpten çok uzakta çekildi.",
+      "claimed": "Bu bildirimle zaten başka biri ilgileniyor.",
+      "hazardous": "Tehlikeli atıklar yalnızca belediyenin uzmanları tarafından kaldırılır.",
+      "status": "Bildirim bu arada değişti. Sayfa güncellendi.",
+      "account": "Lütfen önce bir hesap oluşturun.",
+      "not_allowed": "Bunu yapmaya izniniz yok. Hesabınız engellenmiş olabilir veya burada gönüllüler bildirim üstlenemez.",
+      "invalid": "Bilgiler işlenemedi.",
+      "photo": "Fotoğraf yüklenemedi. Lütfen tekrar deneyin.",
+      "rate_limited": "Kısa sürede çok fazla işlem. Lütfen daha sonra tekrar deneyin.",
+      "network": "Bağlantı yok. Tekrar çevrimiçi olduğunuzda lütfen yeniden deneyin.",
+      "server": "Gönderirken bir sorun oluştu. Lütfen tekrar deneyin."
+    },
+    "timeline": {
+      "title": "Geçmiş",
+      "events": {
+        "created": "Bildirildi",
+        "confirmed": "Biri tarafından onaylandı",
+        "claimed": "Biri temizliği üstlendi",
+        "unclaimed": "Geri bırakıldı",
+        "cleared": "Temizlendi",
+        "status_changed": "Durum değişti: {{status}}",
+        "marked_duplicate": "Yinelenen olarak işaretlendi",
+        "photo_added": "Fotoğraf eklendi",
+        "photo_approved": "Fotoğraf onaylandı",
+        "photo_rejected": "Fotoğraf reddedildi",
+        "published": "Yayınlandı"
+      }
+    }
   },
   "enums": {
     "status": {

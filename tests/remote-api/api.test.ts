@@ -13,6 +13,11 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import pg from 'pg';
 import { loadCloudEnv, pgSslOptions } from '../../supabase/tests/lite/harness';
 import {
+  ActionError,
+  createSupabaseDetailApi,
+  type DetailClient,
+} from '../../src/features/detail/api';
+import {
   createSupabaseSubmitApi,
   photoPath,
   type SubmitClient,
@@ -249,6 +254,121 @@ describe('A — platform assumptions', () => {
       path: photoPath(uid, photo),
       taken_at: new Date('2026-10-04T08:15:00.000Z'),
     });
+  });
+
+  it('F5: the detail page reads a report like the app does (visitor and reporter)', async () => {
+    const detailApi = (client: SupabaseClient) =>
+      createSupabaseDetailApi(async () => client as unknown as DetailClient);
+    const { data: reportId } = await submitReport(reporter, 0.02);
+    const { path } = await upload(reporter, ids.reporter!);
+    const attach = await reporter.rpc('add_report_photo', { p_report_id: reportId, p_path: path });
+    expect(attach.error).toBeNull();
+
+    // Before review: the reporter sees the photo marked pending; a visitor sees none.
+    const own = await detailApi(reporter).load(reportId, ids.reporter!);
+    expect(own).toMatchObject({
+      id: reportId,
+      tenantName: 'Verify run',
+      reportedByMe: true,
+      isPublished: false,
+      comment: null,
+      cleanupRadiusM: 50,
+      viewer: { role: 'none', confirmed: false },
+    });
+    expect(own!.photos).toMatchObject([{ kind: 'before', pending: true }]);
+    expect((await fetch(own!.photos[0]!.url!)).status).toBe(200);
+    expect((await detailApi(anon).load(reportId, null))!.photos).toEqual([]);
+
+    // After approval: public, with a working signed URL, and the timeline.
+    expect(
+      (await staff.rpc('moderate_photo', { p_photo_id: attach.data, p_approve: true })).error,
+    ).toBeNull();
+    const pub = await detailApi(anon).load(reportId, null);
+    expect(pub).toMatchObject({ isPublished: true, comment: 'verify run', viewer: null });
+    expect(pub!.photos).toMatchObject([{ kind: 'before', pending: false }]);
+    const image = await fetch(pub!.photos[0]!.url!);
+    expect(image.status).toBe(200);
+    expect((await image.arrayBuffer()).byteLength).toBe(128);
+    expect(pub!.events.map((e) => e.type)).toEqual([
+      'created',
+      'photo_added',
+      'photo_approved',
+      'published',
+    ]);
+    await expect(detailApi(anon).load(randomUUID(), null)).resolves.toBeNull();
+  });
+
+  it('F6: a volunteer joins, claims and clears through the detail API (50 m checked)', async () => {
+    const { data: reportId } = await submitReport(reporter, 0.03);
+    const v = await signedInUser('volunteer');
+    const api = createSupabaseDetailApi(async () => v.client as unknown as DetailClient);
+    const report = { lng: SPOT.lng + 0.03, lat: SPOT.lat };
+
+    const first = await api.load(reportId, v.id);
+    expect(first!.viewer).toMatchObject({ role: 'none', publicTenantId: expect.any(String) });
+    await expect(api.claim(reportId)).rejects.toMatchObject({ reason: 'not_allowed' });
+
+    await api.joinAsVolunteer(v.id, first!.viewer!.publicTenantId!);
+    await api.joinAsVolunteer(v.id, first!.viewer!.publicTenantId!); // again: no error
+    expect((await api.load(reportId, v.id))!.viewer!.role).toBe('volunteer');
+
+    await api.claim(reportId);
+    expect(await api.load(reportId, v.id)).toMatchObject({
+      status: 'in_progress',
+      claimedByMe: true,
+    });
+    // Someone else cannot take it over.
+    const other = await signedInUser('volunteer2');
+    const otherApi = createSupabaseDetailApi(async () => other.client as unknown as DetailClient);
+    await otherApi.joinAsVolunteer(other.id, first!.viewer!.publicTenantId!);
+    await expect(otherApi.claim(reportId)).rejects.toMatchObject({ reason: 'claimed' });
+
+    const photo = (id = randomUUID()) => {
+      uploaded.push(`${v.id}/${id}.webp`);
+      return { id, blob: new Blob([webp(200)], { type: 'image/webp' }), ext: 'webp' as const };
+    };
+    const takenAt = new Date().toISOString();
+    // ~65 m away: refused with the measured distance.
+    const tooFar = await api
+      .submitCleanup(
+        {
+          reportId,
+          photo: photo(),
+          lng: report.lng + 0.001,
+          lat: report.lat,
+          accuracyM: 5,
+          takenAt,
+        },
+        v.id,
+      )
+      .catch((e: unknown) => e);
+    expect(tooFar).toBeInstanceOf(ActionError);
+    expect(tooFar).toMatchObject({ reason: 'too_far', distance: { maxMeters: 50 } });
+    expect((tooFar as ActionError).distance!.meters).toBeGreaterThan(60);
+
+    // ~7 m away: cleared.
+    const distance = await api.submitCleanup(
+      {
+        reportId,
+        photo: photo(),
+        lng: report.lng + 0.0001,
+        lat: report.lat,
+        accuracyM: 5,
+        takenAt,
+      },
+      v.id,
+    );
+    expect(distance).toBeGreaterThan(5);
+    expect(distance).toBeLessThan(10);
+    const cleared = await api.load(reportId, v.id);
+    expect(cleared).toMatchObject({ status: 'cleared', clearedAt: expect.any(String) });
+    expect(cleared!.photos).toMatchObject([{ kind: 'after', pending: true }]);
+    expect(cleared!.events.map((e) => e.type)).toEqual([
+      'created',
+      'claimed',
+      'photo_added',
+      'cleared',
+    ]);
   });
 
   it('A8: anon cannot read base tables; other users get no rows', async () => {
