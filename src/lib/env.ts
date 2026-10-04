@@ -1,22 +1,56 @@
-export interface AppEnv {
+export type GeocoderProvider = 'nominatim' | 'none';
+
+/** Map and geocoding settings. Always available, also without a backend. */
+export interface MapEnv {
+  mapStyleUrl: string;
+  geocoderProvider: GeocoderProvider;
+  geocoderUrl: string;
+  /** Optional ISO 3166-1 alpha-2 list, e.g. "de" or "de,at". Empty = worldwide. */
+  geocoderCountryCodes: string;
+}
+
+export interface AppEnv extends MapEnv {
   supabaseUrl: string;
   supabaseAnonKey: string;
-  mapStyleUrl: string;
-  geocoderUrl: string;
   demoMode: boolean;
 }
 
 type RawEnv = Record<string, string | boolean | undefined>;
 
-/** Parses and validates the VITE_* env. Throws with a readable message on misconfiguration. */
-export function parseEnv(raw: RawEnv): AppEnv {
-  const str = (key: string, fallback?: string): string => {
+const GEOCODER_PROVIDERS: readonly GeocoderProvider[] = ['nominatim', 'none'];
+
+function reader(raw: RawEnv) {
+  return (key: string, fallback?: string): string => {
     const value = raw[key];
     if (typeof value === 'string' && value.trim() !== '') return value.trim();
     if (fallback !== undefined) return fallback;
     throw new Error(`Missing environment variable ${key} (see .env.example)`);
   };
+}
 
+/** Parses the map/geocoder env. Never throws for missing values; rejects unknown providers. */
+export function parseMapEnv(raw: RawEnv): MapEnv {
+  const str = reader(raw);
+  const provider = str('VITE_GEOCODER_PROVIDER', 'nominatim').toLowerCase();
+  if (!GEOCODER_PROVIDERS.includes(provider as GeocoderProvider)) {
+    throw new Error(
+      `VITE_GEOCODER_PROVIDER must be one of ${GEOCODER_PROVIDERS.join(', ')}, got: ${provider}`,
+    );
+  }
+  return {
+    mapStyleUrl: str('VITE_MAP_STYLE_URL', 'https://tiles.openfreemap.org/styles/liberty'),
+    geocoderProvider: provider as GeocoderProvider,
+    geocoderUrl: str('VITE_GEOCODER_URL', 'https://nominatim.openstreetmap.org').replace(
+      /\/+$/,
+      '',
+    ),
+    geocoderCountryCodes: str('VITE_GEOCODER_COUNTRYCODES', '').toLowerCase(),
+  };
+}
+
+/** Parses and validates the VITE_* env. Throws with a readable message on misconfiguration. */
+export function parseEnv(raw: RawEnv): AppEnv {
+  const str = reader(raw);
   const supabaseUrl = str('VITE_SUPABASE_URL');
   try {
     new URL(supabaseUrl);
@@ -25,10 +59,9 @@ export function parseEnv(raw: RawEnv): AppEnv {
   }
 
   return {
+    ...parseMapEnv(raw),
     supabaseUrl,
     supabaseAnonKey: str('VITE_SUPABASE_ANON_KEY'),
-    mapStyleUrl: str('VITE_MAP_STYLE_URL', 'https://tiles.openfreemap.org/styles/liberty'),
-    geocoderUrl: str('VITE_GEOCODER_URL', 'https://nominatim.openstreetmap.org'),
     demoMode: raw.VITE_DEMO_MODE === 'true' || raw.VITE_DEMO_MODE === true,
   };
 }

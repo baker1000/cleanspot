@@ -1,4 +1,4 @@
-import { parseEnv } from './env';
+import { parseEnv, parseMapEnv } from './env';
 
 const base = { VITE_SUPABASE_URL: 'http://127.0.0.1:54321', VITE_SUPABASE_ANON_KEY: 'anon' };
 
@@ -20,5 +20,28 @@ describe('parseEnv', () => {
   it('enables demo mode only for the literal "true"', () => {
     expect(parseEnv({ ...base, VITE_DEMO_MODE: 'true' }).demoMode).toBe(true);
     expect(parseEnv({ ...base, VITE_DEMO_MODE: '1' }).demoMode).toBe(false);
+  });
+});
+
+describe('parseMapEnv', () => {
+  it('works without any backend variables', () => {
+    expect(parseMapEnv({})).toEqual({
+      mapStyleUrl: 'https://tiles.openfreemap.org/styles/liberty',
+      geocoderProvider: 'nominatim',
+      geocoderUrl: 'https://nominatim.openstreetmap.org',
+      geocoderCountryCodes: '',
+    });
+  });
+
+  it('accepts a configured provider, strips trailing slashes and rejects unknown providers', () => {
+    const env = parseMapEnv({
+      VITE_GEOCODER_PROVIDER: 'None',
+      VITE_GEOCODER_URL: 'https://geo.example.org/',
+      VITE_GEOCODER_COUNTRYCODES: 'DE',
+    });
+    expect(env.geocoderProvider).toBe('none');
+    expect(env.geocoderUrl).toBe('https://geo.example.org');
+    expect(env.geocoderCountryCodes).toBe('de');
+    expect(() => parseMapEnv({ VITE_GEOCODER_PROVIDER: 'google' })).toThrow(/must be one of/);
   });
 });
