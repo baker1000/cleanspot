@@ -41,13 +41,40 @@ describe('translation files', () => {
     for (const { code } of LANGUAGES) expect(locales[`./locales/${code}.json`]).toBeDefined();
   });
 
+  // Plural keys (x_one, x_other, …): each language needs exactly the forms its plural rules use,
+  // which is what i18next looks up (Arabic has six, German two).
+  const PLURAL = /_(zero|one|two|few|many|other)$/;
+  const pluralBases = [
+    ...new Set(deKeys.filter((k) => PLURAL.test(k)).map((k) => k.replace(PLURAL, ''))),
+  ];
+
+  function expectedKeys(code: string) {
+    const forms = new Intl.PluralRules(code).resolvedOptions().pluralCategories;
+    return [
+      ...deKeys.filter((k) => !PLURAL.test(k)),
+      ...pluralBases.flatMap((base) => forms.map((form) => `${base}_${form}`)),
+    ].sort();
+  }
+
+  it('German plural keys are complete', () => {
+    expect(pluralBases.length).toBeGreaterThan(0);
+    expect(deKeys).toEqual(expectedKeys('de'));
+  });
+
   it.each(LANGUAGES.map((l) => l.code))('%s has exactly the German keys, none empty', (code) => {
     const flat = flatten(locales[`./locales/${code}.json`]!);
-    expect(Object.keys(flat).sort()).toEqual(deKeys);
+    expect(Object.keys(flat).sort()).toEqual(expectedKeys(code));
     for (const [key, value] of Object.entries(flat)) {
       expect(typeof value, key).toBe('string');
       expect((value as string).trim(), key).not.toBe('');
-      expect(placeholders(value as string), key).toEqual(placeholders(de[key] as string));
+      if (PLURAL.test(key)) {
+        // Forms like Arabic "one"/"two" may spell the number out instead of using {{count}}.
+        const source = de[`${key.replace(PLURAL, '')}_other`] as string;
+        const strip = (list: (string | undefined)[]) => list.filter((p) => p !== 'count');
+        expect(strip(placeholders(value as string)), key).toEqual(strip(placeholders(source)));
+      } else {
+        expect(placeholders(value as string), key).toEqual(placeholders(de[key] as string));
+      }
     }
   });
 });

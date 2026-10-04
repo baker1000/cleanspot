@@ -27,7 +27,66 @@
     "openApp": "Uygulamayı aç"
   },
   "map": {
-    "title": "Harita"
+    "title": "Harita",
+    "mapLabel": "Bildirim haritası",
+    "loading": "Bildirimler yükleniyor …",
+    "loadError": "Bildirimler yüklenemedi.",
+    "count_one": "Bu alanda {{count}} bildirim",
+    "count_other": "Bu alanda {{count}} bildirim",
+    "tooMany": "Yalnızca en yeni {{max}} bildirim gösteriliyor. Lütfen yakınlaştırın.",
+    "search": {
+      "label": "Yer ara",
+      "placeholder": "Yer veya adres ara",
+      "submit": "Ara",
+      "searching": "Aranıyor …",
+      "results_one": "{{count}} sonuç",
+      "results_other": "{{count}} sonuç",
+      "none": "Sonuç bulunamadı. Başka bir arama terimi deneyin.",
+      "resultsLabel": "Arama sonuçları",
+      "attribution": "Arama verileri:",
+      "errors": {
+        "rate_limited": "Çok fazla arama yapıldı. Lütfen biraz bekleyin.",
+        "network": "Yer aramasına bağlantı yok.",
+        "server": "Yer araması şu anda kullanılamıyor."
+      }
+    },
+    "filters": {
+      "toggle": "Filtreler",
+      "status": "Durum",
+      "category": "Çöp türü",
+      "hazardLegend": "Kalın koyu halka: tehlikeli atık"
+    },
+    "view": {
+      "list": "Liste"
+    },
+    "locate": {
+      "button": "Konumum",
+      "errors": {
+        "denied": "Konum erişimi reddedildi. Tarayıcı ayarlarınızdan izin verebilirsiniz.",
+        "unavailable": "Konumunuz belirlenemedi."
+      }
+    },
+    "errors": {
+      "webgl": "Harita bu cihazda gösterilemiyor. Liste tüm bildirimleri gösterir.",
+      "style": "Harita döşemeleri yüklenemedi. Liste çalışmaya devam ediyor."
+    },
+    "list": {
+      "label": "Bu alandaki bildirimler",
+      "empty": "Bu alanda bildirim yok.",
+      "hazardBadge": "Tehlikeli"
+    },
+    "sheet": {
+      "status": "Durum",
+      "size": "Miktar",
+      "reportedOn": "Bildirim tarihi",
+      "confirmationsLabel": "Onaylar",
+      "confirmations_one": "{{count}} onay",
+      "confirmations_other": "{{count}} onay",
+      "hazardWarning": "Tehlikeli atık: Lütfen dokunmayın.",
+      "claimed": "Gönüllüler zaten ilgileniyor.",
+      "reportedByMe": "Bu sizin bildiriminiz.",
+      "details": "Ayrıntıları gör"
+    }
   },
   "report": {
     "title": "Çöp bildir"
@@ -64,5 +123,31 @@
   "notFound": {
     "title": "Sayfa bulunamadı",
     "back": "Ana sayfaya dön"
+  },
+  "reportDetail": {
+    "title": "Bildirim"
+  },
+  "enums": {
+    "status": {
+      "reported": "Bildirildi",
+      "confirmed": "Onaylandı",
+      "in_progress": "İşlemde",
+      "cleared": "Temizlendi"
+    },
+    "category": {
+      "plastic": "Plastik",
+      "construction": "İnşaat atığı",
+      "electronics": "Elektronik atık",
+      "mixed": "Karışık çöp",
+      "bulky": "Hacimli atık",
+      "hazardous": "Tehlikeli atık",
+      "other": "Diğer"
+    },
+    "size": {
+      "bag": "Bir torba",
+      "pile": "Bir yığın",
+      "container": "Konteyner dolusu",
+      "truck": "Kamyon dolusu"
+    }
   }
 }

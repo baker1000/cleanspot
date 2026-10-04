@@ -27,7 +27,66 @@
     "openApp": "App öffnen"
   },
   "map": {
-    "title": "Karte"
+    "title": "Karte",
+    "mapLabel": "Karte der Meldungen",
+    "loading": "Meldungen werden geladen …",
+    "loadError": "Meldungen konnten nicht geladen werden.",
+    "count_one": "{{count}} Meldung in diesem Ausschnitt",
+    "count_other": "{{count}} Meldungen in diesem Ausschnitt",
+    "tooMany": "Es werden nur die neuesten {{max}} Meldungen angezeigt. Bitte zoomen Sie hinein.",
+    "search": {
+      "label": "Ort suchen",
+      "placeholder": "Ort oder Adresse suchen",
+      "submit": "Suchen",
+      "searching": "Suche läuft …",
+      "results_one": "{{count}} Treffer",
+      "results_other": "{{count}} Treffer",
+      "none": "Keine Treffer. Versuchen Sie einen anderen Suchbegriff.",
+      "resultsLabel": "Suchergebnisse",
+      "attribution": "Suchdaten:",
+      "errors": {
+        "rate_limited": "Zu viele Suchanfragen. Bitte warten Sie einen Moment.",
+        "network": "Keine Verbindung zur Ortssuche.",
+        "server": "Die Ortssuche ist gerade nicht erreichbar."
+      }
+    },
+    "filters": {
+      "toggle": "Filter",
+      "status": "Status",
+      "category": "Art des Mülls",
+      "hazardLegend": "Dicker dunkler Rand: gefährlicher Abfall"
+    },
+    "view": {
+      "list": "Liste"
+    },
+    "locate": {
+      "button": "Mein Standort",
+      "errors": {
+        "denied": "Der Standortzugriff wurde verweigert. Sie können ihn in den Einstellungen Ihres Browsers erlauben.",
+        "unavailable": "Ihr Standort konnte nicht ermittelt werden."
+      }
+    },
+    "errors": {
+      "webgl": "Die Karte kann auf diesem Gerät nicht angezeigt werden. Die Liste zeigt alle Meldungen.",
+      "style": "Die Kartenkacheln konnten nicht geladen werden. Die Liste funktioniert weiterhin."
+    },
+    "list": {
+      "label": "Meldungen in diesem Ausschnitt",
+      "empty": "Keine Meldungen in diesem Ausschnitt.",
+      "hazardBadge": "Gefährlich"
+    },
+    "sheet": {
+      "status": "Status",
+      "size": "Menge",
+      "reportedOn": "Gemeldet am",
+      "confirmationsLabel": "Bestätigungen",
+      "confirmations_one": "{{count}} Bestätigung",
+      "confirmations_other": "{{count}} Bestätigungen",
+      "hazardWarning": "Gefährlicher Abfall: Bitte nicht berühren.",
+      "claimed": "Freiwillige kümmern sich bereits darum.",
+      "reportedByMe": "Das ist Ihre Meldung.",
+      "details": "Details ansehen"
+    }
   },
   "report": {
     "title": "Müll melden"
@@ -64,5 +123,31 @@
   "notFound": {
     "title": "Seite nicht gefunden",
     "back": "Zur Startseite"
+  },
+  "reportDetail": {
+    "title": "Meldung"
+  },
+  "enums": {
+    "status": {
+      "reported": "Gemeldet",
+      "confirmed": "Bestätigt",
+      "in_progress": "In Bearbeitung",
+      "cleared": "Beseitigt"
+    },
+    "category": {
+      "plastic": "Kunststoff",
+      "construction": "Bauschutt",
+      "electronics": "Elektroschrott",
+      "mixed": "Gemischter Müll",
+      "bulky": "Sperrmüll",
+      "hazardous": "Gefährlicher Abfall",
+      "other": "Sonstiges"
+    },
+    "size": {
+      "bag": "Ein Beutel",
+      "pile": "Ein Haufen",
+      "container": "Container-Menge",
+      "truck": "LKW-Ladung"
+    }
   }
 }

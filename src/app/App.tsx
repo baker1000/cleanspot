@@ -1,7 +1,10 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
 import { AuthProvider, type AuthClient } from '@/features/auth/AuthProvider';
+import { MapPage } from '@/features/map/MapPage';
+import type { ReportsApi } from '@/features/map/reports';
+import { ReportsApiProvider } from '@/features/map/ReportsApiContext';
 import { AppLayout } from './AppLayout';
-import { LandingPage, MapPage, NotFoundPage, ProfilePage, ReportPage } from './pages';
+import { LandingPage, NotFoundPage, ProfilePage, ReportDetailPage, ReportPage } from './pages';
 
 export function AppRoutes() {
   return (
@@ -10,6 +13,7 @@ export function AppRoutes() {
       <Route path="/app" element={<AppLayout />}>
         <Route index element={<MapPage />} />
         <Route path="report" element={<ReportPage />} />
+        <Route path="reports/:id" element={<ReportDetailPage />} />
         <Route path="profile" element={<ProfilePage />} />
       </Route>
       <Route path="*" element={<NotFoundPage />} />
@@ -17,12 +21,20 @@ export function AppRoutes() {
   );
 }
 
-export function App({ authClient }: { authClient?: AuthClient | null }) {
+export function App({
+  authClient,
+  reportsApi,
+}: {
+  authClient?: AuthClient | null;
+  reportsApi?: ReportsApi | null;
+}) {
   return (
     <AuthProvider client={authClient}>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
+      <ReportsApiProvider api={reportsApi}>
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </ReportsApiProvider>
     </AuthProvider>
   );
 }

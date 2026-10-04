@@ -1,6 +1,6 @@
 import type { AuthError, Session, SupabaseClient } from '@supabase/supabase-js';
 import { createContext, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { parseEnv } from '@/lib/env';
+import { hasBackendConfig } from '@/lib/env';
 import { mapAuthError, type AuthErrorKey } from './authErrors';
 
 export type AuthClient = Pick<
@@ -35,19 +35,10 @@ export interface AuthContextValue {
 
 export const AuthContext = createContext<AuthContextValue | null>(null);
 
-function hasBackendConfig(): boolean {
-  try {
-    parseEnv(import.meta.env);
-    return true;
-  } catch {
-    return false; // Missing/invalid env: app runs without backend (landing page, dev).
-  }
-}
-
 /** Initial client: injected, `null` without config, or `undefined` = load supabase-js lazily. */
 function initialClient(client: AuthClient | null | undefined): AuthClient | null | undefined {
   if (client !== undefined) return client;
-  return hasBackendConfig() ? undefined : null;
+  return hasBackendConfig(import.meta.env) ? undefined : null;
 }
 
 const fail = (error: AuthError | Error | null): AuthResult => ({

@@ -27,7 +27,69 @@
     "openApp": "Ouvrir l’application"
   },
   "map": {
-    "title": "Carte"
+    "title": "Carte",
+    "mapLabel": "Carte des signalements",
+    "loading": "Chargement des signalements …",
+    "loadError": "Les signalements n’ont pas pu être chargés.",
+    "count_one": "{{count}} signalement dans cette zone",
+    "count_many": "{{count}} de signalements dans cette zone",
+    "count_other": "{{count}} signalements dans cette zone",
+    "tooMany": "Seuls les {{max}} signalements les plus récents sont affichés. Veuillez zoomer.",
+    "search": {
+      "label": "Rechercher un lieu",
+      "placeholder": "Rechercher un lieu ou une adresse",
+      "submit": "Rechercher",
+      "searching": "Recherche en cours …",
+      "results_one": "{{count}} résultat",
+      "results_many": "{{count}} de résultats",
+      "results_other": "{{count}} résultats",
+      "none": "Aucun résultat. Essayez un autre terme de recherche.",
+      "resultsLabel": "Résultats de recherche",
+      "attribution": "Données de recherche :",
+      "errors": {
+        "rate_limited": "Trop de recherches. Veuillez patienter un instant.",
+        "network": "Pas de connexion à la recherche de lieux.",
+        "server": "La recherche de lieux est momentanément indisponible."
+      }
+    },
+    "filters": {
+      "toggle": "Filtres",
+      "status": "Statut",
+      "category": "Type de déchets",
+      "hazardLegend": "Anneau foncé épais : déchets dangereux"
+    },
+    "view": {
+      "list": "Liste"
+    },
+    "locate": {
+      "button": "Ma position",
+      "errors": {
+        "denied": "L’accès à la position a été refusé. Vous pouvez l’autoriser dans les paramètres de votre navigateur.",
+        "unavailable": "Votre position n’a pas pu être déterminée."
+      }
+    },
+    "errors": {
+      "webgl": "La carte ne peut pas être affichée sur cet appareil. La liste affiche tous les signalements.",
+      "style": "Les tuiles de la carte n’ont pas pu être chargées. La liste fonctionne toujours."
+    },
+    "list": {
+      "label": "Signalements dans cette zone",
+      "empty": "Aucun signalement dans cette zone.",
+      "hazardBadge": "Dangereux"
+    },
+    "sheet": {
+      "status": "Statut",
+      "size": "Quantité",
+      "reportedOn": "Signalé le",
+      "confirmationsLabel": "Confirmations",
+      "confirmations_one": "{{count}} confirmation",
+      "confirmations_many": "{{count}} de confirmations",
+      "confirmations_other": "{{count}} confirmations",
+      "hazardWarning": "Déchets dangereux : merci de ne pas y toucher.",
+      "claimed": "Des bénévoles s’en occupent déjà.",
+      "reportedByMe": "C’est votre signalement.",
+      "details": "Voir les détails"
+    }
   },
   "report": {
     "title": "Signaler des déchets"
@@ -64,5 +126,31 @@
   "notFound": {
     "title": "Page introuvable",
     "back": "Retour à l’accueil"
+  },
+  "reportDetail": {
+    "title": "Signalement"
+  },
+  "enums": {
+    "status": {
+      "reported": "Signalé",
+      "confirmed": "Confirmé",
+      "in_progress": "En cours",
+      "cleared": "Nettoyé"
+    },
+    "category": {
+      "plastic": "Plastique",
+      "construction": "Gravats",
+      "electronics": "Déchets électroniques",
+      "mixed": "Déchets mélangés",
+      "bulky": "Encombrants",
+      "hazardous": "Déchets dangereux",
+      "other": "Autre"
+    },
+    "size": {
+      "bag": "Un sac",
+      "pile": "Un tas",
+      "container": "Volume d’une benne",
+      "truck": "Chargement de camion"
+    }
   }
 }

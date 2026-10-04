@@ -8,7 +8,8 @@
 import { createRateGate, type RateGate } from './rateGate';
 import { GeocodeError, type Bbox, type GeocodeResult, type Geocoder, type HttpGet } from './types';
 
-export const NOMINATIM_MIN_INTERVAL_MS = 1000;
+// 1 s per the policy plus a margin, so network jitter never makes two requests arrive closer.
+export const NOMINATIM_MIN_INTERVAL_MS = 1100;
 const CACHE_SIZE = 50;
 const RESULT_LIMIT = 5;
 

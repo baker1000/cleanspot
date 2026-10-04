@@ -1,7 +1,10 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
-import { afterEach } from 'vitest';
+import { afterEach, vi } from 'vitest';
 import { changeLanguage, i18next, initI18n } from '@/i18n';
+
+// jsdom has no WebGL: every test gets the fake map (src/test/fakeMapView.tsx).
+vi.mock('@/features/map/MapView', () => import('./fakeMapView'));
 
 if (typeof document !== 'undefined') {
   await initI18n('de');

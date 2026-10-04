@@ -48,6 +48,16 @@ export function parseMapEnv(raw: RawEnv): MapEnv {
   };
 }
 
+/** True when the backend env is complete; the app runs without it (landing page, map only). */
+export function hasBackendConfig(raw: RawEnv): boolean {
+  try {
+    parseEnv(raw);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /** Parses and validates the VITE_* env. Throws with a readable message on misconfiguration. */
 export function parseEnv(raw: RawEnv): AppEnv {
   const str = reader(raw);

@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import { GEOCODER_URL, STYLE_URL, SUPABASE_URL } from './e2e/fixtures';
 
 const PORT = 4173;
 
@@ -24,5 +25,16 @@ export default defineConfig({
     url: `http://127.0.0.1:${PORT}`,
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,
+    // Build against fake hosts that the tests answer (e2e/fixtures.ts). Process env wins over
+    // any local .env file, so a developer's real backend is never used by E2E tests.
+    env: {
+      VITE_SUPABASE_URL: SUPABASE_URL,
+      VITE_SUPABASE_ANON_KEY: 'e2e-anon-key',
+      VITE_MAP_STYLE_URL: STYLE_URL,
+      VITE_GEOCODER_PROVIDER: 'nominatim',
+      VITE_GEOCODER_URL: GEOCODER_URL,
+      VITE_GEOCODER_COUNTRYCODES: '',
+      VITE_DEMO_MODE: 'false',
+    },
   },
 });

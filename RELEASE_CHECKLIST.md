@@ -8,8 +8,10 @@ Items that **must** be done before a public release (Play Store production or a 
 - [ ] **Production project region and verification.** For production, choose Central EU (Frankfurt, eu-central-1) if hosting in Germany is part of the offer to the Landkreis, and run `npm run verify:remote` there once before seeding.
 - [ ] **Auth URLs on the production project.** Set Authentication → URL Configuration → Site URL (and redirect URLs) to the real app URL; the test project still has the default `http://localhost:3000`.
 - [ ] **Account deletion deletes the user's photos.** Deleting an account must remove every file the user uploaded (storage objects through the Storage API, not only rows), plus the `report_photos` rows. Today `reporter_id` / `uploaded_by` are only set to null.
-- [ ] **Spatial index for the map query.** `reports_in_bbox` filters on computed lng/lat and does not use `reports_location_gix`. Rewrite it to use `location && ST_MakeEnvelope(...)` and check with `EXPLAIN` **before generating the pitch dataset**.
-- [ ] **Maintenance job scheduled** in each environment (claim expiry runs via pg_cron automatically; orphan cleanup needs the setup in `supabase/functions/maintenance/README.md`).
+- [ ] **Spatial index for the map query.** Done locally in migration 5 (`reports_location_geom_gix`, exact lng/lat rectangle; PGlite tests incl. EXPLAIN). Tick after it is pushed and rows F1–F3 in VERIFY_ON_SUPABASE.md are ✅ — **before generating the pitch dataset**.
+- [ ] **Maintenance job scheduled** in each environment: `npm run cloud:maintenance` (done on the cloud test project 2026-10-04, D7). Claim expiry also runs via pg_cron without it.
+- [ ] **Native app identifies itself to Nominatim.** Browsers cannot set `User-Agent`, so the web app relies on the Referer. The Android build must pass an `HttpGet` based on CapacitorHttp that sets `User-Agent: CleanSpot/<version> (+<project URL>)` (`createGeocoder(env, http)`; Capacitor step).
+- [ ] **Geocoder for a Landkreis rollout.** The public Nominatim server is fine for a pilot (search on submit, ≤ 1 request/1.1 s per device, cached). For heavy use, set `VITE_GEOCODER_URL` to a self-hosted Nominatim or another provider (`VITE_GEOCODER_PROVIDER`).
 - [ ] **Translations reviewed by native speakers** (ar, fr, tr, uk were written by the developer/AI; German uses the formal "Sie"). English should be proofread too.
 - [ ] **Legal texts reviewed by a lawyer** (Impressum, Datenschutzerklärung, Nutzungsbedingungen).
 

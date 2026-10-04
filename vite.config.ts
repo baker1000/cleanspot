@@ -10,6 +10,13 @@ export default defineConfig({
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
   server: { host: '127.0.0.1', port: 5173 },
+  // MapLibre's worker is an ES module.
+  worker: { format: 'es' },
+  build: {
+    // MapLibre (~280 kB gzip) is one lazy chunk that cannot be split further; the main chunk stays
+    // around 110 kB gzip. Raise the warning limit only as far as that map chunk needs.
+    chunkSizeWarningLimit: 1100,
+  },
   test: {
     globals: true,
     environment: 'jsdom',

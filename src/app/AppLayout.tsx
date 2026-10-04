@@ -1,6 +1,6 @@
 import type { ComponentType, SVGProps } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, NavLink, Outlet } from 'react-router';
+import { Link, NavLink, Outlet, useMatch } from 'react-router';
 import { MapIcon, PlusIcon, UserIcon } from '@/components/icons';
 import { LanguageSelect } from '@/components/LanguageSelect';
 import { Alert } from '@/components/ui/Alert';
@@ -24,6 +24,8 @@ const NAV: NavItem[] = [
 export function AppLayout() {
   const { t } = useTranslation();
   const { status } = useAuth();
+  // The map fills the space between header and bottom navigation edge to edge.
+  const fullBleed = useMatch({ path: '/app', end: true }) !== null;
 
   return (
     <div className="flex min-h-dvh flex-col">
@@ -36,8 +38,22 @@ export function AppLayout() {
         <LanguageSelect />
       </header>
 
-      <main id="main" tabIndex={-1} className="flex-1 px-4 py-4 pb-24 focus:outline-none">
-        {status === 'unconfigured' && (
+      <main
+        id="main"
+        tabIndex={-1}
+        className={
+          fullBleed
+            ? 'relative flex-1 focus:outline-none'
+            : 'flex-1 px-4 py-4 pb-24 focus:outline-none'
+        }
+        style={
+          fullBleed
+            ? { marginBottom: 'calc(3.5rem + 1px + env(safe-area-inset-bottom))' }
+            : undefined
+        }
+      >
+        {/* The map page shows this warning in its own toolbar. */}
+        {status === 'unconfigured' && !fullBleed && (
           <div className="mb-4">
             <Alert tone="warning">{t('errors.backendNotConfigured')}</Alert>
           </div>

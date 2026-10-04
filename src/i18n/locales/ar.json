@@ -27,7 +27,78 @@
     "openApp": "افتح التطبيق"
   },
   "map": {
-    "title": "الخريطة"
+    "title": "الخريطة",
+    "mapLabel": "خريطة البلاغات",
+    "loading": "جارٍ تحميل البلاغات …",
+    "loadError": "تعذّر تحميل البلاغات.",
+    "count_zero": "لا توجد بلاغات في هذه المنطقة",
+    "count_one": "بلاغ واحد في هذه المنطقة",
+    "count_two": "بلاغان في هذه المنطقة",
+    "count_few": "{{count}} بلاغات في هذه المنطقة",
+    "count_many": "{{count}} بلاغًا في هذه المنطقة",
+    "count_other": "{{count}} بلاغ في هذه المنطقة",
+    "tooMany": "تُعرض أحدث {{max}} بلاغ فقط. يُرجى التكبير.",
+    "search": {
+      "label": "البحث عن مكان",
+      "placeholder": "ابحث عن مكان أو عنوان",
+      "submit": "بحث",
+      "searching": "جارٍ البحث …",
+      "results_zero": "لا توجد نتائج",
+      "results_one": "نتيجة واحدة",
+      "results_two": "نتيجتان",
+      "results_few": "{{count}} نتائج",
+      "results_many": "{{count}} نتيجة",
+      "results_other": "{{count}} نتيجة",
+      "none": "لا توجد نتائج. جرّب كلمة بحث أخرى.",
+      "resultsLabel": "نتائج البحث",
+      "attribution": "بيانات البحث:",
+      "errors": {
+        "rate_limited": "عدد كبير جدًا من عمليات البحث. يُرجى الانتظار قليلًا.",
+        "network": "لا يوجد اتصال بخدمة البحث عن الأماكن.",
+        "server": "خدمة البحث عن الأماكن غير متاحة حاليًا."
+      }
+    },
+    "filters": {
+      "toggle": "تصفية",
+      "status": "الحالة",
+      "category": "نوع النفايات",
+      "hazardLegend": "حلقة داكنة سميكة: نفايات خطرة"
+    },
+    "view": {
+      "list": "قائمة"
+    },
+    "locate": {
+      "button": "موقعي",
+      "errors": {
+        "denied": "تم رفض الوصول إلى الموقع. يمكنك السماح به في إعدادات المتصفح.",
+        "unavailable": "تعذّر تحديد موقعك."
+      }
+    },
+    "errors": {
+      "webgl": "لا يمكن عرض الخريطة على هذا الجهاز. تعرض القائمة جميع البلاغات.",
+      "style": "تعذّر تحميل مربعات الخريطة. لا تزال القائمة تعمل."
+    },
+    "list": {
+      "label": "البلاغات في هذه المنطقة",
+      "empty": "لا توجد بلاغات في هذه المنطقة.",
+      "hazardBadge": "خطِرة"
+    },
+    "sheet": {
+      "status": "الحالة",
+      "size": "الكمية",
+      "reportedOn": "تاريخ الإبلاغ",
+      "confirmationsLabel": "التأكيدات",
+      "confirmations_zero": "لا توجد تأكيدات",
+      "confirmations_one": "تأكيد واحد",
+      "confirmations_two": "تأكيدان",
+      "confirmations_few": "{{count}} تأكيدات",
+      "confirmations_many": "{{count}} تأكيدًا",
+      "confirmations_other": "{{count}} تأكيد",
+      "hazardWarning": "نفايات خطرة: يُرجى عدم لمسها.",
+      "claimed": "يعمل المتطوعون على ذلك بالفعل.",
+      "reportedByMe": "هذا بلاغك.",
+      "details": "عرض التفاصيل"
+    }
   },
   "report": {
     "title": "الإبلاغ عن نفايات"
@@ -64,5 +135,31 @@
   "notFound": {
     "title": "الصفحة غير موجودة",
     "back": "العودة إلى الصفحة الرئيسية"
+  },
+  "reportDetail": {
+    "title": "البلاغ"
+  },
+  "enums": {
+    "status": {
+      "reported": "تم الإبلاغ",
+      "confirmed": "مؤكَّد",
+      "in_progress": "قيد المعالجة",
+      "cleared": "تمت الإزالة"
+    },
+    "category": {
+      "plastic": "بلاستيك",
+      "construction": "مخلفات بناء",
+      "electronics": "نفايات إلكترونية",
+      "mixed": "نفايات مختلطة",
+      "bulky": "نفايات كبيرة الحجم",
+      "hazardous": "نفايات خطرة",
+      "other": "أخرى"
+    },
+    "size": {
+      "bag": "كيس واحد",
+      "pile": "كومة",
+      "container": "حمولة حاوية",
+      "truck": "حمولة شاحنة"
+    }
   }
 }

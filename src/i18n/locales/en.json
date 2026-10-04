@@ -27,7 +27,66 @@
     "openApp": "Open the app"
   },
   "map": {
-    "title": "Map"
+    "title": "Map",
+    "mapLabel": "Map of reports",
+    "loading": "Loading reports …",
+    "loadError": "Reports could not be loaded.",
+    "count_one": "{{count}} report in this area",
+    "count_other": "{{count}} reports in this area",
+    "tooMany": "Only the latest {{max}} reports are shown. Please zoom in.",
+    "search": {
+      "label": "Search for a place",
+      "placeholder": "Search place or address",
+      "submit": "Search",
+      "searching": "Searching …",
+      "results_one": "{{count}} result",
+      "results_other": "{{count}} results",
+      "none": "No results. Try a different search term.",
+      "resultsLabel": "Search results",
+      "attribution": "Search data:",
+      "errors": {
+        "rate_limited": "Too many searches. Please wait a moment.",
+        "network": "No connection to the place search.",
+        "server": "The place search is currently unavailable."
+      }
+    },
+    "filters": {
+      "toggle": "Filters",
+      "status": "Status",
+      "category": "Type of waste",
+      "hazardLegend": "Thick dark ring: hazardous waste"
+    },
+    "view": {
+      "list": "List"
+    },
+    "locate": {
+      "button": "My location",
+      "errors": {
+        "denied": "Location access was denied. You can allow it in your browser settings.",
+        "unavailable": "Your location could not be determined."
+      }
+    },
+    "errors": {
+      "webgl": "The map cannot be shown on this device. The list shows all reports.",
+      "style": "The map tiles could not be loaded. The list still works."
+    },
+    "list": {
+      "label": "Reports in this area",
+      "empty": "No reports in this area.",
+      "hazardBadge": "Hazardous"
+    },
+    "sheet": {
+      "status": "Status",
+      "size": "Amount",
+      "reportedOn": "Reported on",
+      "confirmationsLabel": "Confirmations",
+      "confirmations_one": "{{count}} confirmation",
+      "confirmations_other": "{{count}} confirmations",
+      "hazardWarning": "Hazardous waste: please do not touch.",
+      "claimed": "Volunteers are already on it.",
+      "reportedByMe": "This is your report.",
+      "details": "View details"
+    }
   },
   "report": {
     "title": "Report waste"
@@ -64,5 +123,31 @@
   "notFound": {
     "title": "Page not found",
     "back": "Back to home"
+  },
+  "reportDetail": {
+    "title": "Report"
+  },
+  "enums": {
+    "status": {
+      "reported": "Reported",
+      "confirmed": "Confirmed",
+      "in_progress": "In progress",
+      "cleared": "Cleared"
+    },
+    "category": {
+      "plastic": "Plastic",
+      "construction": "Construction debris",
+      "electronics": "Electronic waste",
+      "mixed": "Mixed waste",
+      "bulky": "Bulky waste",
+      "hazardous": "Hazardous waste",
+      "other": "Other"
+    },
+    "size": {
+      "bag": "One bag",
+      "pile": "A pile",
+      "container": "Container load",
+      "truck": "Truck load"
+    }
   }
 }
