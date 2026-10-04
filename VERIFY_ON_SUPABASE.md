@@ -16,6 +16,12 @@ Every RLS rule, grant and RPC below has so far been tested **only in PGlite** (`
 
 ## Run log
 
+### 2026-10-04 (fourth run) — migration 5, same project
+
+- **Migration 5** (`20261004000005_bbox_index.sql`) pushed; local = remote for all five.
+- `verify:remote`: **82 / 82 passed**: the 3 new SQL tests (category filter, exact rectangle, index used) and a new API test where anon calls `reports_in_bbox` through PostgREST with the same arguments as the map (comment hidden, category filter works). F1–F3 ✅.
+- Afterwards: 1 tenant (`public`), 0 users, 0 reports, 0 storage objects.
+
 ### 2026-10-04 (third run) — D7, same project
 
 - `npm run cloud:maintenance` now also stores `maintenance_url` and `maintenance_secret` in Vault, enables pg_net and schedules `cleanspot-maintenance` (`17 * * * *`, 30 s HTTP timeout).
@@ -164,6 +170,6 @@ If any of these is wrong, rows in B–D may be passing in PGlite for the wrong r
 
 | #   | Rule / function                                                                                 | PGlite test                                         | Status |
 | --- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------- | ------ |
-| F1  | `reports_in_bbox` (security definer) is callable by anon and returns only `reports_public` rows | reports_in_bbox returns reports in the box…         | ⬜     |
-| F2  | `p_categories` filter; exact lng/lat rectangle with inclusive edges, also for wide viewports    | filters by category / is an exact lng/lat rectangle | ⬜     |
-| F3  | The bbox predicate uses `reports_location_geom_gix`                                             | the bbox filter … can use the spatial index         | ⬜     |
+| F1  | `reports_in_bbox` (security definer) is callable by anon and returns only `reports_public` rows | reports_in_bbox returns reports in the box…         | ✅     |
+| F2  | `p_categories` filter; exact lng/lat rectangle with inclusive edges, also for wide viewports    | filters by category / is an exact lng/lat rectangle | ✅     |
+| F3  | The bbox predicate uses `reports_location_geom_gix`                                             | the bbox filter … can use the spatial index         | ✅     |

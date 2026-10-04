@@ -166,6 +166,24 @@ describe('A — platform assumptions', () => {
     expect(res.data![0]!.lng).toBeCloseTo(SPOT.lng + 0.002, 5);
   });
 
+  it('F1/F2: anon calls reports_in_bbox through PostgREST like the map does', async () => {
+    const { data: id } = await submitReport(reporter, 0.005);
+    const box = {
+      p_min_lng: SPOT.lng,
+      p_min_lat: SPOT.lat - 0.01,
+      p_max_lng: SPOT.lng + 0.01,
+      p_max_lat: SPOT.lat + 0.01,
+    };
+    const all = await anon.rpc('reports_in_bbox', { ...box, p_statuses: null, p_limit: 2000 });
+    expect(all.error).toBeNull();
+    const row = (all.data as { id: string; comment: string | null }[]).find((r) => r.id === id);
+    expect(row).toBeDefined();
+    expect(row!.comment).toBeNull();
+    const other = await anon.rpc('reports_in_bbox', { ...box, p_categories: ['bulky'] });
+    expect(other.error).toBeNull();
+    expect((other.data as { id: string }[]).map((r) => r.id)).not.toContain(id);
+  });
+
   it('A8: anon cannot read base tables; other users get no rows', async () => {
     const denied = await anon.from('reports').select('id');
     expect(denied.error?.code).toBe('42501');
