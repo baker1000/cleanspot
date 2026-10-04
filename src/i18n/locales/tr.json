@@ -211,7 +211,46 @@
     "dismiss": "Gizle"
   },
   "profile": {
-    "title": "Profil"
+    "title": "Profil",
+    "error": "Bu işlem başarısız oldu. Lütfen bağlantınızı kontrol edip tekrar deneyin.",
+    "volunteer": {
+      "title": "Gönüllülük",
+      "intro": "Gönüllü olarak kayıtlısınız; bildirimleri üstlenip temizleyebilirsiniz.",
+      "leave": "Gönüllülüğü bırak",
+      "confirm": "Gönüllülüğü bırakmak istiyor musunuz? Üstlendiğiniz bildirimler tekrar serbest bırakılır. İstediğiniz zaman yeniden kaydolabilirsiniz.",
+      "confirmButton": "Evet, bırak",
+      "left": "Artık gönüllü olarak kayıtlı değilsiniz.",
+      "released_one": "Üstlendiğiniz {{count}} bildirim tekrar serbest bırakıldı.",
+      "released_other": "Üstlendiğiniz {{count}} bildirim tekrar serbest bırakıldı."
+    },
+    "export": {
+      "title": "Verilerim",
+      "intro": "CleanSpot’un sizinle ilgili kaydettiği tüm verileri indirin (JSON dosyası). İçindeki fotoğraf bağlantıları 7 gün geçerlidir.",
+      "button": "Verilerimi indir",
+      "done": "Dosya indirildi."
+    },
+    "delete": {
+      "title": {
+        "account": "Hesabı sil",
+        "anonymous": "Verilerimi sil"
+      },
+      "intro": "Silme işlemi şunları yapar:",
+      "whatPhotos": "Fotoğraflarınız ve yorumlarınız silinir.",
+      "whatReports": "Bildirimleriniz sizinle bağlantısı olmadan haritada kalır, çünkü atıklar hâlâ orada olabilir.",
+      "whatClaims": "Üstlendiğiniz bildirimler tekrar serbest bırakılır.",
+      "whatQueued_one": "Bu cihazda henüz gönderilmemiş {{count}} bildirim silinir.",
+      "whatQueued_other": "Bu cihazda henüz gönderilmemiş {{count}} bildirim silinir.",
+      "understood": "Silme işleminin geri alınamayacağını anladım.",
+      "button": {
+        "account": "Hesabı sil …",
+        "anonymous": "Verilerimi sil …"
+      },
+      "confirmButton": {
+        "account": "Hesabı kalıcı olarak sil",
+        "anonymous": "Verileri kalıcı olarak sil"
+      },
+      "done": "Hesabınız ve verileriniz silindi."
+    }
   },
   "auth": {
     "signIn": "Giriş yap",
@@ -429,5 +468,15 @@
       "oil": "Yağ veya yakıt",
       "other": "Diğer"
     }
+  },
+  "legal": {
+    "nav": "Yasal bilgiler",
+    "imprint": "Künye",
+    "privacy": "Gizlilik",
+    "terms": "Kullanım koşulları",
+    "templateWarning": "Şablon: Bu metin yayınlanmadan önce tamamlanmalı ve bir hukukçu tarafından incelenmelidir.",
+    "germanBinding": "Yalnızca Almanca sürüm hukuken bağlayıcıdır.",
+    "onlyGermanEnglish": "Bu metin yalnızca Almanca ve İngilizce olarak mevcuttur.",
+    "loadError": "Metin yüklenemedi. Lütfen tekrar deneyin."
   }
 }

@@ -6,20 +6,32 @@ import { DetailPage } from '@/features/detail/DetailPage';
 import type { PickupsApi } from '@/features/pickups/api';
 import { PickupsApiProvider } from '@/features/pickups/PickupsApiContext';
 import { PickupsPage } from '@/features/pickups/PickupsPage';
+import { LEGAL_ALIASES, LEGAL_PATHS, type LegalDoc } from '@/features/legal/config';
+import { LegalPage } from '@/features/legal/LegalPage';
 import { MapPage } from '@/features/map/MapPage';
 import type { ReportsApi } from '@/features/map/reports';
 import { ReportsApiProvider } from '@/features/map/ReportsApiContext';
+import type { ProfileApi } from '@/features/profile/api';
+import { ProfileApiProvider } from '@/features/profile/ProfileApiContext';
+import { ProfilePage } from '@/features/profile/ProfilePage';
 import type { ReportSubmitApi } from '@/features/report/api';
 import { OutboxProvider } from '@/features/report/outbox/OutboxProvider';
 import { ReportPage } from '@/features/report/ReportPage';
 import { ReportSubmitApiProvider } from '@/features/report/ReportSubmitApiContext';
 import { AppLayout } from './AppLayout';
-import { LandingPage, NotFoundPage, ProfilePage } from './pages';
+import { LandingPage, NotFoundPage } from './pages';
+
+const LEGAL_DOCS = Object.keys(LEGAL_PATHS) as LegalDoc[];
 
 export function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
+      {LEGAL_DOCS.flatMap((doc) =>
+        [LEGAL_PATHS[doc], LEGAL_ALIASES[doc]].map((path) => (
+          <Route key={path} path={path} element={<LegalPage doc={doc} />} />
+        )),
+      )}
       <Route path="/app" element={<AppLayout />}>
         <Route index element={<MapPage />} />
         <Route path="report" element={<ReportPage />} />
@@ -38,12 +50,14 @@ export function App({
   submitApi,
   detailApi,
   pickupsApi,
+  profileApi,
 }: {
   authClient?: AuthClient | null;
   reportsApi?: ReportsApi | null;
   submitApi?: ReportSubmitApi | null;
   detailApi?: DetailApi | null;
   pickupsApi?: PickupsApi | null;
+  profileApi?: ProfileApi | null;
 }) {
   return (
     <AuthProvider client={authClient}>
@@ -52,9 +66,11 @@ export function App({
           <OutboxProvider>
             <DetailApiProvider api={detailApi}>
               <PickupsApiProvider api={pickupsApi}>
-                <BrowserRouter>
-                  <AppRoutes />
-                </BrowserRouter>
+                <ProfileApiProvider api={profileApi}>
+                  <BrowserRouter>
+                    <AppRoutes />
+                  </BrowserRouter>
+                </ProfileApiProvider>
               </PickupsApiProvider>
             </DetailApiProvider>
           </OutboxProvider>

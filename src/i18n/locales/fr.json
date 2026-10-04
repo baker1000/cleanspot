@@ -215,7 +215,48 @@
     "dismiss": "Masquer"
   },
   "profile": {
-    "title": "Profil"
+    "title": "Profil",
+    "error": "Cela n’a pas fonctionné. Veuillez vérifier votre connexion et réessayer.",
+    "volunteer": {
+      "title": "Bénévolat",
+      "intro": "Vous êtes inscrit·e comme bénévole et pouvez prendre en charge et nettoyer des signalements.",
+      "leave": "Arrêter le bénévolat",
+      "confirm": "Voulez-vous arrêter le bénévolat ? Les signalements que vous avez pris en charge seront de nouveau disponibles. Vous pouvez vous réinscrire à tout moment.",
+      "confirmButton": "Oui, arrêter",
+      "left": "Vous n’êtes plus inscrit·e comme bénévole.",
+      "released_one": "{{count}} signalement pris en charge est de nouveau disponible.",
+      "released_many": "{{count}} de signalements pris en charge sont de nouveau disponibles.",
+      "released_other": "{{count}} signalements pris en charge sont de nouveau disponibles."
+    },
+    "export": {
+      "title": "Mes données",
+      "intro": "Téléchargez toutes les données que CleanSpot a enregistrées à votre sujet (fichier JSON). Les liens vers vos photos sont valables 7 jours.",
+      "button": "Télécharger mes données",
+      "done": "Le fichier a été téléchargé."
+    },
+    "delete": {
+      "title": {
+        "account": "Supprimer le compte",
+        "anonymous": "Supprimer mes données"
+      },
+      "intro": "La suppression a les effets suivants :",
+      "whatPhotos": "Vos photos et commentaires sont supprimés.",
+      "whatReports": "Vos signalements restent sur la carte sans lien avec vous, car les déchets sont peut-être encore là.",
+      "whatClaims": "Les signalements que vous avez pris en charge redeviennent disponibles.",
+      "whatQueued_one": "{{count}} signalement non encore envoyé sur cet appareil sera abandonné.",
+      "whatQueued_many": "{{count}} de signalements non encore envoyés sur cet appareil seront abandonnés.",
+      "whatQueued_other": "{{count}} signalements non encore envoyés sur cet appareil seront abandonnés.",
+      "understood": "J’ai compris que la suppression est définitive.",
+      "button": {
+        "account": "Supprimer le compte …",
+        "anonymous": "Supprimer mes données …"
+      },
+      "confirmButton": {
+        "account": "Supprimer définitivement le compte",
+        "anonymous": "Supprimer définitivement les données"
+      },
+      "done": "Votre compte et vos données ont été supprimés."
+    }
   },
   "auth": {
     "signIn": "Se connecter",
@@ -433,5 +474,15 @@
       "oil": "Huile ou carburant",
       "other": "Autre"
     }
+  },
+  "legal": {
+    "nav": "Informations juridiques",
+    "imprint": "Mentions légales",
+    "privacy": "Confidentialité",
+    "terms": "Conditions d’utilisation",
+    "templateWarning": "Modèle : ce texte doit être complété et vérifié par un·e juriste avant publication.",
+    "germanBinding": "Seule la version allemande fait foi.",
+    "onlyGermanEnglish": "Ce texte n’est disponible qu’en allemand et en anglais.",
+    "loadError": "Le texte n’a pas pu être chargé. Veuillez réessayer."
   }
 }

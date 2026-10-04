@@ -18,6 +18,7 @@ import {
   type DetailClient,
 } from '../../src/features/detail/api';
 import { createSupabasePickupsApi } from '../../src/features/pickups/api';
+import { createSupabaseProfileApi, type ProfileClient } from '../../src/features/profile/api';
 import {
   createSupabaseSubmitApi,
   photoPath,
@@ -450,6 +451,68 @@ describe('A — platform assumptions', () => {
     const after = await detail.load(reportId, v.id);
     expect(after!.pickups).toMatchObject([{ id: taskId, status: 'collected' }]);
     expect(after!.events.map((e) => e.type).slice(-2)).toEqual(['bags_reported', 'bags_collected']);
+  });
+
+  it('F8: DSGVO: export, leave volunteering, delete account (photos via Storage API)', async () => {
+    const u = await signedInUser('leaver');
+    const profile = createSupabaseProfileApi(async () => u.client as unknown as ProfileClient);
+    const { rows } = await sql.query(`select id from public.tenants where kind = 'public'`);
+    await createSupabaseDetailApi(async () => u.client as unknown as DetailClient).joinAsVolunteer(
+      u.id,
+      rows[0].id,
+    );
+    expect(await profile.isVolunteer(u.id)).toBe(true);
+
+    const own = await u.client.rpc('submit_report', {
+      p_client_id: randomUUID(),
+      p_lng: SPOT.lng + 0.05,
+      p_lat: SPOT.lat,
+      p_category: 'mixed',
+      p_size: 'bag',
+      p_comment: 'Hausnummer 5, verify run',
+    });
+    expect(own.error).toBeNull();
+    const { path } = await upload(u.client, u.id);
+    expect(
+      (await u.client.rpc('add_report_photo', { p_report_id: own.data, p_path: path })).error,
+    ).toBeNull();
+    const { data: claimedId } = await submitReport(reporter, 0.06);
+    expect((await u.client.rpc('claim_report', { p_report_id: claimedId })).error).toBeNull();
+
+    // Export: own report with comment, the claimed one, a working photo link.
+    const file = await profile.exportData();
+    const data = JSON.parse(file.json);
+    expect(data.account).toMatchObject({ id: u.id, email: `verify-${RUN}-leaver@example.invalid` });
+    expect(data.reports).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: own.data, comment: 'Hausnummer 5, verify run' }),
+        expect.objectContaining({ id: claimedId, my_role: ['claimed'] }),
+      ]),
+    );
+    expect(data.photos).toHaveLength(1);
+    expect((await fetch(data.photos[0].download_url)).status).toBe(200);
+
+    expect(await profile.leaveVolunteerRole()).toBe(1);
+    expect(await profile.isVolunteer(u.id)).toBe(false);
+    const released = await sql.query(
+      `select status, claimed_by from public.reports where id = $1`,
+      [claimedId],
+    );
+    expect(released.rows[0]).toEqual({ status: 'reported', claimed_by: null });
+
+    await profile.deleteAccount();
+    const gone = await sql.query(
+      `select (select count(*)::int from auth.users where id = $1) as users,
+              (select count(*)::int from storage.objects where name = $2) as files,
+              (select count(*)::int from public.report_photos where storage_path = $2) as photos`,
+      [u.id, path],
+    );
+    expect(gone.rows[0]).toEqual({ users: 0, files: 0, photos: 0 });
+    const report = await sql.query(
+      `select reporter_id, comment, status from public.reports where id = $1`,
+      [own.data],
+    );
+    expect(report.rows[0]).toEqual({ reporter_id: null, comment: null, status: 'reported' });
   });
 
   it('A8: anon cannot read base tables; other users get no rows', async () => {

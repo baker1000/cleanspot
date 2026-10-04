@@ -47,10 +47,24 @@ map screen) were done before this file existed; see `git log`.
       may cap the number of stops in one link); no depot setting yet (start = staff location or
       free); bags photo is not queued offline; volunteers are not notified when bags are collected
       (notifications: Milestone 2).
-- [ ] **9. Profile + DSGVO** — account deletion including photos; user data export; leave the
-      volunteer role; privacy
-      policy, imprint and terms of use (Nutzungsbedingungen) pages (templates marked "must be
-      reviewed by a lawyer").
+- [x] **9. Profile + DSGVO** — migration 8 (`export_my_data`, `delete_my_photos`,
+      `delete_my_account`, `leave_volunteer_role`; storage policy: delete own files no report
+      references). Profile page: "Download my data" (JSON with 7-day photo links), "Delete account"
+      (registered and anonymous; checkbox confirmation; photos and comments deleted, reports stay
+      without reporter, claims released, unsent reports on the device discarded, local sign-out),
+      "Stop volunteering" (releases claims except where the user is staff). Legal pages
+      `/impressum`, `/datenschutz`, `/nutzungsbedingungen` (aliases `/imprint`, `/privacy`,
+      `/terms`) from editable Markdown templates in `src/features/legal/content` (de binding +
+      en), placeholders highlighted, "must be reviewed by a lawyer" notice until
+      `LEGAL_TEXTS_REVIEWED` is set; linked from landing and profile. All 6 languages. Tested:
+      PGlite (privacy.test.ts), unit/component, e2e incl. download and axe (de + ar), cloud API F8.
+      Known limits: DB suite H1–H6 not yet run on the cloud (project not empty, see
+      VERIFY_ON_SUPABASE.md); legal texts exist in German and English only (other languages show
+      the English text with a note); files the app could not delete are removed by the hourly
+      maintenance only after 24 h, and not at all without the maintenance function; if the
+      sign-out request fails after deletion, the stale session stays in local storage until the
+      next sign-in attempt; the download uses the browser (Capacitor file save/share → step 11);
+      the privacy policy must be adapted to the real operator and services before publication.
 - [ ] **10. PWA** — installable, offline-capable, offline caching of viewed map areas; Background
       Sync for the offline queue where supported (Chromium/Android); landing page with live
       statistics and Google Play link.

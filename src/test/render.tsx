@@ -10,6 +10,8 @@ import type { PickupsApi } from '@/features/pickups/api';
 import { PickupsApiProvider } from '@/features/pickups/PickupsApiContext';
 import type { ReportsApi } from '@/features/map/reports';
 import { ReportsApiProvider } from '@/features/map/ReportsApiContext';
+import type { ProfileApi } from '@/features/profile/api';
+import { ProfileApiProvider } from '@/features/profile/ProfileApiContext';
 import type { ReportSubmitApi } from '@/features/report/api';
 import { OutboxProvider } from '@/features/report/outbox/OutboxProvider';
 import { createMemoryStore, type OutboxStore } from '@/features/report/outbox/store';
@@ -25,6 +27,7 @@ export function renderWithProviders(
     outboxStore = createMemoryStore(),
     detailApi = null,
     pickupsApi = null,
+    profileApi = null,
   }: RenderOptions = {},
 ) {
   return {
@@ -36,7 +39,9 @@ export function renderWithProviders(
             <OutboxProvider store={outboxStore}>
               <DetailApiProvider api={detailApi}>
                 <PickupsApiProvider api={pickupsApi}>
-                  <MemoryRouter initialEntries={[route]}>{ui}</MemoryRouter>
+                  <ProfileApiProvider api={profileApi}>
+                    <MemoryRouter initialEntries={[route]}>{ui}</MemoryRouter>
+                  </ProfileApiProvider>
                 </PickupsApiProvider>
               </DetailApiProvider>
             </OutboxProvider>
@@ -56,6 +61,7 @@ export interface RenderOptions {
   outboxStore?: OutboxStore | null;
   detailApi?: DetailApi | null;
   pickupsApi?: PickupsApi | null;
+  profileApi?: ProfileApi | null;
 }
 
 export const renderApp = (opts: RenderOptions = {}) => renderWithProviders(<AppRoutes />, opts);

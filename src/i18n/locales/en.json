@@ -211,7 +211,46 @@
     "dismiss": "Hide"
   },
   "profile": {
-    "title": "Profile"
+    "title": "Profile",
+    "error": "That did not work. Please check your connection and try again.",
+    "volunteer": {
+      "title": "Volunteering",
+      "intro": "You are signed up as a volunteer and can take on and clear reports.",
+      "leave": "Stop volunteering",
+      "confirm": "Do you want to stop volunteering? Reports you have taken on will be released again. You can sign up again at any time.",
+      "confirmButton": "Yes, stop",
+      "left": "You are no longer signed up as a volunteer.",
+      "released_one": "{{count}} report you had taken on was released again.",
+      "released_other": "{{count}} reports you had taken on were released again."
+    },
+    "export": {
+      "title": "My data",
+      "intro": "Download all data CleanSpot has stored about you (a JSON file). The links to your photos in it are valid for 7 days.",
+      "button": "Download my data",
+      "done": "The file has been downloaded."
+    },
+    "delete": {
+      "title": {
+        "account": "Delete account",
+        "anonymous": "Delete my data"
+      },
+      "intro": "Deleting does the following:",
+      "whatPhotos": "Your photos and comments are deleted.",
+      "whatReports": "Your reports stay on the map without any link to you, because the waste may still be there.",
+      "whatClaims": "Reports you have taken on are released again.",
+      "whatQueued_one": "{{count}} report on this device that has not been sent yet is discarded.",
+      "whatQueued_other": "{{count}} reports on this device that have not been sent yet are discarded.",
+      "understood": "I understand that deleting cannot be undone.",
+      "button": {
+        "account": "Delete account …",
+        "anonymous": "Delete my data …"
+      },
+      "confirmButton": {
+        "account": "Delete account permanently",
+        "anonymous": "Delete data permanently"
+      },
+      "done": "Your account and your data have been deleted."
+    }
   },
   "auth": {
     "signIn": "Sign in",
@@ -429,5 +468,15 @@
       "oil": "Oil or fuel",
       "other": "Other"
     }
+  },
+  "legal": {
+    "nav": "Legal",
+    "imprint": "Imprint",
+    "privacy": "Privacy",
+    "terms": "Terms of use",
+    "templateWarning": "Template: this text must be completed and reviewed by a lawyer before publication.",
+    "germanBinding": "Only the German version is legally binding.",
+    "onlyGermanEnglish": "This text is only available in German and English.",
+    "loadError": "The text could not be loaded. Please try again."
   }
 }

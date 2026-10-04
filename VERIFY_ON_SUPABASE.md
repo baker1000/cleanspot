@@ -16,6 +16,12 @@ Every RLS rule, grant and RPC below has so far been tested **only in PGlite** (`
 
 ## Run log
 
+### 2026-10-05 (ninth run, API suite only) — migration 8: DSGVO self-service (step 9), same project
+
+- **Migration 8** (`20261005000008_privacy.sql`) pushed; local = remote for all eight.
+- Only the API suite was run (`vitest run --config vitest.remote.config.ts tests/remote-api`): **19 / 19 passed**, including the new **F8** (a registered user joins as volunteer, reports with photo and claims another report; `export_my_data` through the app's API contains both reports, the comment and a working signed photo link; `leave_volunteer_role` releases the claim; `deleteAccount` removes the photo row, **deletes the file through the Storage API under the new delete policy**, and `delete_my_account` **deletes the auth user** from a security-definer function; the report stays with reporter and comment removed).
+- **The DB suites (H1–H6 below) were not run on the cloud**: the harness refuses to run while the project has real data (15 demo reports, 2 own test submissions, and the `lk-harburg` staff test tenant from `npm run cloud:staff-test`). Run them with the full `verify:remote` once the project is empty (or on a separate verification project).
+
 ### 2026-10-05 (eighth run) — migration 7: bag pickup (step 8), same project
 
 - **Migration 7** (`20261005000007_bag_pickup.sql`) pushed; local = remote for all seven.
@@ -210,3 +216,14 @@ If any of these is wrong, rows in B–D may be passing in PGlite for the wrong r
 | G7  | `open_pickup_tasks`: staff of the tenant only (42501), returns lng/lat and photo path                           | open_pickup_tasks: staff of the tenant only…          | ✅     |
 | G8  | `collect_pickup`: staff only, once (CS001), `bags_collected` event, leaves the open list, kg still counted      | collect_pickup: staff only, once…                     | ✅     |
 | G9  | `cancel_pickup`: creator while open or staff; kg falls back to the size estimate                                | cancel_pickup: the creator while open, or staff…      | ✅     |
+
+## H. Migration 8 — DSGVO self-service (`privacy.test.ts`, API F8)
+
+| #   | Rule / function                                                                                                   | PGlite test                                          | Status |
+| --- | ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- | ------ |
+| H1  | `export_my_data`: account (incl. email), profile, memberships, reports by role, own photos, confirmations, events | contains account, profile, memberships… / anonymous… | ✅ API |
+| H2  | `delete_my_photos`: own rows only, returns paths; report stays                                                    | removes own photo rows and returns their paths…      | ✅ API |
+| H3  | `report_photos_delete_own`: own folder, only files no report references; never others' files                      | (same test)                                          | ✅ API |
+| H4  | `delete_my_account`: deletes the auth user (cascade), photos, comments; reports anonymous; claims released        | deletes the user, photos and comments…               | ✅ API |
+| H5  | `delete_my_account` also for blocked and anonymous users; not callable by anon                                    | also for blocked and anonymous users / not callable… | ⏸      |
+| H6  | `leave_volunteer_role`: drops volunteer memberships, releases claims except where staff; event by the user        | drops volunteer memberships and gives back claims…   | ✅ API |

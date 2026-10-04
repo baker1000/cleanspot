@@ -1,20 +1,8 @@
-// Simple pages; each moves to its feature module when it grows (profile: step 9).
+// Simple pages; each moves to its feature module when it grows.
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { LanguageSelect } from '@/components/LanguageSelect';
-import { AccountPanel } from '@/features/auth/AccountPanel';
-import { StaffPickupLink } from '@/features/pickups/PickupsPage';
-
-export function ProfilePage() {
-  const { t } = useTranslation();
-  return (
-    <div className="mx-auto flex max-w-md flex-col gap-4">
-      <h1 className="text-2xl font-bold">{t('profile.title')}</h1>
-      <AccountPanel />
-      <StaffPickupLink />
-    </div>
-  );
-}
+import { LegalLinks } from '@/features/legal/LegalLinks';
 
 export function LandingPage() {
   const { t } = useTranslation();
@@ -33,6 +21,9 @@ export function LandingPage() {
       >
         {t('landing.openApp')}
       </Link>
+      <nav aria-label={t('legal.nav')} className="mt-6">
+        <LegalLinks />
+      </nav>
     </main>
   );
 }

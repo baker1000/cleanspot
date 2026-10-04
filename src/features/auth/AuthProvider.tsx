@@ -38,7 +38,8 @@ export interface AuthContextValue {
   signIn(email: string, password: string): Promise<AuthResult>;
   /** Creates an account. An anonymous session is upgraded in place, keeping its reports. */
   signUp(email: string, password: string): Promise<AuthResult>;
-  signOut(): Promise<void>;
+  /** `local`: only forget the session on this device (e.g. after the account was deleted). */
+  signOut(opts?: { local?: boolean }): Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextValue | null>(null);
@@ -145,11 +146,17 @@ export function AuthProvider({
     [client, session],
   );
 
-  const signOut = useCallback(async () => {
-    if (!client) return;
-    await client.signOut();
-    setSession(null);
-  }, [client]);
+  const signOut = useCallback<AuthContextValue['signOut']>(
+    async (opts) => {
+      if (!client) return;
+      try {
+        await client.signOut(opts?.local ? { scope: 'local' } : undefined);
+      } finally {
+        setSession(null);
+      }
+    },
+    [client],
+  );
 
   const value = useMemo<AuthContextValue>(() => {
     const isAnonymous = Boolean(session?.user.is_anonymous);

@@ -44,7 +44,8 @@ Results are tracked in [VERIFY_ON_SUPABASE.md](VERIFY_ON_SUPABASE.md).
 
 1. `npm run cloud:frontend-env` writes `.env.local` with **only** the project URL and the publishable key (it refuses secret keys). `.env.local` is git-ignored.
 2. Optional: `npm run cloud:demo -- seed` adds 15 demo reports around Stelle / Landkreis Harburg (marked `[Demo]`, no user accounts). `npm run cloud:demo -- status` counts them, `npm run cloud:demo -- remove` deletes them. Remove them before `npm run verify:remote`, which only runs on a project without reports.
-3. `npm run dev` and open http://127.0.0.1:5173/app.
+3. Optional: `npm run cloud:staff-test -- setup` creates a test tenant "Landkreis Harburg (Test)" (rough outline) with one staff account and 6 open bag pickups, for trying `/app/pickups`. The login is written to `cloud-staff-login.local` (git-ignored; the password is never printed). `-- status` / `-- remove`; remove it before `npm run verify:remote`.
+4. `npm run dev` and open http://127.0.0.1:5173/app.
 
 ## Map and place search
 

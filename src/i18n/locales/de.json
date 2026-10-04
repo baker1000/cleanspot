@@ -211,7 +211,46 @@
     "dismiss": "Ausblenden"
   },
   "profile": {
-    "title": "Profil"
+    "title": "Profil",
+    "error": "Das hat nicht geklappt. Bitte prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+    "volunteer": {
+      "title": "Freiwillige Mithilfe",
+      "intro": "Sie sind für die freiwillige Mithilfe eingetragen und können Meldungen übernehmen und aufräumen.",
+      "leave": "Freiwillige Mithilfe beenden",
+      "confirm": "Möchten Sie die freiwillige Mithilfe beenden? Meldungen, die Sie gerade übernommen haben, werden wieder freigegeben. Sie können sich jederzeit wieder eintragen.",
+      "confirmButton": "Ja, beenden",
+      "left": "Ihre freiwillige Mithilfe ist beendet.",
+      "released_one": "{{count}} übernommene Meldung wurde wieder freigegeben.",
+      "released_other": "{{count}} übernommene Meldungen wurden wieder freigegeben."
+    },
+    "export": {
+      "title": "Meine Daten",
+      "intro": "Laden Sie alle Daten herunter, die CleanSpot über Sie gespeichert hat (Datei im JSON-Format). Die Links zu Ihren Fotos darin gelten 7 Tage.",
+      "button": "Meine Daten herunterladen",
+      "done": "Die Datei wurde heruntergeladen."
+    },
+    "delete": {
+      "title": {
+        "account": "Konto löschen",
+        "anonymous": "Meine Daten löschen"
+      },
+      "intro": "Beim Löschen passiert Folgendes:",
+      "whatPhotos": "Ihre Fotos und Kommentare werden gelöscht.",
+      "whatReports": "Ihre Meldungen bleiben ohne Bezug zu Ihnen auf der Karte, denn der Müll liegt vielleicht noch dort.",
+      "whatClaims": "Meldungen, die Sie übernommen haben, werden wieder freigegeben.",
+      "whatQueued_one": "{{count}} noch nicht gesendete Meldung auf diesem Gerät wird verworfen.",
+      "whatQueued_other": "{{count}} noch nicht gesendete Meldungen auf diesem Gerät werden verworfen.",
+      "understood": "Ich habe verstanden, dass das Löschen nicht rückgängig gemacht werden kann.",
+      "button": {
+        "account": "Konto löschen …",
+        "anonymous": "Meine Daten löschen …"
+      },
+      "confirmButton": {
+        "account": "Konto endgültig löschen",
+        "anonymous": "Daten endgültig löschen"
+      },
+      "done": "Ihr Konto und Ihre Daten wurden gelöscht."
+    }
   },
   "auth": {
     "signIn": "Anmelden",
@@ -429,5 +468,15 @@
       "oil": "Öl oder Treibstoff",
       "other": "Sonstiges"
     }
+  },
+  "legal": {
+    "nav": "Rechtliches",
+    "imprint": "Impressum",
+    "privacy": "Datenschutz",
+    "terms": "Nutzungsbedingungen",
+    "templateWarning": "Vorlage: Dieser Text muss vor der Veröffentlichung vervollständigt und juristisch geprüft werden.",
+    "germanBinding": "Rechtsverbindlich ist nur die deutsche Fassung.",
+    "onlyGermanEnglish": "Dieser Text ist nur auf Deutsch und Englisch verfügbar.",
+    "loadError": "Der Text konnte nicht geladen werden. Bitte versuchen Sie es erneut."
   }
 }
