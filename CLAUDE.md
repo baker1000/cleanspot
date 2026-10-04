@@ -36,7 +36,7 @@ Use multi-tenancy: one install can serve several municipalities plus the public.
 citizen (optional account, anonymous reporting allowed), volunteer, organizer, municipality_staff, municipality_admin, super_admin. Enforce all permissions with RLS, not only in the UI.
 
 ## Milestone 1 (MVP)
-- Map screen: markers colored by status (red = reported, orange = in progress, green = cleared), filters, place search, user location, clustering, bottom-sheet preview.
+- Map screen: markers colored by status with a colour-blind-safe palette (Okabe-Ito: reported = vermilion, confirmed = orange, in progress = blue, cleared = bluish green; colour is never the only cue), filters, place search, user location, clustering, bottom-sheet preview.
 - Report flow (under 60 seconds): 1–3 photos, auto GPS (editable pin), category (plastic, construction debris, electronics, mixed, bulky waste, hazardous, other), size (bag, pile, container, truck), optional comment.
 - Offline queue: reports saved in IndexedDB and synced when online.
 - Report detail: photos, history timeline, actions: confirm, navigate, "I'll clear this", upload after-photo.

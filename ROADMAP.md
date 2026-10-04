@@ -25,10 +25,12 @@ map screen) were done before this file existed; see `git log`.
 - [ ] **8. Cleanup + bag pickup + pickup route** — after-photo must be taken within 50 m, timestamp
       stored; "X bags placed here" with photo + location creates a pickup task for municipality
       staff; optimized pickup route for the day.
-- [ ] **9. Profile + DSGVO** — account deletion including photos; privacy policy and imprint pages
-      (templates marked "must be reviewed by a lawyer").
+- [ ] **9. Profile + DSGVO** — account deletion including photos; user data export; privacy
+      policy, imprint and terms of use (Nutzungsbedingungen) pages (templates marked "must be
+      reviewed by a lawyer").
 - [ ] **10. PWA** — installable, offline-capable, offline caching of viewed map areas; Background
-      Sync for the offline queue where supported (Chromium/Android).
+      Sync for the offline queue where supported (Chromium/Android); landing page with live
+      statistics and Google Play link.
 - [ ] **11. Capacitor + Android build** — camera, geolocation, file system; signed release AAB,
       versioning, icons, splash, adaptive icon; iOS platform added (Info.plist permission texts),
       not published. Needs **JDK 21** (Capacitor 8 / Gradle 8.14.3 do not run on JDK 25).
@@ -36,19 +38,9 @@ map screen) were done before this file existed; see `git log`.
       role.
 - [ ] **13. Docs + final test run** — ARCHITECTURE.md (data model, RLS), PLAY_STORE.md (listing in
       de/en/ar, Data Safety answers, closed testing 12+ testers / 14 days), IOS_LATER.md, PITCH.md
-      (German), README in German; then the full test run (unit, PGlite, e2e, verify:remote).
-
-### Spec items not yet assigned to a step
-
-From comparing `CLAUDE.md` with this list (decide where they go):
-
-- Docker Compose self-hosting (spec: Tech stack, README deployment section).
-- README in English **and** German (spec: Deliverables 2; step 13 lists only German).
-- Terms of use page (Nutzungsbedingungen) and user data export (spec: Legal; step 9 lists only
-  deletion, privacy, imprint).
-- Landing page with live statistics and Google Play link (spec: Platforms → Website).
-- Push notifications via FCM / APNs prepared (spec: Platforms → native features).
-- Document how automated face / licence-plate blurring could be added later (spec: Legal).
+      (German), README in English and German (incl. Supabase cloud and Docker deployment, Android
+      build), Docker Compose self-hosting, documentation of how automated face / licence-plate
+      blurring could be added later; then the full test run (unit, PGlite, e2e, verify:remote).
 
 ## Milestone 2
 
@@ -58,7 +50,8 @@ From comparing `CLAUDE.md` with this list (decide where they go):
 - [ ] Cleanup events: create, join, reminders, mark multiple reports cleared at once.
 - [ ] Profile: my reports, points and badges (can be disabled per tenant).
 - [ ] Moderation: flag abusive content (incl. report comments), block users, review queue.
-- [ ] Notifications: email + push when the status of my report changes.
+- [ ] Notifications: email + push when the status of my report changes; push via FCM, APNs
+      prepared (Capacitor).
 - [ ] Public API following Open311 GeoReport v2.
 - [ ] Adopt-a-spot: adopt an area (polygon) and get notified about new reports there.
 - [ ] Chronic hotspot detection: 3+ reports within 90 days (configurable) → "chronic" with a

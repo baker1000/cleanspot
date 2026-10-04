@@ -69,7 +69,6 @@ const HAZARD = {
   'Kanister mit unbekannter Flüssigkeit': 'chemicals',
   'Batterien und Farbeimer': 'batteries',
 };
-const KG = { bag: 5, pile: 50, container: 500, truck: 2000 };
 
 const removeDemo = () =>
   sql.query(`delete from public.reports where client_id::text like $1`, [`${DEMO_PREFIX}%`]);
@@ -105,11 +104,15 @@ try {
         `insert into public.reports
            (client_id, tenant_id, location, category, hazard_type, size, comment, status,
             is_published, confirmation_count, estimated_kg, cleared_at, created_at, updated_at)
-         select $1::uuid, public.tenant_for_point(p.pt), p.pt, $4::public.report_category,
+         select $1::uuid, t.id, p.pt, $4::public.report_category,
                 $5::public.hazard_type, $6::public.report_size, $7, $8::public.report_status,
-                $9 >= 3, $9, $10, case when $8::text = 'cleared' then now() - interval '1 day' end,
-                now() - make_interval(days => $11), now() - make_interval(days => $11)
+                $9 >= 3, $9,
+                -- Same estimate as submit_report: the tenant's kg_per_size setting.
+                (public.tenant_settings(t.id) -> 'kg_per_size' ->> $6::text)::numeric,
+                case when $8::text = 'cleared' then now() - interval '1 day' end,
+                now() - make_interval(days => $10), now() - make_interval(days => $10)
          from (select extensions.st_setsrid(extensions.st_makepoint($2, $3), 4326)::extensions.geography as pt) p
+         cross join lateral (select public.tenant_for_point(p.pt) as id) t
          returning id`,
         [
           clientId,
@@ -121,7 +124,6 @@ try {
           `[Demo] ${comment}`,
           status,
           confirmations,
-          KG[size],
           daysAgo,
         ],
       );
