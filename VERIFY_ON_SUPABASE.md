@@ -16,6 +16,14 @@ Every RLS rule, grant and RPC below has so far been tested **only in PGlite** (`
 
 ## Run log
 
+### 2026-10-04 (second run) — same project
+
+- `cloud:auth-config` before the run: `external_anonymous_users_enabled = true`.
+- **Migration 4** (`20261004000004_public_tenant.sql`) pushed; `cloud:migrations` shows local = remote for all four. The public tenant now exists on the project.
+- **`npm run verify:remote`: 77 / 77 passed** (5 files): 64 SQL-level tests, 2 public-tenant tests and 11 API tests through PostgREST, Storage and the Edge Function. A1, A2, A5–A9, C40 and D6 are now ✅.
+- Afterwards the project held only the `public` tenant: 0 auth users, 0 reports, 0 objects in `report-photos`.
+- Still open: **D7** (cron + pg_net schedule with Vault secrets, manual).
+
 ### 2026-10-04 — cloud project `hpzjyntdzmpdhutqvmgq` (West EU / Ireland, eu-west-1)
 
 - **Migrations 1–3** applied with `npm run cloud:push`; `cloud:migrations` shows local = remote for all three (A4). PostGIS 3.3.7, pg_cron 1.6.4.
@@ -25,7 +33,7 @@ Every RLS rule, grant and RPC below has so far been tested **only in PGlite** (`
 - **D5**: `cron.job` contains `cleanspot-expire-claims`, schedule `7 * * * *`, command `select public.expire_stale_claims()`.
 - **A10**: read via the Management API (`npm run cloud:auth-config`): `rate_limit_anonymous_users = 30` (per hour, per IP).
 - **API suite (`tests/remote-api/api.test.ts`): blocked, 11 tests not run.** Setup failed with `Anonymous sign-ins are disabled`; the Management API confirms `external_anonymous_users_enabled = false` on the server. A1, A2, A5–A9, C40 and D6 stay ⏸ until anonymous sign-ins are enabled and the suite is re-run. No test data was left behind (0 `verify-*` tenants, 0 `verify-*` users, 0 reports checked afterwards).
-- **Gap found: no public tenant on a fresh install.** No migration created the public tenant (the tests created it themselves), so on a fresh project `submit_report` fails with CS007 everywhere outside a municipality. Fixed by `20261004000004_public_tenant.sql` plus `public_tenant.test.ts` (passes in PGlite). **Not pushed yet**; on the cloud its 2 tests fail as expected until it is.
+- **Gap found: no public tenant on a fresh install.** No migration created the public tenant (the tests created it themselves), so on a fresh project `submit_report` fails with CS007 everywhere outside a municipality. Fixed by `20261004000004_public_tenant.sql` plus `public_tenant.test.ts` (passes in PGlite). Pushed in the second run (below).
 - Also noticed: the project's Auth `site_url` is `http://localhost:3000`, not the app URL. It doesn't affect these tests, but must be set before any email or OAuth redirect is used.
 
 ## A. Shim assumptions (check these first)
@@ -34,15 +42,15 @@ If any of these is wrong, rows in B–D may be passing in PGlite for the wrong r
 
 | #   | Assumption                                                                                                                      | How to check                                                         | Status |
 | --- | ------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- | ------ |
-| A1  | `auth.uid()` reads the JWT `sub`; `auth.jwt() ->> 'is_anonymous'` is `true` for anonymous sign-ins                              | Sign in anonymously, `select auth.jwt()` via RPC                     | ⏸      |
-| A2  | Views with `security_invoker = false`, owned by `postgres`, bypass RLS on base tables (owner bypass)                            | **API**: anon reads `reports_public` and gets rows                   | ⏸      |
+| A1  | `auth.uid()` reads the JWT `sub`; `auth.jwt() ->> 'is_anonymous'` is `true` for anonymous sign-ins                              | Sign in anonymously, `select auth.jwt()` via RPC                     | ✅     |
+| A2  | Views with `security_invoker = false`, owned by `postgres`, bypass RLS on base tables (owner bypass)                            | **API**: anon reads `reports_public` and gets rows                   | ✅     |
 | A3  | SECURITY DEFINER functions owned by `postgres` bypass RLS                                                                       | Covered by any RPC test passing                                      | ✅     |
 | A4  | Migrations can create policies on `storage.objects` and insert into `storage.buckets`                                           | `db reset` succeeds                                                  | ✅     |
-| A5  | Storage API upload is checked against the `storage.objects` INSERT policy, and download / signed URL against the SELECT policy  | **API**: upload into another user's folder fails                     | ⏸      |
-| A6  | `storage.foldername(name)[1]` returns the first path segment                                                                    | **API**: upload to `<own uid>/x.webp` works                          | ⏸      |
-| A7  | RAISE with SQLSTATE `PT429` becomes HTTP 429 in PostgREST; custom `CSxxx` codes reach the client in `error.code`                | **API**: call `submit_report` six times as anonymous                 | ⏸      |
-| A8  | Supabase's default grants on new `public` objects are narrowed by our `revoke` statements (anon cannot `select * from reports`) | **API**: anon `from('reports').select()` returns an error            | ⏸      |
-| A9  | `revoke execute … from public, anon` really hides internal helpers from the API                                                 | **API**: anon `rpc('attach_photo')` / `rpc('log_report_event')` fail | ⏸      |
+| A5  | Storage API upload is checked against the `storage.objects` INSERT policy, and download / signed URL against the SELECT policy  | **API**: upload into another user's folder fails                     | ✅     |
+| A6  | `storage.foldername(name)[1]` returns the first path segment                                                                    | **API**: upload to `<own uid>/x.webp` works                          | ✅     |
+| A7  | RAISE with SQLSTATE `PT429` becomes HTTP 429 in PostgREST; custom `CSxxx` codes reach the client in `error.code`                | **API**: call `submit_report` six times as anonymous                 | ✅     |
+| A8  | Supabase's default grants on new `public` objects are narrowed by our `revoke` statements (anon cannot `select * from reports`) | **API**: anon `from('reports').select()` returns an error            | ✅     |
+| A9  | `revoke execute … from public, anon` really hides internal helpers from the API                                                 | **API**: anon `rpc('attach_photo')` / `rpc('log_report_event')` fail | ✅     |
 | A10 | **manual**: anonymous sign-in rate limit is active (Authentication → Rate Limits; `config.toml` only applies locally)           | Cloud dashboard / local config                                       | ✅     |
 
 ## B. Migration 1 — tenancy (`core_tenancy.test.ts`)
@@ -125,7 +133,7 @@ If any of these is wrong, rows in B–D may be passing in PGlite for the wrong r
 | C37 | `report_photos_upload`: own folder only                                                        | uploads only into the own folder     | ✅     |
 | C38 | `report_photos_upload`: blocked users cannot upload                                            | blocked users cannot upload          | ✅     |
 | C39 | `report_photos_read` / `can_read_photo`: pending photos unreadable for anon, approved readable | after N confirmations…               | ✅     |
-| C40 | Bucket limits: 5 MiB, `image/webp` + `image/jpeg` only                                         | **API only**, not testable in PGlite | ⏸      |
+| C40 | Bucket limits: 5 MiB, `image/webp` + `image/jpeg` only                                         | **API only**, not testable in PGlite | ✅     |
 
 ## D. Migration 3 — maintenance (`maintenance.test.ts`, `functions/_shared/maintenance.test.ts`)
 
@@ -136,5 +144,11 @@ If any of these is wrong, rows in B–D may be passing in PGlite for the wrong r
 | D3  | `expire_stale_claims`, `orphan_photo_paths`: service role only                                                                                                  | is not callable by API users (2 tests)                                             | ✅     |
 | D4  | `orphan_photo_paths`: old + unattached + bucket `report-photos` only                                                                                            | lists old unattached photos only                                                   | ✅     |
 | D5  | pg_cron job `cleanspot-expire-claims` is created by the migration (skipped in PGlite)                                                                           | **real stack only**: `select * from cron.job`                                      | ✅     |
-| D6  | `maintenance` Edge Function: 401 without / with wrong `x-maintenance-secret`; deletes orphan files through the Storage API (file really gone, not only the row) | unit tests cover logic only; **API**: call function, then try to download the file | ⏸      |
+| D6  | `maintenance` Edge Function: 401 without / with wrong `x-maintenance-secret`; deletes orphan files through the Storage API (file really gone, not only the row) | unit tests cover logic only; **API**: call function, then try to download the file | ✅     |
 | D7  | pg_cron + pg_net schedule from `functions/maintenance/README.md` works with Vault secrets                                                                       | **real stack only**                                                                | ⬜     |
+
+## E. Migration 4 — public tenant (`public_tenant.test.ts`)
+
+| #   | Rule / function                                                                        | PGlite test                             | Status |
+| --- | -------------------------------------------------------------------------------------- | --------------------------------------- | ------ |
+| E1  | Migrations create exactly one public tenant; points outside municipalities route to it | public tenant (migration 4) › (2 tests) | ✅     |
