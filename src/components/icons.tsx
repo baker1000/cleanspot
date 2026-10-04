@@ -66,3 +66,25 @@ export const CloseIcon = (p: SVGProps<SVGSVGElement>) => (
     <path d="M6 6l12 12M18 6 6 18" />
   </svg>
 );
+
+export const CameraIcon = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base} {...p}>
+    <path d="M4 8h3l2-3h6l2 3h3v11H4V8Z" />
+    <circle cx="12" cy="13" r="3.5" />
+  </svg>
+);
+
+export const ImageIcon = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base} {...p}>
+    <rect x="3" y="4" width="18" height="16" rx="2" />
+    <circle cx="9" cy="10" r="2" />
+    <path d="m21 17-5-5-9 8" />
+  </svg>
+);
+
+export const CrosshairIcon = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base} {...p}>
+    <circle cx="12" cy="12" r="7" />
+    <path d="M12 2v6M12 16v6M2 12h6M16 12h6" />
+  </svg>
+);

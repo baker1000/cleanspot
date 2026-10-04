@@ -92,7 +92,101 @@
     }
   },
   "report": {
-    "title": "Signaler des déchets"
+    "title": "Signaler des déchets",
+    "intro": "Quelques informations suffisent pour faire enlever rapidement un dépôt sauvage.",
+    "photos": {
+      "legend": "Photos",
+      "hint": "Au moins 1, au plus {{max}} photos. Les données de localisation et de l’appareil sont supprimées des photos avant l’envoi.",
+      "take": "Prendre une photo",
+      "choose": "Choisir une photo",
+      "processing": "Préparation de la photo …",
+      "alt": "Photo {{number}}",
+      "remove": "Supprimer la photo {{number}}",
+      "limit": "Vous avez atteint le maximum de {{max}} photos.",
+      "errors": {
+        "unsupported": "Ce format d’image n’est pas pris en charge. Veuillez choisir une photo JPEG ou PNG.",
+        "too_large": "La photo est trop volumineuse.",
+        "metadata": "La photo n’a pas pu être nettoyée de façon sûre ; elle ne sera donc pas utilisée."
+      }
+    },
+    "location": {
+      "legend": "Lieu",
+      "hint": "Utilisez votre position, recherchez un lieu ou déplacez la carte jusqu’à ce que le réticule soit sur les déchets.",
+      "useGps": "Utiliser ma position",
+      "useCenter": "Utiliser le réticule comme lieu",
+      "zoomIn": "Veuillez zoomer davantage pour définir le lieu avec précision.",
+      "mapLabel": "Carte pour choisir le lieu",
+      "set": "Lieu : {{lat}}, {{lng}}",
+      "accuracy": "Précision d’environ {{meters}} m",
+      "notSet": "Aucun lieu choisi pour l’instant.",
+      "mapErrors": {
+        "webgl": "La carte ne peut pas être affichée sur cet appareil. Veuillez utiliser votre position.",
+        "style": "Les tuiles de la carte n’ont pas pu être chargées."
+      }
+    },
+    "nearby": {
+      "title_one": "Il existe déjà {{count}} signalement ouvert à proximité",
+      "title_many": "Il existe déjà {{count}} signalements ouverts à proximité",
+      "title_other": "Il existe déjà {{count}} signalements ouverts à proximité",
+      "body": "S’agit-il des mêmes déchets ? Dans ce cas, aucun nouveau signalement n’est nécessaire.",
+      "item": "{{category}}, à {{meters}} m"
+    },
+    "category": {
+      "legend": "Type de déchets"
+    },
+    "hazard": {
+      "legend": "Quel type de déchets dangereux ?",
+      "hint": "En cas de doute, choisissez « Autre ».",
+      "warning": "Veuillez ne pas y toucher et garder vos distances. Les déchets dangereux sont enlevés uniquement par des professionnels.",
+      "emergency": "En cas de danger immédiat, par exemple une fuite de produits chimiques ou un incendie, appelez le 112.",
+      "authorityMunicipality": "Votre signalement est transmis à : {{name}}.",
+      "authorityPublic": "Ce lieu se trouve en dehors des communes participantes. Veuillez également prévenir l’autorité locale (police municipale ou service de l’environnement).",
+      "authorityUnknown": "En cas de doute, veuillez également prévenir l’autorité locale (police municipale ou service de l’environnement)."
+    },
+    "bulky": {
+      "text": "Vous pouvez aussi demander vous-même l’enlèvement des encombrants auprès de {{name}}.",
+      "link": "Demander l’enlèvement des encombrants"
+    },
+    "size": {
+      "legend": "Quantité",
+      "hints": {
+        "bag": "Tient dans un sac poubelle",
+        "pile": "Un tas qu’une personne peut porter",
+        "container": "Nécessite une remorque ou une benne",
+        "truck": "Nécessite un camion"
+      }
+    },
+    "comment": {
+      "label": "Commentaire (facultatif)",
+      "hint": "Pas de noms, de plaques d’immatriculation ni d’autres données personnelles, s’il vous plaît.",
+      "counter": "{{used}} sur {{max}} caractères"
+    },
+    "privacy": "Sans compte, une session anonyme est créée sur cet appareil. Votre signalement ne contient aucune donnée personnelle. Les photos sont vérifiées avant publication.",
+    "submit": "Envoyer le signalement",
+    "submitting": "Envoi en cours …",
+    "missing": {
+      "summary": "Veuillez compléter :",
+      "photos": "au moins une photo",
+      "location": "le lieu",
+      "category": "le type de déchets",
+      "size": "la quantité"
+    },
+    "errors": {
+      "rate_limited": "Vous avez envoyé beaucoup de signalements au cours de la dernière heure. Veuillez réessayer plus tard.",
+      "blocked": "Votre compte est actuellement bloqué. Vous ne pouvez pas envoyer de signalements.",
+      "invalid": "Les informations n’ont pas pu être traitées. Veuillez vérifier le lieu.",
+      "photo": "Une photo n’a pas pu être envoyée. Veuillez réessayer.",
+      "network": "Pas de connexion. Veuillez réessayer dès que vous serez de nouveau en ligne.",
+      "server": "Une erreur s’est produite lors de l’envoi. Veuillez réessayer.",
+      "session": "La connexion a échoué. Veuillez réessayer."
+    },
+    "done": {
+      "title": "Merci beaucoup !",
+      "body": "Votre signalement a bien été reçu. Les photos sont vérifiées avant publication.",
+      "view": "Voir le signalement",
+      "map": "Retour à la carte",
+      "another": "Nouveau signalement"
+    }
   },
   "profile": {
     "title": "Profil"
@@ -151,6 +245,14 @@
       "pile": "Un tas",
       "container": "Volume d’une benne",
       "truck": "Chargement de camion"
+    },
+    "hazard": {
+      "batteries": "Piles ou batteries",
+      "chemicals": "Produits chimiques, peintures, vernis",
+      "asbestos": "Amiante",
+      "needles": "Seringues ou aiguilles",
+      "oil": "Huile ou carburant",
+      "other": "Autre"
     }
   }
 }

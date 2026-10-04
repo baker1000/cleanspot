@@ -53,7 +53,7 @@ test('skip link is the first focusable element and moves focus to main', async (
 });
 
 for (const lang of ['de', 'ar'] as const) {
-  for (const path of ['/', '/app', '/app/profile']) {
+  for (const path of ['/', '/app', '/app/report', '/app/profile']) {
     test(`no WCAG 2.1 AA violations: ${path} (${lang})`, async ({ page }) => {
       await page.addInitScript((l) => localStorage.setItem('cleanspot.lang', l), lang);
       await page.goto(path);

@@ -89,7 +89,100 @@
     }
   },
   "report": {
-    "title": "Müll melden"
+    "title": "Müll melden",
+    "intro": "Mit wenigen Angaben helfen Sie, wilden Müll schnell zu beseitigen.",
+    "photos": {
+      "legend": "Fotos",
+      "hint": "Mindestens 1, höchstens {{max}} Fotos. Standort- und Kameradaten werden vor dem Hochladen aus den Fotos entfernt.",
+      "take": "Foto aufnehmen",
+      "choose": "Foto auswählen",
+      "processing": "Foto wird vorbereitet …",
+      "alt": "Foto {{number}}",
+      "remove": "Foto {{number}} entfernen",
+      "limit": "Sie haben die Höchstzahl von {{max}} Fotos erreicht.",
+      "errors": {
+        "unsupported": "Dieses Bildformat wird nicht unterstützt. Bitte wählen Sie ein JPEG- oder PNG-Foto.",
+        "too_large": "Das Foto ist zu groß.",
+        "metadata": "Das Foto konnte nicht sicher bereinigt werden und wird deshalb nicht verwendet."
+      }
+    },
+    "location": {
+      "legend": "Ort",
+      "hint": "Nutzen Sie Ihren Standort, suchen Sie einen Ort, oder verschieben Sie die Karte, bis das Fadenkreuz auf dem Müll liegt.",
+      "useGps": "Meinen Standort verwenden",
+      "useCenter": "Fadenkreuz als Ort übernehmen",
+      "zoomIn": "Bitte zoomen Sie weiter hinein, um den Ort genau festzulegen.",
+      "mapLabel": "Karte zur Ortswahl",
+      "set": "Ort: {{lat}}, {{lng}}",
+      "accuracy": "Genauigkeit etwa {{meters}} m",
+      "notSet": "Noch kein Ort gewählt.",
+      "mapErrors": {
+        "webgl": "Die Karte kann auf diesem Gerät nicht angezeigt werden. Bitte nutzen Sie Ihren Standort.",
+        "style": "Die Kartenkacheln konnten nicht geladen werden."
+      }
+    },
+    "nearby": {
+      "title_one": "In der Nähe gibt es bereits {{count}} offene Meldung",
+      "title_other": "In der Nähe gibt es bereits {{count}} offene Meldungen",
+      "body": "Ist es derselbe Müll? Dann ist keine neue Meldung nötig.",
+      "item": "{{category}}, {{meters}} m entfernt"
+    },
+    "category": {
+      "legend": "Art des Mülls"
+    },
+    "hazard": {
+      "legend": "Welcher gefährliche Abfall?",
+      "hint": "Wenn Sie unsicher sind, wählen Sie „Sonstiges“.",
+      "warning": "Bitte nicht berühren und Abstand halten. Gefährlicher Abfall wird nur von Fachleuten beseitigt.",
+      "emergency": "Bei akuter Gefahr, zum Beispiel auslaufenden Chemikalien oder Brand, rufen Sie bitte die 112.",
+      "authorityMunicipality": "Ihre Meldung geht an: {{name}}.",
+      "authorityPublic": "Dieser Ort liegt außerhalb der teilnehmenden Kommunen. Bitte informieren Sie zusätzlich Ihre örtliche Behörde (Ordnungsamt oder Umweltamt).",
+      "authorityUnknown": "Bitte informieren Sie im Zweifel zusätzlich Ihre örtliche Behörde (Ordnungsamt oder Umweltamt)."
+    },
+    "bulky": {
+      "text": "Sperrmüll können Sie bei {{name}} auch selbst zur Abholung anmelden.",
+      "link": "Sperrmüll anmelden"
+    },
+    "size": {
+      "legend": "Menge",
+      "hints": {
+        "bag": "Passt in einen Müllbeutel",
+        "pile": "Ein Haufen, den eine Person tragen kann",
+        "container": "Braucht einen Anhänger oder Container",
+        "truck": "Braucht einen LKW"
+      }
+    },
+    "comment": {
+      "label": "Kommentar (freiwillig)",
+      "hint": "Bitte keine Namen, Kfz-Kennzeichen oder anderen persönlichen Daten.",
+      "counter": "{{used}} von {{max}} Zeichen"
+    },
+    "privacy": "Ohne Konto wird auf diesem Gerät eine anonyme Sitzung angelegt. Ihre Meldung enthält keine persönlichen Daten. Fotos werden vor der Veröffentlichung geprüft.",
+    "submit": "Meldung absenden",
+    "submitting": "Wird gesendet …",
+    "missing": {
+      "summary": "Bitte ergänzen Sie:",
+      "photos": "mindestens ein Foto",
+      "location": "den Ort",
+      "category": "die Art des Mülls",
+      "size": "die Menge"
+    },
+    "errors": {
+      "rate_limited": "Sie haben in der letzten Stunde schon viele Meldungen gesendet. Bitte versuchen Sie es später erneut.",
+      "blocked": "Ihr Konto ist derzeit gesperrt. Sie können keine Meldungen senden.",
+      "invalid": "Die Angaben konnten nicht verarbeitet werden. Bitte prüfen Sie den Ort.",
+      "photo": "Ein Foto konnte nicht hochgeladen werden. Bitte versuchen Sie es erneut.",
+      "network": "Keine Verbindung. Bitte versuchen Sie es erneut, sobald Sie wieder online sind.",
+      "server": "Beim Senden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+      "session": "Die Anmeldung ist fehlgeschlagen. Bitte versuchen Sie es erneut."
+    },
+    "done": {
+      "title": "Vielen Dank!",
+      "body": "Ihre Meldung ist eingegangen. Fotos werden vor der Veröffentlichung geprüft.",
+      "view": "Meldung ansehen",
+      "map": "Zur Karte",
+      "another": "Weitere Meldung"
+    }
   },
   "profile": {
     "title": "Profil"
@@ -148,6 +241,14 @@
       "pile": "Ein Haufen",
       "container": "Container-Menge",
       "truck": "LKW-Ladung"
+    },
+    "hazard": {
+      "batteries": "Batterien oder Akkus",
+      "chemicals": "Chemikalien, Farben, Lacke",
+      "asbestos": "Asbest",
+      "needles": "Spritzen oder Nadeln",
+      "oil": "Öl oder Treibstoff",
+      "other": "Sonstiges"
     }
   }
 }

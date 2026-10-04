@@ -3,8 +3,11 @@ import { AuthProvider, type AuthClient } from '@/features/auth/AuthProvider';
 import { MapPage } from '@/features/map/MapPage';
 import type { ReportsApi } from '@/features/map/reports';
 import { ReportsApiProvider } from '@/features/map/ReportsApiContext';
+import type { ReportSubmitApi } from '@/features/report/api';
+import { ReportPage } from '@/features/report/ReportPage';
+import { ReportSubmitApiProvider } from '@/features/report/ReportSubmitApiContext';
 import { AppLayout } from './AppLayout';
-import { LandingPage, NotFoundPage, ProfilePage, ReportDetailPage, ReportPage } from './pages';
+import { LandingPage, NotFoundPage, ProfilePage, ReportDetailPage } from './pages';
 
 export function AppRoutes() {
   return (
@@ -24,16 +27,20 @@ export function AppRoutes() {
 export function App({
   authClient,
   reportsApi,
+  submitApi,
 }: {
   authClient?: AuthClient | null;
   reportsApi?: ReportsApi | null;
+  submitApi?: ReportSubmitApi | null;
 }) {
   return (
     <AuthProvider client={authClient}>
       <ReportsApiProvider api={reportsApi}>
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
+        <ReportSubmitApiProvider api={submitApi}>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </ReportSubmitApiProvider>
       </ReportsApiProvider>
     </AuthProvider>
   );

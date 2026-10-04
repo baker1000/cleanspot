@@ -1,4 +1,13 @@
-import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type FormEvent,
+  type KeyboardEvent,
+  type MouseEvent,
+  type ReactNode,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { SearchIcon } from '@/components/icons';
 import { Button } from '@/components/ui/Button';
@@ -11,17 +20,20 @@ type State =
   | { kind: 'error'; reason: 'rate_limited' | 'network' | 'server' };
 
 /**
- * Place search. Sends a request only when the form is submitted (no autocomplete), as the
+ * Place search. Sends a request only when the search is submitted (no autocomplete), as the
  * Nominatim usage policy requires; the geocoder itself enforces 1 request/second.
  */
 export function PlaceSearch({
   geocoder,
   viewbox,
   onPick,
+  nested = false,
 }: {
   geocoder: Geocoder;
   viewbox: Bbox | null;
   onPick(result: GeocodeResult): void;
+  /** Inside another form: render without a <form> element and submit on Enter. */
+  nested?: boolean;
 }) {
   const { t, i18n } = useTranslation();
   const [query, setQuery] = useState('');
@@ -32,7 +44,7 @@ export function PlaceSearch({
 
   useEffect(() => () => abortRef.current?.abort(), []);
 
-  async function submit(e: FormEvent) {
+  async function submit(e: FormEvent | KeyboardEvent | MouseEvent) {
     e.preventDefault();
     if (state.kind === 'searching' || query.trim().length < 2) return;
     abortRef.current?.abort();
@@ -73,7 +85,7 @@ export function PlaceSearch({
 
   return (
     <div className="flex flex-col gap-1">
-      <form role="search" onSubmit={submit} className="flex gap-2">
+      <SearchForm nested={nested} onSubmit={submit}>
         <label htmlFor={inputId} className="sr-only">
           {t('map.search.label')}
         </label>
@@ -85,17 +97,19 @@ export function PlaceSearch({
           placeholder={t('map.search.placeholder')}
           autoComplete="off"
           enterKeyHint="search"
+          onKeyDown={nested ? (e) => e.key === 'Enter' && void submit(e) : undefined}
           aria-describedby={statusId}
           className="min-h-11 min-w-0 flex-1 rounded-lg border border-slate-500 bg-white px-3 py-2 text-base text-slate-900"
         />
         <Button
-          type="submit"
+          type={nested ? 'button' : 'submit'}
+          onClick={nested ? (e) => void submit(e) : undefined}
           loading={state.kind === 'searching'}
           aria-label={t('map.search.submit')}
         >
           <SearchIcon />
         </Button>
-      </form>
+      </SearchForm>
 
       <p
         id={statusId}
@@ -134,5 +148,25 @@ export function PlaceSearch({
         </div>
       )}
     </div>
+  );
+}
+
+function SearchForm({
+  nested,
+  onSubmit,
+  children,
+}: {
+  nested: boolean;
+  onSubmit(e: FormEvent): void;
+  children: ReactNode;
+}) {
+  return nested ? (
+    <div role="search" className="flex gap-2">
+      {children}
+    </div>
+  ) : (
+    <form role="search" onSubmit={onSubmit} className="flex gap-2">
+      {children}
+    </form>
   );
 }

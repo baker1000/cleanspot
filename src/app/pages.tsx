@@ -14,7 +14,6 @@ function Placeholder({ titleKey }: { titleKey: string }) {
   );
 }
 
-export const ReportPage = () => <Placeholder titleKey="report.title" />;
 export const ReportDetailPage = () => <Placeholder titleKey="reportDetail.title" />;
 
 export function ProfilePage() {

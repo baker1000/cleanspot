@@ -89,7 +89,100 @@
     }
   },
   "report": {
-    "title": "Çöp bildir"
+    "title": "Çöp bildir",
+    "intro": "Birkaç bilgiyle kaçak dökülen çöpün hızla kaldırılmasına yardımcı olursunuz.",
+    "photos": {
+      "legend": "Fotoğraflar",
+      "hint": "En az 1, en fazla {{max}} fotoğraf. Konum ve kamera bilgileri yüklemeden önce fotoğraflardan silinir.",
+      "take": "Fotoğraf çek",
+      "choose": "Fotoğraf seç",
+      "processing": "Fotoğraf hazırlanıyor …",
+      "alt": "Fotoğraf {{number}}",
+      "remove": "Fotoğraf {{number}} kaldır",
+      "limit": "En fazla {{max}} fotoğraf sınırına ulaştınız.",
+      "errors": {
+        "unsupported": "Bu görüntü biçimi desteklenmiyor. Lütfen JPEG veya PNG bir fotoğraf seçin.",
+        "too_large": "Fotoğraf çok büyük.",
+        "metadata": "Fotoğraf güvenli şekilde temizlenemedi, bu yüzden kullanılmayacak."
+      }
+    },
+    "location": {
+      "legend": "Konum",
+      "hint": "Konumunuzu kullanın, bir yer arayın veya artı işareti çöpün üzerine gelene kadar haritayı kaydırın.",
+      "useGps": "Konumumu kullan",
+      "useCenter": "Artı işaretini konum olarak al",
+      "zoomIn": "Konumu tam belirlemek için lütfen daha fazla yakınlaştırın.",
+      "mapLabel": "Konum seçme haritası",
+      "set": "Konum: {{lat}}, {{lng}}",
+      "accuracy": "Doğruluk yaklaşık {{meters}} m",
+      "notSet": "Henüz konum seçilmedi.",
+      "mapErrors": {
+        "webgl": "Harita bu cihazda gösterilemiyor. Lütfen konumunuzu kullanın.",
+        "style": "Harita karoları yüklenemedi."
+      }
+    },
+    "nearby": {
+      "title_one": "Yakında zaten {{count}} açık bildirim var",
+      "title_other": "Yakında zaten {{count}} açık bildirim var",
+      "body": "Aynı çöp mü? O zaman yeni bir bildirime gerek yok.",
+      "item": "{{category}}, {{meters}} m uzaklıkta"
+    },
+    "category": {
+      "legend": "Çöp türü"
+    },
+    "hazard": {
+      "legend": "Ne tür tehlikeli atık?",
+      "hint": "Emin değilseniz „Diğer“ seçeneğini seçin.",
+      "warning": "Lütfen dokunmayın ve mesafenizi koruyun. Tehlikeli atıklar yalnızca uzmanlar tarafından kaldırılır.",
+      "emergency": "Acil tehlikede, örneğin sızan kimyasallar veya yangın durumunda, lütfen 112’yi arayın.",
+      "authorityMunicipality": "Bildiriminiz şuraya iletilir: {{name}}.",
+      "authorityPublic": "Bu yer katılımcı belediyelerin dışında. Lütfen ayrıca yerel makamlara (zabıta veya çevre dairesi) haber verin.",
+      "authorityUnknown": "Emin değilseniz lütfen ayrıca yerel makamlara (zabıta veya çevre dairesi) haber verin."
+    },
+    "bulky": {
+      "text": "İri hacimli atık alımı için {{name}} üzerinden kendiniz de randevu alabilirsiniz.",
+      "link": "İri hacimli atık alımı için başvur"
+    },
+    "size": {
+      "legend": "Miktar",
+      "hints": {
+        "bag": "Bir çöp poşetine sığar",
+        "pile": "Bir kişinin taşıyabileceği bir yığın",
+        "container": "Römork veya konteyner gerekir",
+        "truck": "Kamyon gerekir"
+      }
+    },
+    "comment": {
+      "label": "Yorum (isteğe bağlı)",
+      "hint": "Lütfen isim, araç plakası veya başka kişisel veri yazmayın.",
+      "counter": "{{used}} / {{max}} karakter"
+    },
+    "privacy": "Hesap olmadan bu cihazda anonim bir oturum oluşturulur. Bildiriminiz kişisel veri içermez. Fotoğraflar yayınlanmadan önce kontrol edilir.",
+    "submit": "Bildirimi gönder",
+    "submitting": "Gönderiliyor …",
+    "missing": {
+      "summary": "Lütfen şunları ekleyin:",
+      "photos": "en az bir fotoğraf",
+      "location": "konum",
+      "category": "çöp türü",
+      "size": "miktar"
+    },
+    "errors": {
+      "rate_limited": "Son bir saatte çok sayıda bildirim gönderdiniz. Lütfen daha sonra tekrar deneyin.",
+      "blocked": "Hesabınız şu anda engelli. Bildirim gönderemezsiniz.",
+      "invalid": "Bilgiler işlenemedi. Lütfen konumu kontrol edin.",
+      "photo": "Bir fotoğraf yüklenemedi. Lütfen tekrar deneyin.",
+      "network": "Bağlantı yok. Tekrar çevrimiçi olduğunuzda lütfen yeniden deneyin.",
+      "server": "Gönderirken bir hata oluştu. Lütfen tekrar deneyin.",
+      "session": "Oturum açılamadı. Lütfen tekrar deneyin."
+    },
+    "done": {
+      "title": "Teşekkürler!",
+      "body": "Bildiriminiz alındı. Fotoğraflar yayınlanmadan önce kontrol edilir.",
+      "view": "Bildirimi görüntüle",
+      "map": "Haritaya dön",
+      "another": "Yeni bildirim"
+    }
   },
   "profile": {
     "title": "Profil"
@@ -148,6 +241,14 @@
       "pile": "Bir yığın",
       "container": "Konteyner dolusu",
       "truck": "Kamyon dolusu"
+    },
+    "hazard": {
+      "batteries": "Piller veya aküler",
+      "chemicals": "Kimyasallar, boyalar, vernikler",
+      "asbestos": "Asbest",
+      "needles": "Şırıngalar veya iğneler",
+      "oil": "Yağ veya yakıt",
+      "other": "Diğer"
     }
   }
 }

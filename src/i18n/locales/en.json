@@ -89,7 +89,100 @@
     }
   },
   "report": {
-    "title": "Report waste"
+    "title": "Report waste",
+    "intro": "A few details help get illegally dumped waste cleared quickly.",
+    "photos": {
+      "legend": "Photos",
+      "hint": "At least 1, at most {{max}} photos. Location and camera data are removed from the photos before upload.",
+      "take": "Take photo",
+      "choose": "Choose photo",
+      "processing": "Preparing photo …",
+      "alt": "Photo {{number}}",
+      "remove": "Remove photo {{number}}",
+      "limit": "You have reached the maximum of {{max}} photos.",
+      "errors": {
+        "unsupported": "This image format is not supported. Please choose a JPEG or PNG photo.",
+        "too_large": "The photo is too large.",
+        "metadata": "The photo could not be cleaned safely, so it will not be used."
+      }
+    },
+    "location": {
+      "legend": "Location",
+      "hint": "Use your location, search for a place, or move the map until the crosshair is on the waste.",
+      "useGps": "Use my location",
+      "useCenter": "Use crosshair as location",
+      "zoomIn": "Please zoom in further to set the location precisely.",
+      "mapLabel": "Map for choosing the location",
+      "set": "Location: {{lat}}, {{lng}}",
+      "accuracy": "Accuracy about {{meters}} m",
+      "notSet": "No location chosen yet.",
+      "mapErrors": {
+        "webgl": "The map cannot be shown on this device. Please use your location.",
+        "style": "The map tiles could not be loaded."
+      }
+    },
+    "nearby": {
+      "title_one": "There is already {{count}} open report nearby",
+      "title_other": "There are already {{count}} open reports nearby",
+      "body": "Is it the same waste? Then no new report is needed.",
+      "item": "{{category}}, {{meters}} m away"
+    },
+    "category": {
+      "legend": "Type of waste"
+    },
+    "hazard": {
+      "legend": "What kind of hazardous waste?",
+      "hint": "If you are unsure, choose “Other”.",
+      "warning": "Please do not touch it and keep your distance. Hazardous waste is only removed by professionals.",
+      "emergency": "In acute danger, for example leaking chemicals or fire, please call 112.",
+      "authorityMunicipality": "Your report goes to: {{name}}.",
+      "authorityPublic": "This place is outside the participating municipalities. Please also contact your local authority (public order or environmental office).",
+      "authorityUnknown": "If in doubt, please also contact your local authority (public order or environmental office)."
+    },
+    "bulky": {
+      "text": "You can also book a bulky waste collection with {{name}} yourself.",
+      "link": "Book bulky waste collection"
+    },
+    "size": {
+      "legend": "Amount",
+      "hints": {
+        "bag": "Fits into one bin bag",
+        "pile": "A pile one person can carry",
+        "container": "Needs a trailer or skip",
+        "truck": "Needs a truck"
+      }
+    },
+    "comment": {
+      "label": "Comment (optional)",
+      "hint": "Please no names, licence plates or other personal data.",
+      "counter": "{{used}} of {{max}} characters"
+    },
+    "privacy": "Without an account, an anonymous session is created on this device. Your report contains no personal data. Photos are reviewed before publication.",
+    "submit": "Send report",
+    "submitting": "Sending …",
+    "missing": {
+      "summary": "Please add:",
+      "photos": "at least one photo",
+      "location": "the location",
+      "category": "the type of waste",
+      "size": "the amount"
+    },
+    "errors": {
+      "rate_limited": "You have sent many reports in the last hour. Please try again later.",
+      "blocked": "Your account is currently blocked. You cannot send reports.",
+      "invalid": "The details could not be processed. Please check the location.",
+      "photo": "A photo could not be uploaded. Please try again.",
+      "network": "No connection. Please try again once you are back online.",
+      "server": "Something went wrong while sending. Please try again.",
+      "session": "Signing in failed. Please try again."
+    },
+    "done": {
+      "title": "Thank you!",
+      "body": "Your report has been received. Photos are reviewed before publication.",
+      "view": "View report",
+      "map": "Back to the map",
+      "another": "Report more waste"
+    }
   },
   "profile": {
     "title": "Profile"
@@ -148,6 +241,14 @@
       "pile": "A pile",
       "container": "Container load",
       "truck": "Truck load"
+    },
+    "hazard": {
+      "batteries": "Batteries",
+      "chemicals": "Chemicals, paint, varnish",
+      "asbestos": "Asbestos",
+      "needles": "Syringes or needles",
+      "oil": "Oil or fuel",
+      "other": "Other"
     }
   }
 }

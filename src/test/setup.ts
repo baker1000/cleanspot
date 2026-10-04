@@ -7,6 +7,10 @@ import { changeLanguage, i18next, initI18n } from '@/i18n';
 vi.mock('@/features/map/MapView', () => import('./fakeMapView'));
 
 if (typeof document !== 'undefined') {
+  // jsdom has no object URLs (photo previews).
+  URL.createObjectURL ??= () => 'blob:fake';
+  URL.revokeObjectURL ??= () => {};
+
   await initI18n('de');
 
   afterEach(async () => {
