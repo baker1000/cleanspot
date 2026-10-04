@@ -67,6 +67,7 @@ beforeAll(async () => {
     `insert into tenants (slug, name, kind, area, settings) values
        ('public', 'CleanSpot Community', 'public', null, '{"reports_per_hour_registered": 1000}'),
        ('lk-harburg', 'Landkreis Harburg', 'municipality', $1::geography, '{"reports_per_hour_registered": 1000}')
+     on conflict (kind) where kind = 'public' do update set slug = excluded.slug, settings = excluded.settings
      returning id, slug`,
     [HARBURG_AREA],
   );

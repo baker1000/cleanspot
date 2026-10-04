@@ -137,15 +137,18 @@ async function createRemoteDb(): Promise<Db> {
   });
   await client.connect();
 
-  // The tests create their own tenants (incl. the single public tenant). Refuse to run on a
-  // database that already has real tenants instead of silently mixing with real data.
+  // The tests create their own tenants and take over the public tenant (created by migration).
+  // Refuse to run on a database that already has real tenants or reports instead of silently
+  // mixing with real data.
   const existing = await client.query(
-    `select slug from public.tenants where slug not like 'verify-%'`,
+    `select slug from public.tenants where slug not like 'verify-%' and kind <> 'public'
+     union all
+     select 'reports' where exists (select 1 from public.reports)`,
   );
   if (existing.rowCount) {
     await client.end();
     throw new Error(
-      `Remote DB already has tenants (${existing.rows.map((r) => r.slug).join(', ')}). ` +
+      `Remote DB already has data (${existing.rows.map((r) => r.slug).join(', ')}). ` +
         'Run the verification on an empty project (before seeding demo data).',
     );
   }

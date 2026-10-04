@@ -34,6 +34,7 @@ beforeAll(async () => {
        ('public', 'CleanSpot Community', 'public', null),
        ('lk-harburg', 'Landkreis Harburg', 'municipality', $1::geography),
        ('other', 'Other Town', 'municipality', $2::geography)
+     on conflict (kind) where kind = 'public' do update set slug = excluded.slug, settings = excluded.settings
      returning id, slug`,
     [HARBURG_AREA, OTHER_AREA],
   );

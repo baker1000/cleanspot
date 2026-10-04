@@ -30,7 +30,8 @@
     "cloud:maintenance": "node scripts/cloud-maintenance-setup.mjs",
     "verify:remote": "vitest run --config vitest.remote.config.ts",
     "i18n:review": "node scripts/i18n-review.mjs",
-    "cloud:status": "node scripts/cloud-env-status.mjs"
+    "cloud:status": "node scripts/cloud-env-status.mjs",
+    "cloud:auth-config": "node scripts/cloud-auth-config.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.2",
