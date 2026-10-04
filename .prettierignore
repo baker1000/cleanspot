@@ -8,3 +8,6 @@ supabase/.temp
 src/types/database.ts
 package-lock.json
 LICENSE
+
+# Project spec, maintained by hand
+CLAUDE.md
