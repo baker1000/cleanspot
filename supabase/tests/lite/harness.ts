@@ -149,7 +149,7 @@ async function createRemoteDb(): Promise<Db> {
     await client.end();
     throw new Error(
       `Remote DB already has data (${existing.rows.map((r) => r.slug).join(', ')}). ` +
-        'Run the verification on an empty project (before seeding demo data).',
+        'Run the verification on an empty project. Demo reports: `npm run cloud:demo -- remove` first.',
     );
   }
 

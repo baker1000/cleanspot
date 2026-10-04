@@ -40,6 +40,12 @@ npm run dev
 
 Results are tracked in [VERIFY_ON_SUPABASE.md](VERIFY_ON_SUPABASE.md).
 
+### Running the frontend against the cloud project
+
+1. `npm run cloud:frontend-env` writes `.env.local` with **only** the project URL and the publishable key (it refuses secret keys). `.env.local` is git-ignored.
+2. Optional: `npm run cloud:demo -- seed` adds 15 demo reports around Stelle / Landkreis Harburg (marked `[Demo]`, no user accounts). `npm run cloud:demo -- status` counts them, `npm run cloud:demo -- remove` deletes them. Remove them before `npm run verify:remote`, which only runs on a project without reports.
+3. `npm run dev` and open http://127.0.0.1:5173/app.
+
 ## Map and place search
 
 - **Map:** [MapLibre GL JS](https://maplibre.org) (BSD-3-Clause) with the free [OpenFreeMap](https://openfreemap.org) style by default (`VITE_MAP_STYLE_URL`). Map data © OpenStreetMap contributors; the attribution is always visible on the map. For self-hosting, point `VITE_MAP_STYLE_URL` at your own style (e.g. PMTiles).
