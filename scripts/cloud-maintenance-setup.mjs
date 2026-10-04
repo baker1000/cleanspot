@@ -3,10 +3,13 @@
 //   1. generates MAINTENANCE_SECRET into .env.supabase-cloud (if empty) — never printed
 //   2. stores it as a function secret
 //   3. deploys the function (server-side bundling, no Docker needed)
+//   4. stores URL + secret in Vault and schedules the hourly pg_cron job that calls the function
+// Safe to re-run: secrets are updated in place and the cron job is replaced by name.
 import { spawnSync } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import pg from 'pg';
 
 const ENV_FILE = join(import.meta.dirname, '..', '.env.supabase-cloud');
 process.loadEnvFile(ENV_FILE);
@@ -33,3 +36,43 @@ const run = (args) => {
 run(['secrets', 'set', `MAINTENANCE_SECRET=${secret}`, '--project-ref', ref]);
 run(['functions', 'deploy', 'maintenance', '--no-verify-jwt', '--use-api', '--project-ref', ref]);
 console.log('maintenance function deployed.');
+
+// --- 4. Vault secrets + hourly schedule -------------------------------------------------------
+const functionUrl = `${process.env.SUPABASE_URL.replace(/\/$/, '')}/functions/v1/maintenance`;
+const sql = new pg.Client({
+  connectionString: process.env.SUPABASE_DB_URL,
+  ssl: process.env.SUPABASE_DB_CA_CERT
+    ? { ca: readFileSync(process.env.SUPABASE_DB_CA_CERT, 'utf8') }
+    : { rejectUnauthorized: false },
+});
+await sql.connect();
+try {
+  // Values go in as query parameters, so they never appear in SQL text or logs.
+  const upsertSecret = async (name, value) => {
+    const { rows } = await sql.query('select id from vault.secrets where name = $1', [name]);
+    if (rows.length) await sql.query('select vault.update_secret($1, $2)', [rows[0].id, value]);
+    else await sql.query('select vault.create_secret($1, $2)', [value, name]);
+  };
+  await upsertSecret('maintenance_url', functionUrl);
+  await upsertSecret('maintenance_secret', secret);
+
+  await sql.query('create extension if not exists pg_net');
+  // Keep in sync with supabase/functions/maintenance/README.md.
+  await sql.query(
+    `select cron.schedule('cleanspot-maintenance', '17 * * * *', $cmd$
+  select net.http_post(
+    url := (select decrypted_secret from vault.decrypted_secrets where name = 'maintenance_url'),
+    headers := jsonb_build_object(
+      'Content-Type', 'application/json',
+      'x-maintenance-secret',
+      (select decrypted_secret from vault.decrypted_secrets where name = 'maintenance_secret')
+    ),
+    body := '{}'::jsonb,
+    timeout_milliseconds := 30000
+  );
+  $cmd$)`,
+  );
+  console.log('Vault secrets stored; cron job cleanspot-maintenance scheduled (17 * * * *).');
+} finally {
+  await sql.end();
+}

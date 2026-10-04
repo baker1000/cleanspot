@@ -279,4 +279,40 @@ describe('D — maintenance', () => {
       expect(rows).toHaveLength(0);
     },
   );
+
+  it('D7: the scheduled job reaches the function with the Vault secrets', async () => {
+    const job = await sql.query(
+      `select schedule, command, active from cron.job where jobname = 'cleanspot-maintenance'`,
+    );
+    expect(job.rows).toHaveLength(1);
+    expect(job.rows[0].schedule).toBe('17 * * * *');
+    expect(job.rows[0].active).toBe(true);
+
+    const { path, error } = await upload(reporter, ids.reporter!);
+    expect(error).toBeNull();
+    await sql.query(
+      `update storage.objects set created_at = now() - interval '25 hours' where bucket_id = 'report-photos' and name = $1`,
+      [path],
+    );
+
+    // Run exactly what pg_cron runs, then wait for pg_net's background worker to get the answer.
+    const call = await sql.query<{ id: string }>(
+      `select id from (${String(job.rows[0].command).trim().replace(/;$/, '')}) as r(id)`,
+    );
+    const requestId = call.rows[0]!.id;
+    let response: { status_code: number | null; content: string | null; error_msg: string | null } =
+      { status_code: null, content: null, error_msg: null };
+    for (let i = 0; i < 60 && response.status_code === null && !response.error_msg; i++) {
+      await new Promise((r) => setTimeout(r, 1000));
+      const res = await sql.query(
+        `select status_code, content, error_msg from net._http_response where id = $1`,
+        [requestId],
+      );
+      if (res.rows[0]) response = res.rows[0];
+    }
+    expect(response.error_msg).toBeNull();
+    expect(response.status_code).toBe(200);
+    expect(JSON.parse(response.content!).removedOrphans).toBeGreaterThanOrEqual(1);
+    expect((await admin.storage.from('report-photos').download(path)).error).not.toBeNull();
+  }, 90_000);
 });

@@ -16,13 +16,20 @@ Every RLS rule, grant and RPC below has so far been tested **only in PGlite** (`
 
 ## Run log
 
+### 2026-10-04 (third run) — D7, same project
+
+- `npm run cloud:maintenance` now also stores `maintenance_url` and `maintenance_secret` in Vault, enables pg_net and schedules `cleanspot-maintenance` (`17 * * * *`, 30 s HTTP timeout).
+- New API test **D7** runs the exact command stored in `cron.job`; pg_net called the function with the Vault secrets, got HTTP 200, and an orphan file older than 24 h was deleted from Storage. **`verify:remote`: 78 / 78 passed.**
+- `cron.job_run_details`: `cleanspot-expire-claims` ran on schedule at 10:07 local time and succeeded (pg_cron itself fires jobs; supports D5).
+- Afterwards: 1 tenant (`public`), 0 users, 0 reports, 0 storage objects.
+
 ### 2026-10-04 (second run) — same project
 
 - `cloud:auth-config` before the run: `external_anonymous_users_enabled = true`.
 - **Migration 4** (`20261004000004_public_tenant.sql`) pushed; `cloud:migrations` shows local = remote for all four. The public tenant now exists on the project.
 - **`npm run verify:remote`: 77 / 77 passed** (5 files): 64 SQL-level tests, 2 public-tenant tests and 11 API tests through PostgREST, Storage and the Edge Function. A1, A2, A5–A9, C40 and D6 are now ✅.
 - Afterwards the project held only the `public` tenant: 0 auth users, 0 reports, 0 objects in `report-photos`.
-- Still open: **D7** (cron + pg_net schedule with Vault secrets, manual).
+- Still open after this run: D7 (done in the third run).
 
 ### 2026-10-04 — cloud project `hpzjyntdzmpdhutqvmgq` (West EU / Ireland, eu-west-1)
 
@@ -145,7 +152,7 @@ If any of these is wrong, rows in B–D may be passing in PGlite for the wrong r
 | D4  | `orphan_photo_paths`: old + unattached + bucket `report-photos` only                                                                                            | lists old unattached photos only                                                   | ✅     |
 | D5  | pg_cron job `cleanspot-expire-claims` is created by the migration (skipped in PGlite)                                                                           | **real stack only**: `select * from cron.job`                                      | ✅     |
 | D6  | `maintenance` Edge Function: 401 without / with wrong `x-maintenance-secret`; deletes orphan files through the Storage API (file really gone, not only the row) | unit tests cover logic only; **API**: call function, then try to download the file | ✅     |
-| D7  | pg_cron + pg_net schedule from `functions/maintenance/README.md` works with Vault secrets                                                                       | **real stack only**                                                                | ⬜     |
+| D7  | pg_cron + pg_net schedule from `functions/maintenance/README.md` works with Vault secrets                                                                       | **real stack only**                                                                | ✅     |
 
 ## E. Migration 4 — public tenant (`public_tenant.test.ts`)
 

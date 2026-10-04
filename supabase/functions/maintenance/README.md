@@ -7,6 +7,8 @@ Runs hourly:
 
 ## Setup (once per environment)
 
+On a Supabase cloud project, `npm run cloud:maintenance` does all of the steps below (idempotent; secrets are never printed). By hand:
+
 ```bash
 # Shared secret between pg_cron and the function
 npx supabase secrets set MAINTENANCE_SECRET=<random, e.g. openssl rand -hex 32>
@@ -31,11 +33,14 @@ select cron.schedule(
       'x-maintenance-secret',
       (select decrypted_secret from vault.decrypted_secrets where name = 'maintenance_secret')
     ),
-    body := '{}'::jsonb
+    body := '{}'::jsonb,
+    timeout_milliseconds := 30000
   );
   $$
 );
 ```
+
+`timeout_milliseconds` matters: pg_net's default is 5 s, which a cold-starting function can exceed. The response lands in `net._http_response`.
 
 For self-hosting with Docker, use `http://kong:8000/functions/v1/maintenance` as the URL.
 
