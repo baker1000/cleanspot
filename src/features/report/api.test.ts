@@ -106,10 +106,52 @@ describe('submit', () => {
   it('does not treat other photo errors as "already attached"', async () => {
     const { api } = fakeClient({
       rpc: {
-        add_report_photo: { data: null, error: { code: 'CS005', message: 'Photo not uploaded' } },
+        add_report_photo: { data: null, error: { code: 'CS005', message: 'Invalid photo path' } },
       },
     });
     await expect(api.submit(draft(), UID)).rejects.toMatchObject({ reason: 'photo' });
+  });
+
+  it('re-uploads the local copy once when the server lost the file (orphan cleanup)', async () => {
+    const { api, rpc, log } = fakeClient();
+    const notUploaded = { data: null, error: { code: 'CS005', message: 'Photo not uploaded' } };
+    rpc.mockImplementation((fn: string) => {
+      log.push(`rpc ${fn}`);
+      if (fn === 'submit_report') return Promise.resolve({ data: 'r1', error: null });
+      const lost =
+        fn === 'add_report_photo' && log.filter((l) => l === 'rpc add_report_photo').length === 1;
+      return Promise.resolve(lost ? notUploaded : { data: 'ph', error: null });
+    });
+    await expect(api.submit(draft({ photos: [draft().photos[0]!] }), UID)).resolves.toBe('r1');
+    expect(log).toEqual([
+      `upload ${UID}/${P1}.webp`,
+      'rpc submit_report',
+      'rpc add_report_photo',
+      `upload ${UID}/${P1}.webp`,
+      'rpc add_report_photo',
+    ]);
+  });
+
+  it('gives up if the file is still missing after the re-upload', async () => {
+    const { api, upload } = fakeClient({
+      rpc: {
+        add_report_photo: { data: null, error: { code: 'CS005', message: 'Photo not uploaded' } },
+      },
+    });
+    await expect(api.submit(draft({ photos: [draft().photos[0]!] }), UID)).rejects.toMatchObject({
+      reason: 'photo',
+    });
+    expect(upload).toHaveBeenCalledTimes(2);
+  });
+
+  it('keeps the original time of a queued report as the photo time', async () => {
+    const { api, rpc } = fakeClient();
+    await api.submit(draft({ takenAt: '2026-10-04T08:15:00.000Z' }), UID);
+    expect(rpc.mock.calls[1]![1]).toEqual({
+      p_report_id: 'r1',
+      p_path: `${UID}/${P1}.webp`,
+      p_taken_at: '2026-10-04T08:15:00.000Z',
+    });
   });
 
   it('maps the rate limit', async () => {

@@ -6,6 +6,7 @@ import { LanguageSelect } from '@/components/LanguageSelect';
 import { Alert } from '@/components/ui/Alert';
 import { SkipLink } from '@/components/ui/SkipLink';
 import { useAuth } from '@/features/auth/useAuth';
+import { OutboxStatus } from '@/features/report/outbox/OutboxStatus';
 
 interface NavItem {
   to: string;
@@ -37,6 +38,11 @@ export function AppLayout() {
         </Link>
         <LanguageSelect />
       </header>
+
+      {/* Reports waiting on this device (offline queue); visible on every app page. */}
+      <div className="px-4 pt-2 empty:hidden">
+        <OutboxStatus />
+      </div>
 
       <main
         id="main"

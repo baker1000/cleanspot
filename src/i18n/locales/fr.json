@@ -186,7 +186,33 @@
       "view": "Voir le signalement",
       "map": "Retour à la carte",
       "another": "Nouveau signalement"
+    },
+    "queued": {
+      "title": "Enregistré sur cet appareil",
+      "body": "Votre signalement sera envoyé automatiquement dès qu’une connexion sera disponible. D’ici là, veuillez ne pas effacer les données de site de cette application.",
+      "reason": {
+        "offline": "Il n’y a pas de connexion pour le moment.",
+        "rate_limited": "Vous avez envoyé beaucoup de signalements au cours de la dernière heure.",
+        "server": "Le serveur est injoignable pour le moment."
+      }
     }
+  },
+  "outbox": {
+    "pending": "Signalements en attente d’envoi : {{count}}",
+    "pendingHint": "Ils seront envoyés automatiquement dès qu’une connexion sera disponible.",
+    "sendNow": "Envoyer maintenant",
+    "sending": "Envoi en cours …",
+    "failed": "Signalements non envoyés : {{count}}",
+    "failedItem": "{{category}} du {{date}} :",
+    "reasons": {
+      "invalid": "Les informations n’ont pas été acceptées.",
+      "blocked": "Votre compte est bloqué.",
+      "photo": "Une photo n’a pas été acceptée."
+    },
+    "discard": "Supprimer",
+    "discardLabel": "Supprimer le signalement du {{date}}",
+    "sent": "Signalements enregistrés envoyés : {{count}}",
+    "dismiss": "Masquer"
   },
   "profile": {
     "title": "Profil"

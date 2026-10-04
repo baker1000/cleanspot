@@ -4,7 +4,6 @@ import { Link } from 'react-router';
 import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
 import { ChoiceGroup } from '@/components/ui/ChoiceGroup';
-import { useAuth } from '@/features/auth/useAuth';
 import { getGeocoder, type Geocoder } from '@/features/geocoding';
 import { CATEGORIES, type ReportCategory, type ReportSize } from '@/features/map/reports';
 import { uuid } from '@/lib/uuid';
@@ -12,13 +11,13 @@ import {
   HAZARD_TYPES,
   MAX_COMMENT,
   SIZES,
-  SubmitError,
   type HazardType,
   type NearbyReport,
-  type SubmitErrorReason,
   type TenantInfo,
 } from './api';
 import { LocationPicker, type PickedLocation } from './LocationPicker';
+import { useOutbox } from './outbox/OutboxProvider';
+import type { OutboxError } from './outbox/store';
 import { PhotoPicker, type PickedPhoto } from './PhotoPicker';
 import type { PreparedPhoto } from './photo';
 import { useReportSubmitApi } from './ReportSubmitApiContext';
@@ -27,8 +26,10 @@ type Missing = 'photos' | 'location' | 'category' | 'size';
 type SubmitState =
   | { kind: 'editing' }
   | { kind: 'submitting' }
-  | { kind: 'error'; reason: SubmitErrorReason | 'session' }
-  | { kind: 'done'; reportId: string };
+  | { kind: 'error'; reason: OutboxError }
+  | { kind: 'done'; reportId: string }
+  /** Saved on the device (offline queue); sent automatically later. */
+  | { kind: 'queued'; reason: OutboxError };
 
 export interface ReportPageProps {
   geocoder?: Geocoder | null;
@@ -40,7 +41,7 @@ export interface ReportPageProps {
 export function ReportPage({ geocoder = getGeocoder(), preparePhoto, locate }: ReportPageProps) {
   const { t } = useTranslation();
   const api = useReportSubmitApi();
-  const { ensureSession } = useAuth();
+  const outbox = useOutbox();
   const ids = { photos: useId(), location: useId(), category: useId(), size: useId() };
   const commentId = useId();
   const summaryRef = useRef<HTMLDivElement>(null);
@@ -73,7 +74,7 @@ export function ReportPage({ geocoder = getGeocoder(), preparePhoto, locate }: R
   }, [api, location]);
 
   useEffect(() => {
-    if (state.kind === 'done') doneRef.current?.focus();
+    if (state.kind === 'done' || state.kind === 'queued') doneRef.current?.focus();
   }, [state.kind]);
 
   const currentMissing = (): Missing[] =>
@@ -98,32 +99,26 @@ export function ReportPage({ geocoder = getGeocoder(), preparePhoto, locate }: R
       return;
     }
     setState({ kind: 'submitting' });
-    let userId: string;
-    try {
-      userId = (await ensureSession()).user.id;
-    } catch {
-      setState({ kind: 'error', reason: 'session' });
-      return;
-    }
-    try {
-      const reportId = await api.submit(
-        {
-          clientId,
-          lng: location!.lng,
-          lat: location!.lat,
-          accuracyM: location!.accuracy,
-          category: category!,
-          hazardType: category === 'hazardous' ? (hazardType ?? 'other') : null,
-          size: size!,
-          comment,
-          photos: photos.map(({ id, blob, ext }) => ({ id, blob, ext })),
-        },
-        userId,
-      );
-      setState({ kind: 'done', reportId });
-    } catch (err) {
-      setState({ kind: 'error', reason: err instanceof SubmitError ? err.reason : 'server' });
-    }
+    // Without connection the outbox keeps the report on the device and sends it later.
+    const outcome = await outbox.send({
+      clientId,
+      lng: location!.lng,
+      lat: location!.lat,
+      accuracyM: location!.accuracy,
+      category: category!,
+      hazardType: category === 'hazardous' ? (hazardType ?? 'other') : null,
+      size: size!,
+      comment,
+      photos: photos.map(({ id, blob, ext }) => ({ id, blob, ext })),
+      takenAt: new Date().toISOString(),
+    });
+    setState(
+      outcome.kind === 'sent'
+        ? { kind: 'done', reportId: outcome.reportId }
+        : outcome.kind === 'queued'
+          ? { kind: 'queued', reason: outcome.reason }
+          : { kind: 'error', reason: outcome.reason },
+    );
   }
 
   function startOver() {
@@ -141,20 +136,30 @@ export function ReportPage({ geocoder = getGeocoder(), preparePhoto, locate }: R
     setState({ kind: 'editing' });
   }
 
-  if (state.kind === 'done') {
+  if (state.kind === 'done' || state.kind === 'queued') {
+    const queued = state.kind === 'queued';
     return (
       <div className="mx-auto flex max-w-xl flex-col gap-4">
         <h1 ref={doneRef} tabIndex={-1} className="text-2xl font-bold focus:outline-none">
-          {t('report.done.title')}
+          {t(queued ? 'report.queued.title' : 'report.done.title')}
         </h1>
-        <Alert tone="success">{t('report.done.body')}</Alert>
+        {queued ? (
+          <Alert tone="info">
+            <p>{t(`report.queued.reason.${queuedReason(state.reason)}`)}</p>
+            <p>{t('report.queued.body')}</p>
+          </Alert>
+        ) : (
+          <Alert tone="success">{t('report.done.body')}</Alert>
+        )}
         <div className="flex flex-wrap gap-2">
-          <Link
-            to={`/app/reports/${state.reportId}`}
-            className="inline-flex min-h-11 items-center rounded-lg bg-brand-700 px-4 py-2 font-semibold text-white hover:bg-brand-900"
-          >
-            {t('report.done.view')}
-          </Link>
+          {!queued && (
+            <Link
+              to={`/app/reports/${state.reportId}`}
+              className="inline-flex min-h-11 items-center rounded-lg bg-brand-700 px-4 py-2 font-semibold text-white hover:bg-brand-900"
+            >
+              {t('report.done.view')}
+            </Link>
+          )}
           <Link
             to="/app"
             className="inline-flex min-h-11 items-center rounded-lg border border-slate-400 bg-white px-4 py-2 font-semibold text-slate-900 hover:bg-slate-100"
@@ -316,6 +321,12 @@ export function ReportPage({ geocoder = getGeocoder(), preparePhoto, locate }: R
       </Button>
     </form>
   );
+}
+
+/** Why a report was queued instead of sent, as the reporter needs to know it. */
+function queuedReason(reason: OutboxError): 'offline' | 'rate_limited' | 'server' {
+  if (reason === 'rate_limited' || reason === 'server') return reason;
+  return 'offline';
 }
 
 /** Moves focus into the field group (the browser only scrolls for in-page links). */

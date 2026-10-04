@@ -142,7 +142,7 @@ export function LocationPicker({
             onError={onMapError}
           />
           <CrosshairIcon
-            className="pointer-events-none absolute top-1/2 left-1/2 size-10 -translate-x-1/2 -translate-y-1/2 text-slate-950 drop-shadow-[0_0_2px_white]"
+            className="pointer-events-none absolute inset-0 m-auto size-10 text-slate-950 drop-shadow-[0_0_2px_white]"
             strokeWidth={2.5}
           />
         </div>

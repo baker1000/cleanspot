@@ -223,6 +223,8 @@ describe('A — platform assumptions', () => {
       size: 'bag' as const,
       comment: ' verify run ',
       photos: [photo],
+      // As the offline queue sends it: the photo keeps the time the report was made.
+      takenAt: '2026-10-04T08:15:00.000Z',
     };
 
     const id = await api.submit(draft, uid);
@@ -232,7 +234,8 @@ describe('A — platform assumptions', () => {
     const { rows } = await sql.query(
       `select r.tenant_id, r.reporter_id, r.hazard_type, r.comment, r.accuracy_m,
               (select count(*)::int from public.report_photos p where p.report_id = r.id) as photos,
-              (select p.storage_path from public.report_photos p where p.report_id = r.id) as path
+              (select p.storage_path from public.report_photos p where p.report_id = r.id) as path,
+              (select p.taken_at from public.report_photos p where p.report_id = r.id) as taken_at
        from public.reports r where r.id = $1`,
       [id],
     );
@@ -244,6 +247,7 @@ describe('A — platform assumptions', () => {
       accuracy_m: 7,
       photos: 1,
       path: photoPath(uid, photo),
+      taken_at: new Date('2026-10-04T08:15:00.000Z'),
     });
   });
 

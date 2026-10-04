@@ -182,7 +182,33 @@
       "view": "View report",
       "map": "Back to the map",
       "another": "Report more waste"
+    },
+    "queued": {
+      "title": "Saved on this device",
+      "body": "Your report will be sent automatically as soon as a connection is available. Until then, please do not clear this app's website data.",
+      "reason": {
+        "offline": "There is no connection right now.",
+        "rate_limited": "You have sent many reports in the last hour.",
+        "server": "The server cannot be reached right now."
+      }
     }
+  },
+  "outbox": {
+    "pending": "Reports waiting to be sent: {{count}}",
+    "pendingHint": "They are sent automatically as soon as a connection is available.",
+    "sendNow": "Send now",
+    "sending": "Sending …",
+    "failed": "Reports that could not be sent: {{count}}",
+    "failedItem": "{{category}} from {{date}}:",
+    "reasons": {
+      "invalid": "The details were not accepted.",
+      "blocked": "Your account is blocked.",
+      "photo": "A photo was not accepted."
+    },
+    "discard": "Discard",
+    "discardLabel": "Discard report from {{date}}",
+    "sent": "Saved reports sent: {{count}}",
+    "dismiss": "Hide"
   },
   "profile": {
     "title": "Profile"

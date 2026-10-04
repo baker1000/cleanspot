@@ -182,7 +182,33 @@
       "view": "Meldung ansehen",
       "map": "Zur Karte",
       "another": "Weitere Meldung"
+    },
+    "queued": {
+      "title": "Auf diesem Gerät gespeichert",
+      "body": "Ihre Meldung wird automatisch gesendet, sobald eine Verbindung besteht. Bitte löschen Sie bis dahin nicht die Website-Daten dieser App.",
+      "reason": {
+        "offline": "Gerade besteht keine Verbindung.",
+        "rate_limited": "Sie haben in der letzten Stunde viele Meldungen gesendet.",
+        "server": "Der Server ist gerade nicht erreichbar."
+      }
     }
+  },
+  "outbox": {
+    "pending": "Wartende Meldungen: {{count}}",
+    "pendingHint": "Sie werden automatisch gesendet, sobald eine Verbindung besteht.",
+    "sendNow": "Jetzt senden",
+    "sending": "Wird gesendet …",
+    "failed": "Nicht gesendete Meldungen: {{count}}",
+    "failedItem": "{{category}} vom {{date}}:",
+    "reasons": {
+      "invalid": "Die Angaben wurden nicht angenommen.",
+      "blocked": "Ihr Konto ist gesperrt.",
+      "photo": "Ein Foto wurde nicht angenommen."
+    },
+    "discard": "Verwerfen",
+    "discardLabel": "Meldung vom {{date}} verwerfen",
+    "sent": "Gespeicherte Meldungen gesendet: {{count}}",
+    "dismiss": "Ausblenden"
   },
   "profile": {
     "title": "Profil"

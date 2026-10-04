@@ -16,6 +16,11 @@ Every RLS rule, grant and RPC below has so far been tested **only in PGlite** (`
 
 ## Run log
 
+### 2026-10-04 (sixth run) — offline queue (step 6), same project
+
+- No new migration. `verify:remote`: **87 / 87 passed**; F4 now also sends `p_taken_at` (as the offline queue does) and checks the stored photo time.
+- Demo reports removed before and seeded again after the run.
+
 ### 2026-10-04 (fifth run) — migration 6, same project
 
 - **Migration 6** (`20261004000006_tenant_at_point.sql`) pushed; local = remote for all six.

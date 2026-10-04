@@ -182,7 +182,33 @@
       "view": "Bildirimi görüntüle",
       "map": "Haritaya dön",
       "another": "Yeni bildirim"
+    },
+    "queued": {
+      "title": "Bu cihazda kaydedildi",
+      "body": "Bildiriminiz bağlantı kurulur kurulmaz otomatik olarak gönderilecek. O zamana kadar lütfen bu uygulamanın site verilerini silmeyin.",
+      "reason": {
+        "offline": "Şu anda bağlantı yok.",
+        "rate_limited": "Son bir saat içinde çok sayıda bildirim gönderdiniz.",
+        "server": "Sunucuya şu anda ulaşılamıyor."
+      }
     }
+  },
+  "outbox": {
+    "pending": "Gönderilmeyi bekleyen bildirimler: {{count}}",
+    "pendingHint": "Bağlantı kurulur kurulmaz otomatik olarak gönderilirler.",
+    "sendNow": "Şimdi gönder",
+    "sending": "Gönderiliyor …",
+    "failed": "Gönderilemeyen bildirimler: {{count}}",
+    "failedItem": "{{category}}, {{date}}:",
+    "reasons": {
+      "invalid": "Bilgiler kabul edilmedi.",
+      "blocked": "Hesabınız engellendi.",
+      "photo": "Bir fotoğraf kabul edilmedi."
+    },
+    "discard": "Sil",
+    "discardLabel": "{{date}} tarihli bildirimi sil",
+    "sent": "Kaydedilen bildirimler gönderildi: {{count}}",
+    "dismiss": "Gizle"
   },
   "profile": {
     "title": "Profil"

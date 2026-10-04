@@ -2,7 +2,9 @@
 // network error (and later the offline queue) can simply run it again with the same draft:
 //   1. upload each photo to <uid>/<photo id>.<ext>   ("already exists" counts as done)
 //   2. submit_report(client_id, …)                   (returns the existing id for a known client_id)
-//   3. add_report_photo(report, path)                ("already attached" counts as done)
+//   3. add_report_photo(report, path)                ("already attached" counts as done;
+//                                                     "not uploaded" re-uploads the local copy once,
+//                                                     e.g. after the orphan cleanup removed it)
 import type { ReportCategory, ReportSize } from '@/features/map/reports';
 
 export const HAZARD_TYPES = [
@@ -37,6 +39,8 @@ export interface ReportDraft {
   size: ReportSize;
   comment: string;
   photos: DraftPhoto[];
+  /** When the reporter sent it (ISO); kept as the photo time when the queue sends it later. */
+  takenAt?: string;
 }
 
 export interface TenantInfo {
@@ -129,6 +133,10 @@ const isAlreadyAttached = (error: unknown) => {
   const e = error as PgError;
   return e.code === 'CS005' && /already attached/i.test(e.message ?? '');
 };
+const isNotUploaded = (error: unknown) => {
+  const e = error as PgError;
+  return e.code === 'CS005' && /not uploaded/i.test(e.message ?? '');
+};
 
 async function call(
   client: SubmitClient,
@@ -194,16 +202,18 @@ export function createSupabaseSubmitApi(getClient: () => Promise<SubmitClient>):
         throw new SubmitError(classifyError(error), error);
       };
 
+      const upload = async (photo: DraftPhoto) => {
+        const { error } = await client.storage
+          .from(PHOTO_BUCKET)
+          .upload(photoPath(userId, photo), photo.blob, {
+            contentType: photo.ext === 'webp' ? 'image/webp' : 'image/jpeg',
+            upsert: false,
+          });
+        if (error && !isAlreadyUploaded(error)) fail(error);
+      };
+
       try {
-        for (const photo of draft.photos) {
-          const { error } = await client.storage
-            .from(PHOTO_BUCKET)
-            .upload(photoPath(userId, photo), photo.blob, {
-              contentType: photo.ext === 'webp' ? 'image/webp' : 'image/jpeg',
-              upsert: false,
-            });
-          if (error && !isAlreadyUploaded(error)) fail(error);
-        }
+        for (const photo of draft.photos) await upload(photo);
 
         const { data: reportId, error } = await client.rpc('submit_report', {
           p_client_id: draft.clientId,
@@ -217,11 +227,20 @@ export function createSupabaseSubmitApi(getClient: () => Promise<SubmitClient>):
         });
         if (error) fail(error);
 
+        const attach = async (photo: DraftPhoto) =>
+          (
+            await client.rpc('add_report_photo', {
+              p_report_id: reportId,
+              p_path: photoPath(userId, photo),
+              ...(draft.takenAt ? { p_taken_at: draft.takenAt } : {}),
+            })
+          ).error;
         for (const photo of draft.photos) {
-          const { error: attachError } = await client.rpc('add_report_photo', {
-            p_report_id: reportId,
-            p_path: photoPath(userId, photo),
-          });
+          let attachError = await attach(photo);
+          if (attachError && isNotUploaded(attachError)) {
+            await upload(photo);
+            attachError = await attach(photo);
+          }
           if (attachError && !isAlreadyAttached(attachError)) fail(attachError);
         }
         return reportId as string;

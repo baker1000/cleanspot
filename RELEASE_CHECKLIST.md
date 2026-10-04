@@ -17,5 +17,5 @@ Items that **must** be done before a public release (Play Store production or a 
 
 ## Product decisions already agreed (implement in the named step)
 
-- [ ] Report flow: hazardous waste outside any municipality shows a "contact your local authority" text (Milestone 1, report flow).
-- [ ] Offline queue: if attaching a photo fails with `CS005` (file was removed as an orphan), re-upload it from the local copy and retry (Milestone 1, offline queue).
+- [x] Report flow: hazardous waste outside any municipality shows a "contact your local authority" text (Milestone 1, report flow). 2026-10-04, 4381459.
+- [x] Offline queue: if attaching a photo fails with `CS005` (file was removed as an orphan), re-upload it from the local copy and retry (Milestone 1, offline queue). 2026-10-04, step 6.

@@ -5,6 +5,7 @@ import { fakeMap, viewportAround } from '@/test/fakeMapView';
 import { renderWithProviders } from '@/test/render';
 import { LocateFailure } from '@/lib/geolocation';
 import { SubmitError, type ReportSubmitApi, type TenantInfo } from './api';
+import { createMemoryStore, type OutboxStore } from './outbox/store';
 import { PhotoError } from './photo';
 import { ReportPage, type ReportPageProps } from './ReportPage';
 
@@ -36,6 +37,7 @@ function setup(
     api?: ReportSubmitApi | null;
     props?: Partial<ReportPageProps>;
     auth?: ReturnType<typeof fakeAuthClient>;
+    outboxStore?: OutboxStore | null;
   } = {},
 ) {
   const api = opts.api === undefined ? fakeApi() : opts.api;
@@ -44,7 +46,7 @@ function setup(
   const locate = vi.fn(async () => GPS);
   const utils = renderWithProviders(
     <ReportPage geocoder={null} preparePhoto={preparePhoto} locate={locate} {...opts.props} />,
-    { authClient, submitApi: api },
+    { authClient, submitApi: api, outboxStore: opts.outboxStore },
   );
   return { ...utils, api, authClient, preparePhoto, locate };
 }
@@ -107,6 +109,7 @@ describe('report form', () => {
         photos: [
           { id: expect.stringMatching(/^[0-9a-f-]{36}$/), blob: expect.any(Blob), ext: 'webp' },
         ],
+        takenAt: expect.stringMatching(/^\d{4}-\d\d-\d\dT/),
       },
       fakeSession({ anonymous: true }).user.id,
     );
@@ -126,17 +129,20 @@ describe('report form', () => {
     expect(api!.submit).toHaveBeenCalledOnce();
   });
 
-  it('keeps the draft after an error and retries with the same client id', async () => {
+  it('keeps the draft after a refused report and retries with the same client id', async () => {
+    const store = createMemoryStore();
     const api = fakeApi({
       submit: vi
         .fn()
-        .mockRejectedValueOnce(new SubmitError('network'))
+        .mockRejectedValueOnce(new SubmitError('photo'))
         .mockResolvedValueOnce('report-1'),
     });
-    const { user } = setup({ api });
+    const { user } = setup({ api, outboxStore: store });
     await fillIn(user);
     await user.click(screen.getByRole('button', { name: 'Meldung absenden' }));
-    expect(await screen.findByText(/Keine Verbindung/)).toBeInTheDocument();
+    expect(await screen.findByText(/Ein Foto konnte nicht hochgeladen werden/)).toBeInTheDocument();
+    // Refused reports go back to the form, not into the queue.
+    expect(await store.list()).toEqual([]);
     expect(screen.getByRole('img', { name: 'Foto 1' })).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Meldung absenden' }));
@@ -159,12 +165,60 @@ describe('report form', () => {
     expect(second![0].clientId).not.toBe(first![0].clientId);
   });
 
-  it('shows the rate-limit message', async () => {
+  it('offline: saves the report on the device and says so', async () => {
+    const store = createMemoryStore();
+    const api = fakeApi({ submit: vi.fn().mockRejectedValue(new SubmitError('network')) });
+    const { user } = setup({ api, outboxStore: store });
+    await fillIn(user);
+    await user.click(screen.getByRole('button', { name: 'Meldung absenden' }));
+
+    const heading = await screen.findByRole('heading', { name: 'Auf diesem Gerät gespeichert' });
+    expect(heading).toHaveFocus();
+    expect(screen.getByText('Gerade besteht keine Verbindung.')).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Meldung ansehen' })).toBeNull();
+    const [entry] = await store.list();
+    expect(entry).toMatchObject({ state: 'pending', attempts: 1, lastError: 'network' });
+    expect(entry!.id).toBe(vi.mocked(api.submit).mock.calls[0]![0].clientId);
+    expect(entry!.draft.photos[0]!.blob).toBeInstanceOf(Blob);
+  });
+
+  it('no sign-in possible (offline before the first report): queues it too', async () => {
+    const auth = fakeAuthClient();
+    auth.signInAnonymously.mockRejectedValue(new TypeError('Failed to fetch'));
+    const store = createMemoryStore();
+    const { user, api } = setup({ auth, outboxStore: store });
+    await fillIn(user);
+    await user.click(screen.getByRole('button', { name: 'Meldung absenden' }));
+    await screen.findByRole('heading', { name: 'Auf diesem Gerät gespeichert' });
+    expect(api!.submit).not.toHaveBeenCalled();
+    expect((await store.list())[0]).toMatchObject({ lastError: 'session' });
+  });
+
+  it('rate limit: queues the report and explains why', async () => {
     const api = fakeApi({ submit: vi.fn().mockRejectedValue(new SubmitError('rate_limited')) });
     const { user } = setup({ api });
     await fillIn(user);
     await user.click(screen.getByRole('button', { name: 'Meldung absenden' }));
-    expect(await screen.findByText(/schon viele Meldungen gesendet/)).toBeInTheDocument();
+    await screen.findByRole('heading', { name: 'Auf diesem Gerät gespeichert' });
+    expect(screen.getByText(/in der letzten Stunde viele Meldungen gesendet/)).toBeInTheDocument();
+  });
+
+  it('without device storage: shows the error in the form as before', async () => {
+    const api = fakeApi({ submit: vi.fn().mockRejectedValue(new SubmitError('network')) });
+    const { user } = setup({ api, outboxStore: null });
+    await fillIn(user);
+    await user.click(screen.getByRole('button', { name: 'Meldung absenden' }));
+    expect(await screen.findByText(/Keine Verbindung/)).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Foto 1' })).toBeInTheDocument();
+  });
+
+  it('storage failing on write (e.g. full): sends directly instead', async () => {
+    const store = { ...createMemoryStore(), put: vi.fn().mockRejectedValue(new Error('quota')) };
+    const { user, api } = setup({ outboxStore: store });
+    await fillIn(user);
+    await user.click(screen.getByRole('button', { name: 'Meldung absenden' }));
+    await screen.findByRole('heading', { name: 'Vielen Dank!' });
+    expect(api!.submit).toHaveBeenCalledOnce();
   });
 
   it('disables sending without a backend', () => {

@@ -4,6 +4,7 @@ import { MapPage } from '@/features/map/MapPage';
 import type { ReportsApi } from '@/features/map/reports';
 import { ReportsApiProvider } from '@/features/map/ReportsApiContext';
 import type { ReportSubmitApi } from '@/features/report/api';
+import { OutboxProvider } from '@/features/report/outbox/OutboxProvider';
 import { ReportPage } from '@/features/report/ReportPage';
 import { ReportSubmitApiProvider } from '@/features/report/ReportSubmitApiContext';
 import { AppLayout } from './AppLayout';
@@ -37,9 +38,11 @@ export function App({
     <AuthProvider client={authClient}>
       <ReportsApiProvider api={reportsApi}>
         <ReportSubmitApiProvider api={submitApi}>
-          <BrowserRouter>
-            <AppRoutes />
-          </BrowserRouter>
+          <OutboxProvider>
+            <BrowserRouter>
+              <AppRoutes />
+            </BrowserRouter>
+          </OutboxProvider>
         </ReportSubmitApiProvider>
       </ReportsApiProvider>
     </AuthProvider>

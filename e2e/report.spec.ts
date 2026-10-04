@@ -196,6 +196,7 @@ test('report with photo: EXIF removed, orientation applied, anonymous submit', a
   expect(calls.bodies.add_report_photo).toEqual({
     p_report_id: REPORT_ID,
     p_path: calls.upload!.path,
+    p_taken_at: expect.stringMatching(/^\d{4}-\d\d-\d\dT/),
   });
 });
 
@@ -209,4 +210,58 @@ test('missing fields: error summary is announced, focused and accessible', async
   await expectNoA11yViolations(page);
   await summary.getByRole('link', { name: 'die Menge' }).click();
   await expect(page.getByRole('group', { name: 'Menge' })).toBeFocused();
+});
+
+test('offline: the report is kept on the device and sent later', async ({ page, context }) => {
+  const calls = await routeSupabase(page);
+  // Until `reachable` is set, every backend request fails like an unreachable server. Registered
+  // last, so Playwright asks this route first; fallback() hands over to the fake backend.
+  let reachable = false;
+  await page.route(`${SUPABASE_URL}/**`, (route) =>
+    reachable ? route.fallback() : route.abort('connectionrefused'),
+  );
+  await page.goto('/app/report');
+  await page.getByLabel('Foto auswählen').setInputFiles({
+    name: 'IMG_0002.jpg',
+    mimeType: 'image/jpeg',
+    buffer: await jpegWithExif(page),
+  });
+  await expect(page.getByRole('img', { name: 'Foto 1' })).toBeVisible();
+  await page.getByRole('button', { name: 'Meinen Standort verwenden' }).click();
+  await expect(page.getByText(/Genauigkeit etwa 9 m/)).toBeVisible();
+  await page.getByRole('radio', { name: 'Sperrmüll' }).check();
+  await page.getByRole('radio', { name: /Ein Haufen/ }).check();
+
+  await context.setOffline(true);
+  await page.getByRole('button', { name: 'Meldung absenden' }).click();
+  await expect(page.getByRole('heading', { name: 'Auf diesem Gerät gespeichert' })).toBeFocused();
+  await expect(page.getByText('Wartende Meldungen: 1')).toBeVisible();
+  await expectNoA11yViolations(page);
+  await context.setOffline(false);
+
+  // Survives a reload: the draft including the photo is in IndexedDB.
+  await page.reload();
+  await expect(page.getByText('Wartende Meldungen: 1')).toBeVisible();
+  expect(calls.log).toEqual([]);
+
+  // Back online with a reachable server. Whichever attempt runs first (start-up, timer or this
+  // event) sends the report; the outbox lock keeps it to exactly one.
+  reachable = true;
+  await page.evaluate(() => window.dispatchEvent(new Event('online')));
+  await expect(page.getByText('Gespeicherte Meldungen gesendet: 1')).toBeVisible();
+  expect(
+    calls.log.filter((c) => !['tenant_at_point', 'find_nearby_open_reports'].includes(c)),
+  ).toEqual(['signup', 'upload', 'submit_report', 'add_report_photo']);
+  expect(calls.upload!.path).toMatch(new RegExp(`^${USER_ID}/[0-9a-f-]{36}\\.webp$`));
+  expect(extractWebp(calls.upload!.body).subarray(8, 12).toString('latin1')).toBe('WEBP');
+  expect(calls.bodies.submit_report).toMatchObject({ p_category: 'bulky', p_size: 'pile' });
+  // The photo keeps the time the report was made, not the time it was sent.
+  expect(calls.bodies.add_report_photo).toMatchObject({
+    p_report_id: REPORT_ID,
+    p_taken_at: expect.stringMatching(/^\d{4}-\d\d-\d\dT/),
+  });
+
+  await page.reload();
+  await expect(page.getByRole('heading', { level: 1, name: 'Müll melden' })).toBeVisible();
+  await expect(page.getByText(/Wartende Meldungen/)).toHaveCount(0);
 });

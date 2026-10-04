@@ -1,5 +1,13 @@
 import type { AuthError, Session, SupabaseClient } from '@supabase/supabase-js';
-import { createContext, useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
 import { hasBackendConfig } from '@/lib/env';
 import { mapAuthError, type AuthErrorKey } from './authErrors';
 
@@ -89,13 +97,28 @@ export function AuthProvider({
     };
   }, [client]);
 
+  // One sign-in at a time: callers in the same render (e.g. the offline queue sending several
+  // reports) share it instead of each creating another anonymous user.
+  const signingIn = useRef<Promise<Session> | null>(null);
   const ensureSession = useCallback(async () => {
     if (!client) throw new Error('Backend not configured');
     if (session) return session;
-    const { data, error } = await client.signInAnonymously();
-    if (error || !data.session) throw error ?? new Error('Anonymous sign-in failed');
-    setSession(data.session);
-    return data.session;
+    signingIn.current ??= (async () => {
+      // A session stored on the device may not be in state yet (e.g. right after page load).
+      const stored = (await client.getSession()).data.session;
+      if (stored) return stored;
+      const { data, error } = await client.signInAnonymously();
+      if (error || !data.session) throw error ?? new Error('Anonymous sign-in failed');
+      return data.session;
+    })()
+      .then((next) => {
+        setSession(next);
+        return next;
+      })
+      .finally(() => {
+        signingIn.current = null;
+      });
+    return signingIn.current;
   }, [client, session]);
 
   const signIn = useCallback<AuthContextValue['signIn']>(

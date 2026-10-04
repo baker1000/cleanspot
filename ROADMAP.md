@@ -9,9 +9,17 @@ map screen) were done before this file existed; see `git log`.
 - [x] **5. Report flow** — 1–3 photos (compressed, EXIF stripped, WebP), auto GPS with editable pin,
       category, size, hazard type, optional comment with "no personal data" hint, duplicate warning
       within 30 m, anonymous submit. Verified on Supabase cloud (F3/F4).
-- [ ] **6. Offline queue** — reports saved in IndexedDB and synced when online; retry with the same
-      `client_id`; re-upload a photo from the local copy if attaching fails with `CS005`
-      (RELEASE_CHECKLIST).
+- [x] **6. Offline queue** — every report is saved in IndexedDB (draft + photo blobs) before the
+      first attempt; sent on app start, when the device comes back online, when the app becomes
+      visible, on "Send now", and on a backoff timer (30 s doubling to 30 min; 15 min after a rate
+      limit). Same `client_id` on every retry; one anonymous user for all queued reports; Web Lock
+      so two tabs never send at once; photo re-uploaded from the local copy on `CS005`; photo keeps
+      the original time (`p_taken_at`). Reports the server refuses go back to the form, or (from
+      the background) are listed with "Discard". Tested: unit, PGlite, e2e in Chromium (offline →
+      reload → sent), verify:remote 87/87.
+      Known limits: sends only while the app is open (Background Sync → step 10); queued reports
+      are not shown on the map; without IndexedDB there is no queue (sent directly, errors shown
+      as before).
 - [ ] **7. Report detail page** — photos, history timeline, actions: confirm, navigate,
       "I'll clear this", upload after-photo.
 - [ ] **8. Cleanup + bag pickup + pickup route** — after-photo must be taken within 50 m, timestamp
@@ -19,7 +27,8 @@ map screen) were done before this file existed; see `git log`.
       staff; optimized pickup route for the day.
 - [ ] **9. Profile + DSGVO** — account deletion including photos; privacy policy and imprint pages
       (templates marked "must be reviewed by a lawyer").
-- [ ] **10. PWA** — installable, offline-capable, offline caching of viewed map areas.
+- [ ] **10. PWA** — installable, offline-capable, offline caching of viewed map areas; Background
+      Sync for the offline queue where supported (Chromium/Android).
 - [ ] **11. Capacitor + Android build** — camera, geolocation, file system; signed release AAB,
       versioning, icons, splash, adaptive icon; iOS platform added (Info.plist permission texts),
       not published. Needs **JDK 21** (Capacitor 8 / Gradle 8.14.3 do not run on JDK 25).
