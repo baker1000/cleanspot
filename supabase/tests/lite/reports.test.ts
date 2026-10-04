@@ -250,6 +250,58 @@ describe('read access', () => {
     expect(cleared).toHaveLength(0);
   });
 
+  it('reports_in_bbox filters by category', async () => {
+    const r = await newReport(reporter, { category: 'electronics' });
+    const box = [r.lng - 0.001, r.lat - 0.001, r.lng + 0.001, r.lat + 0.001];
+    const electronics = await rpc<{ id: string }>(
+      as(null),
+      `select id from reports_in_bbox($1, $2, $3, $4, p_categories => array['electronics']::report_category[])`,
+      box,
+    );
+    expect(electronics.map((x) => x.id)).toEqual([r.id]);
+    const bulky = await rpc(
+      as(null),
+      `select id from reports_in_bbox($1, $2, $3, $4, p_categories => array['bulky']::report_category[])`,
+      box,
+    );
+    expect(bulky).toHaveLength(0);
+  });
+
+  it('reports_in_bbox is an exact lng/lat rectangle (edges inclusive)', async () => {
+    const r = await newReport(reporter);
+    const ids = async (box: number[]) =>
+      (
+        await rpc<{ id: string }>(as(null), `select id from reports_in_bbox($1, $2, $3, $4)`, box)
+      ).map((x) => x.id);
+    // Point exactly on the west/south edge: inside.
+    expect(await ids([r.lng, r.lat, r.lng + 0.01, r.lat + 0.01])).toContain(r.id);
+    // Box ending 1 m short of the point (east and north): outside.
+    expect(await ids([r.lng - 0.01, r.lat - 0.01, r.lng - 0.00001, r.lat + 0.01])).not.toContain(
+      r.id,
+    );
+    expect(await ids([r.lng - 0.01, r.lat - 0.01, r.lng + 0.01, r.lat - 0.00001])).not.toContain(
+      r.id,
+    );
+    // A wide viewport (whole of northern Germany) still finds it near its southern edge.
+    expect(await ids([5, r.lat - 0.00001, 15, 56])).toContain(r.id);
+  });
+
+  it('the bbox filter used by reports_in_bbox can use the spatial index', async () => {
+    // reports_in_bbox has SET search_path, so it is not inlined and EXPLAIN cannot see inside it.
+    // This checks the same predicate against the base table.
+    await db.query(`set enable_seqscan = off`);
+    try {
+      const { rows } = await db.query<{ 'QUERY PLAN': string }>(
+        `explain select id from public.reports r
+         where (r.location::extensions.geometry) operator(extensions.&&)
+               extensions.st_makeenvelope(9, 53, 10, 54, 4326)`,
+      );
+      expect(rows.map((x) => x['QUERY PLAN']).join('\n')).toContain('reports_location_geom_gix');
+    } finally {
+      await db.query(`reset enable_seqscan`);
+    }
+  });
+
   it('public timeline is visible to anon, base events are not', async () => {
     const { id } = await newReport(reporter);
     const events = await rpc(

@@ -5,7 +5,7 @@ let db: Db;
 
 beforeAll(async () => {
   db = await createTestDb();
-});
+}, 60_000);
 afterAll(async () => {
   await db?.close();
 });

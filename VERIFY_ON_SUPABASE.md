@@ -159,3 +159,11 @@ If any of these is wrong, rows in B–D may be passing in PGlite for the wrong r
 | #   | Rule / function                                                                        | PGlite test                             | Status |
 | --- | -------------------------------------------------------------------------------------- | --------------------------------------- | ------ |
 | E1  | Migrations create exactly one public tenant; points outside municipalities route to it | public tenant (migration 4) › (2 tests) | ✅     |
+
+## F. Migration 5 — map bbox query (`reports.test.ts`)
+
+| #   | Rule / function                                                                                 | PGlite test                                         | Status |
+| --- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------- | ------ |
+| F1  | `reports_in_bbox` (security definer) is callable by anon and returns only `reports_public` rows | reports_in_bbox returns reports in the box…         | ⬜     |
+| F2  | `p_categories` filter; exact lng/lat rectangle with inclusive edges, also for wide viewports    | filters by category / is an exact lng/lat rectangle | ⬜     |
+| F3  | The bbox predicate uses `reports_location_geom_gix`                                             | the bbox filter … can use the spatial index         | ⬜     |
