@@ -38,7 +38,7 @@ describe('LandingPage', () => {
   });
 
   it('links to Google Play when configured, otherwise "coming soon"', () => {
-    const url = 'https://play.google.com/store/apps/details?id=org.cleanspot.app';
+    const url = 'https://play.google.com/store/apps/details?id=store.thinktools.cleanspot';
     const { unmount } = renderApp({ landing: { stats: null, playStoreUrl: url } });
     expect(screen.getByRole('link', { name: 'Android-App bei Google Play' })).toHaveAttribute(
       'href',
@@ -66,6 +66,31 @@ describe('LandingPage', () => {
     // The browser's prompt can be used only once.
     expect(await screen.findByRole('link', { name: 'App öffnen' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'App installieren' })).toBeNull();
+  });
+
+  it('labels agree with the number (1 municipality, 2 municipalities)', async () => {
+    await changeLanguage('en', { persist: false });
+    const one = { ...STATS, reports: 1, municipalities: 1 };
+    const { unmount } = renderApp({
+      landing: { stats: { load: async () => one }, playStoreUrl: null },
+    });
+    const region = await screen.findByRole('region', { name: 'CleanSpot in numbers' });
+    await screen.findByText('participating municipality');
+    expect(screen.getByText('report')).toBeInTheDocument();
+    expect(region).not.toHaveTextContent('municipalities');
+    unmount();
+    await changeLanguage('de', { persist: false });
+    renderApp({ landing: { stats: { load: async () => STATS }, playStoreUrl: null } });
+    expect(await screen.findByText('teilnehmende Kommunen')).toBeInTheDocument();
+    expect(screen.getByText('Meldungen')).toBeInTheDocument();
+  });
+
+  it('"How it works" is in the UI language', async () => {
+    await changeLanguage('en', { persist: false });
+    renderApp();
+    const steps = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
+    expect(steps).toEqual(['1.Report', '2.Clear', '3.Collect']);
+    expect(screen.getByRole('heading', { level: 2, name: 'How it works' })).toBeInTheDocument();
   });
 
   it('formats numbers for the language (Arabic)', async () => {

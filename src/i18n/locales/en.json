@@ -32,12 +32,17 @@
       "title": "CleanSpot in numbers",
       "loading": "Loading the numbers …",
       "unavailable": "The numbers are not available right now.",
-      "reports": "reports",
-      "cleared": "cleared",
-      "clearedLast30Days": "cleared in the last 30 days",
+      "reports_one": "report",
+      "reports_other": "reports",
+      "cleared_one": "cleared",
+      "cleared_other": "cleared",
+      "clearedLast30Days_one": "cleared in the last 30 days",
+      "clearedLast30Days_other": "cleared in the last 30 days",
       "kgCleared": "kg of waste cleared (estimated)",
-      "open": "still open",
-      "municipalities": "participating municipalities"
+      "open_one": "still open",
+      "open_other": "still open",
+      "municipalities_one": "participating municipality",
+      "municipalities_other": "participating municipalities"
     },
     "how": {
       "title": "How it works",

@@ -1,4 +1,4 @@
-package com.getcapacitor.myapp;
+package store.thinktools.cleanspot;
 
 import static org.junit.Assert.*;
 

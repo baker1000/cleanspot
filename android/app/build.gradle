@@ -19,10 +19,10 @@ if (keystorePropsFile.exists()) {
 }
 
 android {
-    namespace = "org.cleanspot.app"
+    namespace = "store.thinktools.cleanspot"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "org.cleanspot.app"
+        applicationId "store.thinktools.cleanspot"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode appVersionCode

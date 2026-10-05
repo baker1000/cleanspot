@@ -142,7 +142,9 @@ function StatsSection() {
               key={key}
               className="flex flex-col-reverse rounded-xl border border-slate-200 p-4 text-center"
             >
-              <dt className="text-sm text-slate-700">{t(`landing.stats.${label}`)}</dt>
+              <dt className="text-sm text-slate-700">
+                {t(`landing.stats.${label}`, { count: state.stats[key] })}
+              </dt>
               <dd className="text-2xl font-bold text-brand-900">{format(state.stats[key])}</dd>
             </div>
           ))}

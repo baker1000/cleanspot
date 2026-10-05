@@ -3,7 +3,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 // Native app (Android primary, iOS prepared). The web build in dist/ is bundled into the app;
 // `npm run android:sync` rebuilds and copies it.
 const config: CapacitorConfig = {
-  appId: 'org.cleanspot.app',
+  appId: 'store.thinktools.cleanspot',
   appName: 'CleanSpot',
   webDir: 'dist',
   // Identifies the app to the tile and geocoding servers (Nominatim usage policy).

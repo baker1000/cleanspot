@@ -26,7 +26,7 @@ been built or run yet: that needs a Mac.
 3. **Localised permission texts:** in Xcode, add the languages (Project → Info → Localizations:
    English, Arabic, French, Turkish, Ukrainian) and add the existing `InfoPlist.strings` files to
    the App target (they are on disk but not yet referenced in `project.pbxproj`).
-4. **Signing:** set the team and bundle id `org.cleanspot.app` (Signing & Capabilities).
+4. **Signing:** set the team and bundle id `store.thinktools.cleanspot` (Signing & Capabilities).
 5. **Version:** set `MARKETING_VERSION` to the `package.json` version and increase
    `CURRENT_PROJECT_VERSION` for every upload (Android does this automatically from
    `package.json`; iOS does not yet).

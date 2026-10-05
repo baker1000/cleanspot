@@ -32,12 +32,17 @@
       "title": "Rakamlarla CleanSpot",
       "loading": "Rakamlar yükleniyor …",
       "unavailable": "Rakamlar şu anda kullanılamıyor.",
-      "reports": "bildirim",
-      "cleared": "temizlendi",
-      "clearedLast30Days": "son 30 günde temizlendi",
+      "reports_one": "bildirim",
+      "reports_other": "bildirim",
+      "cleared_one": "temizlendi",
+      "cleared_other": "temizlendi",
+      "clearedLast30Days_one": "son 30 günde temizlendi",
+      "clearedLast30Days_other": "son 30 günde temizlendi",
       "kgCleared": "kg çöp temizlendi (tahmini)",
-      "open": "hâlâ açık",
-      "municipalities": "katılan belediye"
+      "open_one": "hâlâ açık",
+      "open_other": "hâlâ açık",
+      "municipalities_one": "katılan belediye",
+      "municipalities_other": "katılan belediye"
     },
     "how": {
       "title": "Nasıl çalışır",

@@ -15,6 +15,7 @@ Use multi-tenancy: one install can serve several municipalities plus the public.
 
 ## Platforms
 - One codebase: React web app (website + PWA) wrapped with Capacitor.
+- App ID (fixed, never change): `store.thinktools.cleanspot` — Android applicationId and namespace, Java package, Capacitor appId and iOS bundle ID. Based on the owner's domain thinktools.store; a Play Store app ID cannot be changed after the first upload.
 - Android: primary native target. Fully build, test, and prepare for Google Play release:
   - signed release AAB, versioning, app icons, splash screen, adaptive icon
   - Play Store listing texts in German, English, Arabic (title, short + full description)

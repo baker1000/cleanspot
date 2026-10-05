@@ -1,4 +1,4 @@
-package org.cleanspot.app;
+package store.thinktools.cleanspot;
 
 import com.getcapacitor.BridgeActivity;
 

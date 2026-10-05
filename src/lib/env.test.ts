@@ -48,7 +48,7 @@ describe('parseMapEnv', () => {
 
 describe('parsePlayStoreUrl', () => {
   it('accepts only https Play Store links', () => {
-    const url = 'https://play.google.com/store/apps/details?id=org.cleanspot.app';
+    const url = 'https://play.google.com/store/apps/details?id=store.thinktools.cleanspot';
     expect(parsePlayStoreUrl({ VITE_PLAY_STORE_URL: url })).toBe(url);
     expect(parsePlayStoreUrl({})).toBeNull();
     expect(parsePlayStoreUrl({ VITE_PLAY_STORE_URL: 'http://play.google.com/x' })).toBeNull();

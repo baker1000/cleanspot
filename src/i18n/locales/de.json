@@ -32,12 +32,17 @@
       "title": "CleanSpot in Zahlen",
       "loading": "Zahlen werden geladen …",
       "unavailable": "Die Zahlen sind gerade nicht verfügbar.",
-      "reports": "Meldungen",
-      "cleared": "beseitigt",
-      "clearedLast30Days": "beseitigt in den letzten 30 Tagen",
+      "reports_one": "Meldung",
+      "reports_other": "Meldungen",
+      "cleared_one": "beseitigt",
+      "cleared_other": "beseitigt",
+      "clearedLast30Days_one": "beseitigt in den letzten 30 Tagen",
+      "clearedLast30Days_other": "beseitigt in den letzten 30 Tagen",
       "kgCleared": "kg Müll beseitigt (geschätzt)",
-      "open": "noch offen",
-      "municipalities": "teilnehmende Kommunen"
+      "open_one": "noch offen",
+      "open_other": "noch offen",
+      "municipalities_one": "teilnehmende Kommune",
+      "municipalities_other": "teilnehmende Kommunen"
     },
     "how": {
       "title": "So funktioniert es",

@@ -88,7 +88,7 @@ map screen) were done before this file existed; see `git log`.
       window (10 s) must cover it; the PNG icons are rendered with Playwright (`npm run icons`);
       the Google Play link uses text, not Google's official badge; Capacitor (step 11) must decide
       whether the native app uses the service worker; DB suite I1 not yet run on the cloud.
-- [x] **11. Capacitor + Android build** — Capacitor 8 (`org.cleanspot.app`), plugins camera,
+- [x] **11. Capacitor + Android build** — Capacitor 8 (`store.thinktools.cleanspot`), plugins camera,
       geolocation, filesystem, share, splash screen, app (all MIT). `src/lib/native.ts`: system
       camera for "Take photo" (report, after-photo, bags), Geolocation plugin with permission
       dialog, data export via the share sheet, splash hidden after the first render, Android back
