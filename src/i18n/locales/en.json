@@ -523,5 +523,43 @@
     "reload": "Update now",
     "later": "Later",
     "offline": "You are offline. Map areas you have already viewed stay visible; new reports are saved on the device and sent later."
+  },
+  "demo": {
+    "notice": "Demo: all reports and people here are invented.",
+    "switchRole": "Switch demo role",
+    "accounts": {
+      "title": "Demo accounts",
+      "intro": "Try CleanSpot in every role. Each button signs you in to a demo account.",
+      "current": "You are signed in as: {{role}} (demo)",
+      "unavailable": "This demo account is not set up on the server. Ask the operator to load the demo data.",
+      "active": "Signed in",
+      "signInAs": "Sign in as {{role}}"
+    },
+    "roles": {
+      "citizen": {
+        "name": "Citizen",
+        "try": "Report waste, confirm reports of others, see your own reports on the map."
+      },
+      "volunteer": {
+        "name": "Volunteer",
+        "try": "Take on a cleanup (\"I'll clear this\"), upload the after-photo, report bags for pickup."
+      },
+      "organizer": {
+        "name": "Organiser",
+        "try": "Clears like a volunteer. Cleanup events for groups follow in Milestone 2."
+      },
+      "municipality_staff": {
+        "name": "Municipal staff",
+        "try": "Landkreis Harburg (demo): pickup route with the open bag pickups, hazardous reports."
+      },
+      "municipality_admin": {
+        "name": "Municipal admin",
+        "try": "Everything staff can do in Landkreis Harburg (demo). The admin dashboard follows in Milestone 2."
+      },
+      "super_admin": {
+        "name": "Super admin",
+        "try": "Operator of the whole installation, with staff rights everywhere. Moderation tools follow in Milestone 2."
+      }
+    }
   }
 }

@@ -18,6 +18,7 @@ import { OutboxProvider } from '@/features/report/outbox/OutboxProvider';
 import { createMemoryStore, type OutboxStore } from '@/features/report/outbox/store';
 import { ReportSubmitApiProvider } from '@/features/report/ReportSubmitApiContext';
 import { LandingProvider, type LandingConfig } from '@/features/landing/LandingContext';
+import { DemoProvider, type DemoConfig } from '@/features/demo/DemoContext';
 
 export function renderWithProviders(
   ui: ReactElement,
@@ -32,6 +33,7 @@ export function renderWithProviders(
     pickupsApi = null,
     profileApi = null,
     landing = { stats: null, playStoreUrl: null },
+    demo = null,
   }: RenderOptions = {},
 ) {
   return {
@@ -45,7 +47,9 @@ export function renderWithProviders(
                 <PickupsApiProvider api={pickupsApi}>
                   <ProfileApiProvider api={profileApi}>
                     <LandingProvider config={landing}>
-                      <MemoryRouter initialEntries={[route]}>{ui}</MemoryRouter>
+                      <DemoProvider config={demo}>
+                        <MemoryRouter initialEntries={[route]}>{ui}</MemoryRouter>
+                      </DemoProvider>
                     </LandingProvider>
                   </ProfileApiProvider>
                 </PickupsApiProvider>
@@ -71,6 +75,8 @@ export interface RenderOptions {
   pickupsApi?: PickupsApi | null;
   profileApi?: ProfileApi | null;
   landing?: LandingConfig;
+  /** Demo mode; off by default. */
+  demo?: DemoConfig;
 }
 
 export const renderApp = (opts: RenderOptions = {}) => renderWithProviders(<AppRoutes />, opts);

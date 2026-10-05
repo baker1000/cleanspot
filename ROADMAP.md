@@ -115,8 +115,31 @@ map screen) were done before this file existed; see `git log`.
       after sharing; landscape side insets (camera cutout) are not handled; email links (account
       confirmation) open the website, not the app (App Links: later); the upload key exists only on
       this computer until backed up; iOS needs a Mac for every remaining step.
-- [ ] **12. Demo mode** — seed data around Hamburg / Landkreis Harburg and demo accounts for each
-      role.
+- [x] **12. Demo mode** — `supabase/demo/seed.sql` (idempotent, plain SQL; `remove.sql`):
+      demo municipality "Landkreis Harburg (Demo)" (rough outline), 32 reports (22 in Landkreis
+      Harburg, 10 in Hamburg = public area) covering every status and category, incl. hazardous
+      reports (one in progress with staff), a duplicate within 30 m, rejected reports, unpublished
+      fresh reports; history with confirmations, claims, clean-ups, bags reported/collected; 7 bag
+      pickups (5 open → staff route), kg from size or bags. One account per role
+      (`supabase/demo/accounts.json`: citizen, volunteer + organizer in the public tenant,
+      municipality staff + admin of the demo municipality, super admin), one shared random
+      password in git-ignored `demo-login.local` (never printed). Script `npm run demo --` with
+      `seed --yes`, `remove`, `status`, `remove-test`, `--env <file>` (accounts via the Auth API; replaces
+      `cloud:demo` and `cloud:staff-test`, and removes their old data). App: `VITE_DEMO_MODE` +
+      `VITE_DEMO_PASSWORD` (`npm run cloud:frontend-env -- --force --demo`) show "demo data is
+      invented" on every app page and one-tap sign-in per role on the profile page. All 6
+      languages. Tested: PGlite (demo.test.ts: routing, roles, RLS per role, history consistency,
+      idempotency, removal keeps real data), component tests, e2e 56/56, on the cloud project:
+      seeded, all 6 accounts sign in with the publishable key, pickups only for staff/admin/super
+      admin, roles and profiles as intended.
+      Known limits: demo reports have no photos; the switcher was not looked at in a browser or on
+      the phone yet (demo mode is off in `.env.local`); a demo-mode build contains the demo
+      password, so anyone with it can sign in as super admin of that project (demo projects
+      only, documented); admin dashboard, moderation, events are Milestone 2, so admin and super
+      admin can do little more than staff today; seeding on the cloud also removed the old
+      `lk-harburg` test tenant and 8 own test reports routed to it (as its own `remove` did); verify:remote is blocked until `npm run demo -- remove`; no local
+      `supabase db reset` seed (config.toml's `seed.sql` does not exist; use `npm run demo`
+      with `--env`).
 - [ ] **13. Docs + final test run** — ARCHITECTURE.md (data model, RLS), PLAY_STORE.md (listing in
       de/en/ar, Data Safety answers, closed testing 12+ testers / 14 days), IOS_LATER.md, PITCH.md
       (German), README in English and German (incl. Supabase cloud and Docker deployment, Android

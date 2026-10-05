@@ -6,6 +6,7 @@ import { LanguageSelect } from '@/components/LanguageSelect';
 import { Alert } from '@/components/ui/Alert';
 import { SkipLink } from '@/components/ui/SkipLink';
 import { useAuth } from '@/features/auth/useAuth';
+import { DemoNotice } from '@/features/demo/DemoAccounts';
 import { OutboxStatus } from '@/features/report/outbox/OutboxStatus';
 import { OfflineNotice } from './OfflineNotice';
 
@@ -42,6 +43,7 @@ export function AppLayout() {
 
       {/* Reports waiting on this device (offline queue); visible on every app page. */}
       <div className="flex flex-col gap-2 px-4 pt-2 empty:hidden">
+        <DemoNotice />
         <OfflineNotice />
         <OutboxStatus />
       </div>

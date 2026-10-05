@@ -534,5 +534,43 @@
     "reload": "Mettre à jour",
     "later": "Plus tard",
     "offline": "Vous êtes hors ligne. Les zones de carte déjà consultées restent visibles ; les nouveaux signalements sont enregistrés sur l’appareil et envoyés plus tard."
+  },
+  "demo": {
+    "notice": "Démo : tous les signalements et toutes les personnes ici sont fictifs.",
+    "switchRole": "Changer de rôle de démo",
+    "accounts": {
+      "title": "Comptes de démo",
+      "intro": "Essayez CleanSpot dans chaque rôle. Chaque bouton vous connecte à un compte de démo.",
+      "current": "Vous êtes connecté·e en tant que : {{role}} (démo)",
+      "unavailable": "Ce compte de démo n’est pas configuré sur le serveur. Demandez à l’exploitant de charger les données de démo.",
+      "active": "Connecté·e",
+      "signInAs": "Se connecter en tant que {{role}}"
+    },
+    "roles": {
+      "citizen": {
+        "name": "Citoyen·ne",
+        "try": "Signaler des déchets, confirmer les signalements des autres, voir vos signalements sur la carte."
+      },
+      "volunteer": {
+        "name": "Bénévole",
+        "try": "Prendre en charge un nettoyage (« Je m’en occupe »), envoyer la photo après, signaler des sacs à enlever."
+      },
+      "organizer": {
+        "name": "Organisateur·rice",
+        "try": "Nettoie comme les bénévoles. Les événements de nettoyage pour groupes arrivent au jalon 2."
+      },
+      "municipality_staff": {
+        "name": "Agent·e municipal·e",
+        "try": "Landkreis Harburg (démo) : tournée d’enlèvement des sacs en attente, signalements dangereux."
+      },
+      "municipality_admin": {
+        "name": "Admin municipal·e",
+        "try": "Tout ce que peuvent faire les agents dans le Landkreis Harburg (démo). Le tableau de bord arrive au jalon 2."
+      },
+      "super_admin": {
+        "name": "Super admin",
+        "try": "Exploitant de toute l’installation, avec les droits des agents partout. Les outils de modération arrivent au jalon 2."
+      }
+    }
   }
 }

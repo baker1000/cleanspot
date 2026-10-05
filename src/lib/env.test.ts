@@ -1,4 +1,4 @@
-import { parseEnv, parseMapEnv, parsePlayStoreUrl } from './env';
+import { parseDemoConfig, parseEnv, parseMapEnv, parsePlayStoreUrl } from './env';
 
 const base = { VITE_SUPABASE_URL: 'http://127.0.0.1:54321', VITE_SUPABASE_ANON_KEY: 'anon' };
 
@@ -54,5 +54,15 @@ describe('parsePlayStoreUrl', () => {
     expect(parsePlayStoreUrl({ VITE_PLAY_STORE_URL: 'http://play.google.com/x' })).toBeNull();
     expect(parsePlayStoreUrl({ VITE_PLAY_STORE_URL: 'https://evil.example/x' })).toBeNull();
     expect(parsePlayStoreUrl({ VITE_PLAY_STORE_URL: 'javascript:alert(1)' })).toBeNull();
+  });
+});
+
+describe('parseDemoConfig', () => {
+  it('needs demo mode, a backend and the shared password', () => {
+    const demo = { ...base, VITE_DEMO_MODE: 'true', VITE_DEMO_PASSWORD: ' secret ' };
+    expect(parseDemoConfig(demo)).toEqual({ password: 'secret' });
+    expect(parseDemoConfig({ ...demo, VITE_DEMO_MODE: 'false' })).toBeNull();
+    expect(parseDemoConfig({ ...demo, VITE_DEMO_PASSWORD: '' })).toBeNull();
+    expect(parseDemoConfig({ VITE_DEMO_MODE: 'true', VITE_DEMO_PASSWORD: 'x' })).toBeNull();
   });
 });

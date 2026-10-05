@@ -3,6 +3,7 @@ import { AuthProvider, type AuthClient } from '@/features/auth/AuthProvider';
 import type { DetailApi } from '@/features/detail/api';
 import { DetailApiProvider } from '@/features/detail/DetailApiContext';
 import { DetailPage } from '@/features/detail/DetailPage';
+import { DemoProvider } from '@/features/demo/DemoContext';
 import type { PickupsApi } from '@/features/pickups/api';
 import { PickupsApiProvider } from '@/features/pickups/PickupsApiContext';
 import { PickupsPage } from '@/features/pickups/PickupsPage';
@@ -73,16 +74,18 @@ export function App({
               <PickupsApiProvider api={pickupsApi}>
                 <ProfileApiProvider api={profileApi}>
                   <LandingProvider>
-                    <BrowserRouter>
-                      <AppRoutes />
-                      <UpdatePrompt />
-                      {/* Solid strip behind the system status bar (edge-to-edge native app;
+                    <DemoProvider>
+                      <BrowserRouter>
+                        <AppRoutes />
+                        <UpdatePrompt />
+                        {/* Solid strip behind the system status bar (edge-to-edge native app;
                           zero height in browsers), so scrolled content never runs under it. */}
-                      <div
-                        aria-hidden="true"
-                        className="pointer-events-none fixed inset-x-0 top-0 z-40 h-[var(--safe-top)] bg-white"
-                      />
-                    </BrowserRouter>
+                        <div
+                          aria-hidden="true"
+                          className="pointer-events-none fixed inset-x-0 top-0 z-40 h-[var(--safe-top)] bg-white"
+                        />
+                      </BrowserRouter>
+                    </DemoProvider>
                   </LandingProvider>
                 </ProfileApiProvider>
               </PickupsApiProvider>

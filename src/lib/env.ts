@@ -76,6 +76,20 @@ export function parseEnv(raw: RawEnv): AppEnv {
   };
 }
 
+/**
+ * Demo mode (VITE_DEMO_MODE=true): a notice that the data is invented and a switcher for the
+ * demo accounts, which all share VITE_DEMO_PASSWORD (written by `npm run demo -- seed`). The
+ * password is public in such a build, so only demo projects may be built this way.
+ * Needs a backend and a password; otherwise demo mode is off.
+ */
+export function parseDemoConfig(raw: RawEnv): { password: string } | null {
+  if (!hasBackendConfig(raw) || !parseEnv(raw).demoMode) return null;
+  const password = raw.VITE_DEMO_PASSWORD;
+  return typeof password === 'string' && password.trim() !== ''
+    ? { password: password.trim() }
+    : null;
+}
+
 /** Google Play listing of the Android app; only a real Play Store URL is accepted. */
 export function parsePlayStoreUrl(raw: RawEnv): string | null {
   const value = raw.VITE_PLAY_STORE_URL;

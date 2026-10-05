@@ -43,9 +43,42 @@ Results are tracked in [VERIFY_ON_SUPABASE.md](VERIFY_ON_SUPABASE.md).
 ### Running the frontend against the cloud project
 
 1. `npm run cloud:frontend-env` writes `.env.local` with **only** the project URL and the publishable key (it refuses secret keys). `.env.local` is git-ignored.
-2. Optional: `npm run cloud:demo -- seed` adds 15 demo reports around Stelle / Landkreis Harburg (marked `[Demo]`, no user accounts). `npm run cloud:demo -- status` counts them, `npm run cloud:demo -- remove` deletes them. Remove them before `npm run verify:remote`, which only runs on a project without reports.
-3. Optional: `npm run cloud:staff-test -- setup` creates a test tenant "Landkreis Harburg (Test)" (rough outline) with one staff account and 6 open bag pickups, for trying `/app/pickups`. The login is written to `cloud-staff-login.local` (git-ignored; the password is never printed). `-- status` / `-- remove`; remove it before `npm run verify:remote`.
-4. `npm run dev` and open http://127.0.0.1:5173/app.
+2. Optional: demo data and demo accounts, see [Demo mode](#demo-mode).
+3. `npm run dev` and open http://127.0.0.1:5173/app.
+
+## Demo mode
+
+For a pitch or for trying every role. **Only on a project used for demos**: the demo accounts
+share one password, and a demo-mode build contains it.
+
+- `npm run demo -- seed --yes` creates the demo municipality **Landkreis Harburg (Demo)** (rough
+  outline, not the official border), 32 reports around Hamburg (public area) and Landkreis
+  Harburg in every status (incl. a hazardous report in progress with staff, a duplicate, a
+  rejected one, timelines with confirmations, claims and clean-ups), 7 bag pickups (5 open, so
+  the staff pickup route has stops) and one account per role:
+
+  | Role                                   | E-mail                              |
+  | -------------------------------------- | ----------------------------------- |
+  | citizen                                | `citizen@demo.cleanspot.invalid`    |
+  | volunteer (public area)                | `volunteer@demo.cleanspot.invalid`  |
+  | organizer (public area)                | `organizer@demo.cleanspot.invalid`  |
+  | municipality_staff (Landkreis Harburg) | `staff@demo.cleanspot.invalid`      |
+  | municipality_admin (Landkreis Harburg) | `admin@demo.cleanspot.invalid`      |
+  | super_admin                            | `superadmin@demo.cleanspot.invalid` |
+
+  The password is random, kept in `demo-login.local` (git-ignored, reused on the next seed) and
+  never printed. Seeding again resets the demo data (and anything the demo accounts did).
+
+- `npm run cloud:frontend-env -- --force --demo` turns on demo mode in `.env.local`
+  (`VITE_DEMO_MODE=true`, `VITE_DEMO_PASSWORD`): every app page says the data is invented, and
+  the profile page has one-tap sign-in for each role. Without `--demo` it is off again.
+- `npm run demo -- status` counts the demo data; `npm run demo -- remove` deletes it with the
+  accounts and their photo files. `npm run verify:remote` runs only on a project without data:
+  `remove` first, and `npm run demo -- remove-test` deletes other (own test) reports.
+- Another project (e.g. a local `supabase start`): `--env <file>` with `SUPABASE_URL`,
+  `SUPABASE_SECRET_KEY` and `SUPABASE_DB_URL`. The data itself is plain SQL in
+  `supabase/demo/seed.sql` (`remove.sql`), tested in `supabase/tests/lite/demo.test.ts`.
+- Demo reports have no photos (no freely licensed pictures of waste dumps are included).
 
 ## PWA (installable, offline)
 

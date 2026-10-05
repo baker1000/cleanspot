@@ -1,0 +1,8 @@
+[
+  { "role": "citizen", "email": "citizen@demo.cleanspot.invalid" },
+  { "role": "volunteer", "email": "volunteer@demo.cleanspot.invalid" },
+  { "role": "organizer", "email": "organizer@demo.cleanspot.invalid" },
+  { "role": "municipality_staff", "email": "staff@demo.cleanspot.invalid" },
+  { "role": "municipality_admin", "email": "admin@demo.cleanspot.invalid" },
+  { "role": "super_admin", "email": "superadmin@demo.cleanspot.invalid" }
+]

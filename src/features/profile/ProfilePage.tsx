@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
 import { AccountPanel } from '@/features/auth/AccountPanel';
+import { DemoAccounts } from '@/features/demo/DemoAccounts';
 import { useAuth } from '@/features/auth/useAuth';
 import { LegalLinks } from '@/features/legal/LegalLinks';
 import { StaffPickupLink } from '@/features/pickups/PickupsPage';
@@ -38,6 +39,7 @@ export function ProfilePage({
     <div className="mx-auto flex max-w-md flex-col gap-4">
       <h1 className="text-2xl font-bold">{t('profile.title')}</h1>
       {deleted && <Alert tone="success">{t('profile.delete.done')}</Alert>}
+      <DemoAccounts />
       <AccountPanel />
       <StaffPickupLink />
       {api && session && (

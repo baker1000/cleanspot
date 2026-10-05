@@ -523,5 +523,43 @@
     "reload": "Jetzt aktualisieren",
     "later": "Später",
     "offline": "Sie sind offline. Bereits angesehene Kartenausschnitte bleiben sichtbar; neue Meldungen werden auf dem Gerät gespeichert und später gesendet."
+  },
+  "demo": {
+    "notice": "Demo: Alle Meldungen und Personen hier sind erfunden.",
+    "switchRole": "Demo-Rolle wechseln",
+    "accounts": {
+      "title": "Demo-Konten",
+      "intro": "Probieren Sie CleanSpot in jeder Rolle aus. Jede Schaltfläche meldet Sie mit einem Demo-Konto an.",
+      "current": "Sie sind angemeldet als: {{role}} (Demo)",
+      "unavailable": "Dieses Demo-Konto ist auf dem Server nicht eingerichtet. Bitten Sie den Betreiber, die Demodaten zu laden.",
+      "active": "Angemeldet",
+      "signInAs": "Anmelden als {{role}}"
+    },
+    "roles": {
+      "citizen": {
+        "name": "Bürgerin/Bürger",
+        "try": "Müll melden, Meldungen anderer bestätigen, eigene Meldungen auf der Karte sehen."
+      },
+      "volunteer": {
+        "name": "Freiwillige/r",
+        "try": "Eine Aufräumaktion übernehmen („Ich räume das auf“), Nachher-Foto hochladen, Säcke zur Abholung melden."
+      },
+      "organizer": {
+        "name": "Organisator/in",
+        "try": "Räumt auf wie Freiwillige. Aufräumaktionen für Gruppen folgen in Meilenstein 2."
+      },
+      "municipality_staff": {
+        "name": "Mitarbeiter/in der Kommune",
+        "try": "Landkreis Harburg (Demo): Abholroute mit den offenen Sack-Abholungen, Gefahrstoff-Meldungen."
+      },
+      "municipality_admin": {
+        "name": "Admin der Kommune",
+        "try": "Alles, was Mitarbeitende im Landkreis Harburg (Demo) können. Das Admin-Dashboard folgt in Meilenstein 2."
+      },
+      "super_admin": {
+        "name": "Super-Admin",
+        "try": "Betreiber der gesamten Installation, mit Mitarbeiterrechten überall. Moderationswerkzeuge folgen in Meilenstein 2."
+      }
+    }
   }
 }

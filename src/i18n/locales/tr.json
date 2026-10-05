@@ -523,5 +523,43 @@
     "reload": "Şimdi güncelle",
     "later": "Sonra",
     "offline": "Çevrimdışısınız. Daha önce baktığınız harita bölümleri görünür kalır; yeni bildirimler cihazda saklanır ve sonra gönderilir."
+  },
+  "demo": {
+    "notice": "Demo: Buradaki tüm bildirimler ve kişiler hayalidir.",
+    "switchRole": "Demo rolünü değiştir",
+    "accounts": {
+      "title": "Demo hesapları",
+      "intro": "CleanSpot’u her rolde deneyin. Her düğme sizi bir demo hesabıyla oturum açtırır.",
+      "current": "Şu rolle oturum açtınız: {{role}} (demo)",
+      "unavailable": "Bu demo hesabı sunucuda kurulu değil. İşletmeciden demo verilerini yüklemesini isteyin.",
+      "active": "Oturum açık",
+      "signInAs": "{{role}} olarak oturum aç"
+    },
+    "roles": {
+      "citizen": {
+        "name": "Vatandaş",
+        "try": "Çöp bildirin, başkalarının bildirimlerini onaylayın, kendi bildirimlerinizi haritada görün."
+      },
+      "volunteer": {
+        "name": "Gönüllü",
+        "try": "Bir temizliği üstlenin („Bunu ben temizlerim“), sonrası fotoğrafını yükleyin, toplanacak torbaları bildirin."
+      },
+      "organizer": {
+        "name": "Organizatör",
+        "try": "Gönüllüler gibi temizler. Gruplar için temizlik etkinlikleri 2. aşamada gelecek."
+      },
+      "municipality_staff": {
+        "name": "Belediye çalışanı",
+        "try": "Landkreis Harburg (demo): açık torba toplama işleri için toplama rotası, tehlikeli atık bildirimleri."
+      },
+      "municipality_admin": {
+        "name": "Belediye yöneticisi",
+        "try": "Landkreis Harburg’da (demo) çalışanların yapabildiği her şey. Yönetim paneli 2. aşamada gelecek."
+      },
+      "super_admin": {
+        "name": "Süper yönetici",
+        "try": "Tüm kurulumun işletmecisi, her yerde çalışan yetkileriyle. Moderasyon araçları 2. aşamada gelecek."
+      }
+    }
   }
 }
