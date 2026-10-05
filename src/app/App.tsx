@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 import { AuthProvider, type AuthClient } from '@/features/auth/AuthProvider';
 import type { DetailApi } from '@/features/detail/api';
 import { DetailApiProvider } from '@/features/detail/DetailApiContext';
@@ -20,16 +20,18 @@ import type { ReportSubmitApi } from '@/features/report/api';
 import { OutboxProvider } from '@/features/report/outbox/OutboxProvider';
 import { ReportPage } from '@/features/report/ReportPage';
 import { ReportSubmitApiProvider } from '@/features/report/ReportSubmitApiContext';
+import { isNative } from '@/lib/native';
 import { AppLayout } from './AppLayout';
 import { NotFoundPage } from './pages';
 import { UpdatePrompt } from './UpdatePrompt';
 
 const LEGAL_DOCS = Object.keys(LEGAL_PATHS) as LegalDoc[];
 
-export function AppRoutes() {
+export function AppRoutes({ native = isNative() }: { native?: boolean }) {
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
+      {/* The landing page is the website; the native app opens on the map. */}
+      <Route path="/" element={native ? <Navigate to="/app" replace /> : <LandingPage />} />
       {LEGAL_DOCS.flatMap((doc) =>
         [LEGAL_PATHS[doc], LEGAL_ALIASES[doc]].map((path) => (
           <Route key={path} path={path} element={<LegalPage doc={doc} />} />
@@ -74,6 +76,12 @@ export function App({
                     <BrowserRouter>
                       <AppRoutes />
                       <UpdatePrompt />
+                      {/* Solid strip behind the system status bar (edge-to-edge native app;
+                          zero height in browsers), so scrolled content never runs under it. */}
+                      <div
+                        aria-hidden="true"
+                        className="pointer-events-none fixed inset-x-0 top-0 z-40 h-[var(--safe-top)] bg-white"
+                      />
                     </BrowserRouter>
                   </LandingProvider>
                 </ProfileApiProvider>

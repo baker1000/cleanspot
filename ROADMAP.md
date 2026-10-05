@@ -88,9 +88,33 @@ map screen) were done before this file existed; see `git log`.
       window (10 s) must cover it; the PNG icons are rendered with Playwright (`npm run icons`);
       the Google Play link uses text, not Google's official badge; Capacitor (step 11) must decide
       whether the native app uses the service worker; DB suite I1 not yet run on the cloud.
-- [ ] **11. Capacitor + Android build** — camera, geolocation, file system; signed release AAB,
-      versioning, icons, splash, adaptive icon; iOS platform added (Info.plist permission texts),
-      not published. Needs **JDK 21** (Capacitor 8 / Gradle 8.14.3 do not run on JDK 25).
+- [x] **11. Capacitor + Android build** — Capacitor 8 (`org.cleanspot.app`), plugins camera,
+      geolocation, filesystem, share, splash screen, app (all MIT). `src/lib/native.ts`: system
+      camera for "Take photo" (report, after-photo, bags), Geolocation plugin with permission
+      dialog, data export via the share sheet, splash hidden after the first render, Android back
+      button; the native app opens on the map and does not register the service worker. Android:
+      permissions INTERNET, CAMERA, location only (camera/GPS hardware optional), no app-data
+      backup (DSGVO), targetSdk 36 / minSdk 24, version from `package.json` (0.1.0 → code 100),
+      release signing from git-ignored `keystore.properties` (`npm run android:keystore`; upload
+      key created), adaptive icon + round + legacy icons and Android 12+ splash rendered by
+      `npm run icons`, safe areas for edge-to-edge (header padding, status-bar strip).
+      `npm run android:apk` / `android:aab` build a debug APK and a signed release AAB (signature
+      verified). iOS platform added (SPM) with Info.plist permission texts (de) and InfoPlist.strings
+      in 6 languages, icon and splash; not built (needs a Mac): IOS_LATER.md. Found and fixed on
+      the emulator: content under the status bar; the location line was always German in other
+      languages (`lng` interpolation variable switched i18next's language; since step 5).
+      Tested: unit (native branches with mocked plugins, i18n regression), e2e 56/56, Android 17
+      emulator (API 37 image): app starts, landing redirects to the map, OpenFreeMap tiles and
+      cloud reports load, camera permission + system camera + photo back in the form, location
+      permission + position.
+      Known limits: not tested on a real phone yet; a report was not sent from the emulator (it
+      would create data in the cloud project); RTL and the share sheet export not checked on the
+      emulator; no Background Sync in the native app (sent while open, as on iOS); Android 12+
+      shows the icon on the system splash only for launcher starts; release build is not minified
+      (R8 off; the code is mostly the web bundle); the "file downloaded" message is also shown
+      after sharing; landscape side insets (camera cutout) are not handled; email links (account
+      confirmation) open the website, not the app (App Links: later); the upload key exists only on
+      this computer until backed up; iOS needs a Mac for every remaining step.
 - [ ] **12. Demo mode** — seed data around Hamburg / Landkreis Harburg and demo accounts for each
       role.
 - [ ] **13. Docs + final test run** — ARCHITECTURE.md (data model, RLS), PLAY_STORE.md (listing in

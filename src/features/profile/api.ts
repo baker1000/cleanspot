@@ -3,6 +3,7 @@
 // leave_volunteer_role).
 import { classifyActionError } from '@/features/detail/api';
 import { PHOTO_BUCKET } from '@/features/report/api';
+import { isNative, shareTextFile } from '@/lib/native';
 
 /** Photo links in the export stay valid this long (the export says until when). */
 export const EXPORT_PHOTO_URL_TTL_S = 7 * 24 * 3600;
@@ -136,4 +137,10 @@ export function downloadFile({ fileName, json }: DataExport, doc: Document = doc
   a.remove();
   // Revoke later: some browsers start the download asynchronously.
   setTimeout(() => URL.revokeObjectURL(url), 60_000);
+}
+
+/** Browser: a file download. Native app: the system share sheet (save to Files, Drive, …). */
+export async function saveExport(file: DataExport) {
+  if (isNative()) await shareTextFile(file.fileName, file.json, 'CleanSpot');
+  else downloadFile(file);
 }

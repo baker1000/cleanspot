@@ -147,7 +147,7 @@
       "useCenter": "Use crosshair as location",
       "zoomIn": "Please zoom in further to set the location precisely.",
       "mapLabel": "Map for choosing the location",
-      "set": "Location: {{lat}}, {{lng}}",
+      "set": "Location: {{latitude}}, {{longitude}}",
       "accuracy": "Accuracy about {{meters}} m",
       "notSet": "No location chosen yet.",
       "mapErrors": {

@@ -41,7 +41,7 @@ export function LegalPage({ doc }: { doc: LegalDoc }) {
   const current = text && text !== 'error' && text.doc === doc && text.lang === lang ? text : null;
 
   return (
-    <div className="mx-auto flex min-h-dvh max-w-2xl flex-col gap-4 p-4">
+    <div className="mx-auto flex min-h-dvh max-w-2xl flex-col gap-4 p-4 pt-[calc(1rem+var(--safe-top))]">
       <header className="flex items-center justify-between gap-2">
         <Link to="/" className="text-lg font-bold text-brand-900">
           {t('app.name')}

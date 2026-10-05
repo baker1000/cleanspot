@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">CleanSpot</string>
+    <string name="title_activity_main">CleanSpot</string>
+    <string name="package_name">org.cleanspot.app</string>
+    <string name="custom_url_scheme">org.cleanspot.app</string>
+</resources>

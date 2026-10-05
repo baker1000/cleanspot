@@ -18,7 +18,7 @@ export function LandingPage() {
 
   return (
     <div className="min-h-dvh bg-white">
-      <header className="mx-auto flex max-w-4xl items-center justify-between gap-2 px-4 py-3">
+      <header className="mx-auto flex max-w-4xl items-center justify-between gap-2 px-4 pt-[calc(0.75rem+var(--safe-top))] pb-3">
         <span className="flex items-center gap-2 text-lg font-bold text-brand-900">
           <img src="/icons/icon.svg" alt="" width={32} height={32} />
           {t('app.name')}

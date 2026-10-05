@@ -147,7 +147,7 @@
       "useCenter": "Artı işaretini konum olarak al",
       "zoomIn": "Konumu tam belirlemek için lütfen daha fazla yakınlaştırın.",
       "mapLabel": "Konum seçme haritası",
-      "set": "Konum: {{lat}}, {{lng}}",
+      "set": "Konum: {{latitude}}, {{longitude}}",
       "accuracy": "Doğruluk yaklaşık {{meters}} m",
       "notSet": "Henüz konum seçilmedi.",
       "mapErrors": {

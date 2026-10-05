@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState, type ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CameraIcon, CloseIcon, ImageIcon } from '@/components/icons';
 import { Alert } from '@/components/ui/Alert';
+import { CameraInput } from '@/components/ui/CameraInput';
 import { Spinner } from '@/components/ui/Spinner';
 import { uuid } from '@/lib/uuid';
 import { MAX_PHOTOS, type DraftPhoto } from './api';
@@ -34,7 +35,7 @@ export function PhotoPicker({
 }) {
   const { t } = useTranslation();
   const [busy, setBusy] = useState(false);
-  const [photoError, setPhotoError] = useState<PhotoErrorReason | null>(null);
+  const [photoError, setPhotoError] = useState<PhotoErrorReason | 'camera' | null>(null);
   const chooseRef = useRef<HTMLInputElement>(null);
   const hintId = useId();
   const errorId = useId();
@@ -47,9 +48,14 @@ export function PhotoPicker({
 
   const remaining = MAX_PHOTOS - photos.length;
 
-  async function onFiles(e: ChangeEvent<HTMLInputElement>) {
-    const files = [...(e.target.files ?? [])].slice(0, remaining);
+  function onFiles(e: ChangeEvent<HTMLInputElement>) {
+    const files = [...(e.target.files ?? [])];
     e.target.value = ''; // allow picking the same file again
+    void addPhotos(files);
+  }
+
+  async function addPhotos(picked: Blob[]) {
+    const files = picked.slice(0, remaining);
     if (!files.length) return;
     setBusy(true);
     setPhotoError(null);
@@ -120,17 +126,14 @@ export function PhotoPicker({
         <Spinner label={t('report.photos.processing')} />
       ) : remaining > 0 ? (
         <div className="flex flex-wrap gap-2">
-          <label className={pickButton}>
+          <CameraInput
+            className={pickButton}
+            onPhoto={(photo) => void addPhotos([photo])}
+            onError={() => setPhotoError('camera')}
+          >
             <CameraIcon />
             {t('report.photos.take')}
-            <input
-              type="file"
-              accept="image/*"
-              capture="environment"
-              onChange={onFiles}
-              className="sr-only"
-            />
-          </label>
+          </CameraInput>
           <label className={pickButton}>
             <ImageIcon />
             {t('report.photos.choose')}

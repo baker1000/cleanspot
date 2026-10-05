@@ -1,7 +1,8 @@
-import { useEffect, useId, useRef, useState, type ChangeEvent, type ReactNode } from 'react';
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CameraIcon } from '@/components/icons';
 import { Alert } from '@/components/ui/Alert';
+import { CameraInput } from '@/components/ui/CameraInput';
 import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Spinner';
 import { distanceMeters } from '@/features/map/reports';
@@ -88,10 +89,7 @@ export function PhotoLocationForm({
     }
   }
 
-  async function onFile(e: ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    e.target.value = '';
-    if (!file) return;
+  async function onPhoto(file: Blob) {
     const takenAt = new Date().toISOString();
     setPhotoError(null);
     setPreparing(true);
@@ -138,18 +136,15 @@ export function PhotoLocationForm({
       {preparing ? (
         <Spinner label={t('report.photos.processing')} />
       ) : (
-        <label className="inline-flex min-h-11 w-fit cursor-pointer items-center gap-2 rounded-lg border border-slate-400 bg-white px-4 py-2 font-semibold text-slate-900 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-brand-700 hover:bg-slate-100">
+        <CameraInput
+          className="inline-flex min-h-11 w-fit cursor-pointer items-center gap-2 rounded-lg border border-slate-400 bg-white px-4 py-2 font-semibold text-slate-900 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-brand-700 hover:bg-slate-100"
+          describedBy={hintId}
+          onPhoto={(photo) => void onPhoto(photo)}
+          onError={() => setPhotoError(t('report.photos.errors.camera'))}
+        >
           <CameraIcon />
           {t(picked ? `${texts}.retake` : `${texts}.take`)}
-          <input
-            type="file"
-            accept="image/*"
-            capture="environment"
-            onChange={onFile}
-            aria-describedby={hintId}
-            className="sr-only"
-          />
-        </label>
+        </CameraInput>
       )}
       {photoError && <Alert tone="error">{photoError}</Alert>}
 

@@ -1,0 +1,5 @@
+/* Permission texts (ar). Add this file to the Xcode project: see IOS_LATER.md. */
+"NSCameraUsageDescription" = "يحتاج CleanSpot إلى الكاميرا لالتقاط صور لأماكن رمي النفايات وبعد التنظيف.";
+"NSLocationWhenInUseUsageDescription" = "يحتاج CleanSpot إلى موقعك لتسجيل البلاغ في المكان الصحيح وتأكيد صور التنظيف في الموقع.";
+"NSPhotoLibraryUsageDescription" = "يحتاج CleanSpot إلى الوصول إلى صورك عندما تختار صورة موجودة للبلاغ.";
+"NSPhotoLibraryAddUsageDescription" = "لا يحفظ CleanSpot الصور في مكتبتك. مكوّن الكاميرا وحده يطلب هذا الإذن.";

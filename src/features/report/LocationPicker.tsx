@@ -165,8 +165,8 @@ export function LocationPicker({
         {value
           ? [
               t('report.location.set', {
-                lat: coords.format(value.lat),
-                lng: coords.format(value.lng),
+                latitude: coords.format(value.lat),
+                longitude: coords.format(value.lng),
               }),
               value.accuracy !== null &&
                 t('report.location.accuracy', { meters: Math.round(value.accuracy) }),

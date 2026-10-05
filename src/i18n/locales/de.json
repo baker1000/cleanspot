@@ -147,7 +147,7 @@
       "useCenter": "Fadenkreuz als Ort übernehmen",
       "zoomIn": "Bitte zoomen Sie weiter hinein, um den Ort genau festzulegen.",
       "mapLabel": "Karte zur Ortswahl",
-      "set": "Ort: {{lat}}, {{lng}}",
+      "set": "Ort: {{latitude}}, {{longitude}}",
       "accuracy": "Genauigkeit etwa {{meters}} m",
       "notSet": "Noch kein Ort gewählt.",
       "mapErrors": {

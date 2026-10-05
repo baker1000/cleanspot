@@ -1,5 +1,6 @@
-// One-shot position lookup. The browser API today; the Capacitor Geolocation plugin can be
-// plugged in here for the native app (step 11) without touching the screens.
+// One-shot position lookup: the browser API, or the Capacitor Geolocation plugin in the native
+// app (which also asks for the system permission).
+import { isNative, nativePosition } from './native';
 
 export interface Position {
   lng: number;
@@ -17,7 +18,12 @@ export class LocateFailure extends Error {
   }
 }
 
-export function locateOnce(): Promise<Position> {
+export async function locateOnce(): Promise<Position> {
+  if (isNative()) {
+    const result = await nativePosition();
+    if (!result.ok) throw new LocateFailure(result.denied ? 'denied' : 'unavailable');
+    return { lng: result.lng, lat: result.lat, accuracy: result.accuracy };
+  }
   return new Promise((resolve, reject) => {
     if (!('geolocation' in navigator)) {
       reject(new LocateFailure('unavailable'));

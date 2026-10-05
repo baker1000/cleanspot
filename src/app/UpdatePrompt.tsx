@@ -13,7 +13,7 @@ export function UpdatePrompt() {
   return (
     <div
       role="status"
-      className="fixed inset-x-2 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-50 mx-auto flex max-w-xl flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-300 bg-white p-3 shadow-lg"
+      className="fixed inset-x-2 bottom-[calc(4.5rem+var(--safe-bottom))] z-50 mx-auto flex max-w-xl flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-300 bg-white p-3 shadow-lg"
     >
       <p className="font-semibold">{t('pwa.updateAvailable')}</p>
       <div className="flex gap-2">

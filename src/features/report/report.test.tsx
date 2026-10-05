@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { fakeAuthClient, fakeSession } from '@/test/fakeAuth';
 import { fakeMap, viewportAround } from '@/test/fakeMapView';
 import { renderWithProviders } from '@/test/render';
+import { changeLanguage } from '@/i18n';
 import { LocateFailure } from '@/lib/geolocation';
 import { SubmitError, type ReportSubmitApi, type TenantInfo } from './api';
 import { createMemoryStore, type OutboxStore } from './outbox/store';
@@ -293,6 +294,15 @@ describe('location', () => {
     await user.click(take);
     expect(screen.getByText('Ort: 53,38765, 10,12345')).toBeInTheDocument();
     expect(screen.queryByText(/Genauigkeit/)).toBeNull();
+  });
+
+  it('the location line is in the UI language (regression: `lng` switched i18next to German)', async () => {
+    await changeLanguage('en', { persist: false });
+    const { user } = setup();
+    await screen.findByRole('region', { name: 'Map for choosing the location' });
+    act(() => fakeMap.emitViewport(viewportAround([10.12345, 53.38765], 17)));
+    await user.click(screen.getByRole('button', { name: 'Use crosshair as location' }));
+    expect(screen.getByText('Location: 53.38765, 10.12345')).toBeInTheDocument();
   });
 
   it('GPS centres the map and shows the accuracy', async () => {

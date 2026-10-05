@@ -150,7 +150,7 @@
       "useCenter": "Utiliser le réticule comme lieu",
       "zoomIn": "Veuillez zoomer davantage pour définir le lieu avec précision.",
       "mapLabel": "Carte pour choisir le lieu",
-      "set": "Lieu : {{lat}}, {{lng}}",
+      "set": "Lieu : {{latitude}}, {{longitude}}",
       "accuracy": "Précision d’environ {{meters}} m",
       "notSet": "Aucun lieu choisi pour l’instant.",
       "mapErrors": {

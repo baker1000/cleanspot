@@ -1,0 +1,5 @@
+/* Permission texts (en). Add this file to the Xcode project: see IOS_LATER.md. */
+"NSCameraUsageDescription" = "CleanSpot needs the camera to take photos of waste dumps and after a cleanup.";
+"NSLocationWhenInUseUsageDescription" = "CleanSpot needs your location to place the report correctly and to confirm cleanup photos on site.";
+"NSPhotoLibraryUsageDescription" = "CleanSpot needs access to your photos when you choose an existing photo for a report.";
+"NSPhotoLibraryAddUsageDescription" = "CleanSpot does not save photos to your library. Only the camera component asks for this permission.";

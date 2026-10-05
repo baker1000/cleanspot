@@ -7,7 +7,7 @@ import { useAuth } from '@/features/auth/useAuth';
 import { LegalLinks } from '@/features/legal/LegalLinks';
 import { StaffPickupLink } from '@/features/pickups/PickupsPage';
 import { useOutbox } from '@/features/report/outbox/OutboxProvider';
-import { downloadFile, type DataExport } from './api';
+import { saveExport, type DataExport } from './api';
 import { useProfileApi } from './ProfileApiContext';
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
@@ -23,10 +23,10 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 }
 
 export function ProfilePage({
-  download = downloadFile,
+  download = saveExport,
 }: {
   /** Inject for tests. */
-  download?: (file: DataExport) => void;
+  download?: (file: DataExport) => void | Promise<void>;
 }) {
   const { t } = useTranslation();
   const { session } = useAuth();
@@ -126,7 +126,7 @@ function VolunteerSection() {
   );
 }
 
-function ExportSection({ download }: { download: (file: DataExport) => void }) {
+function ExportSection({ download }: { download: (file: DataExport) => void | Promise<void> }) {
   const { t } = useTranslation();
   const api = useProfileApi()!;
   const [state, setState] = useState<'idle' | 'busy' | 'done' | 'error'>('idle');
@@ -134,7 +134,7 @@ function ExportSection({ download }: { download: (file: DataExport) => void }) {
   async function run() {
     setState('busy');
     try {
-      download(await api.exportData());
+      await download(await api.exportData());
       setState('done');
     } catch {
       setState('error');

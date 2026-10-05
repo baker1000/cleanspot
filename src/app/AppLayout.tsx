@@ -33,7 +33,7 @@ export function AppLayout() {
     <div className="flex min-h-dvh flex-col">
       <SkipLink targetId="main">{t('nav.skipToContent')}</SkipLink>
 
-      <header className="flex items-center justify-between gap-2 border-b border-slate-200 px-4 py-2">
+      <header className="flex items-center justify-between gap-2 border-b border-slate-200 px-4 pt-[calc(0.5rem+var(--safe-top))] pb-2">
         <Link to="/" className="text-lg font-bold text-brand-900">
           {t('app.name')}
         </Link>
@@ -54,11 +54,7 @@ export function AppLayout() {
             ? 'relative flex-1 focus:outline-none'
             : 'flex-1 px-4 py-4 pb-24 focus:outline-none'
         }
-        style={
-          fullBleed
-            ? { marginBottom: 'calc(3.5rem + 1px + env(safe-area-inset-bottom))' }
-            : undefined
-        }
+        style={fullBleed ? { marginBottom: 'calc(3.5rem + 1px + var(--safe-bottom))' } : undefined}
       >
         {/* The map page shows this warning in its own toolbar. */}
         {status === 'unconfigured' && !fullBleed && (
@@ -71,7 +67,7 @@ export function AppLayout() {
 
       <nav
         aria-label={t('nav.main')}
-        className="fixed inset-x-0 bottom-0 border-t border-slate-200 bg-white pb-[env(safe-area-inset-bottom)]"
+        className="fixed inset-x-0 bottom-0 border-t border-slate-200 bg-white pb-[var(--safe-bottom)]"
       >
         <ul className="mx-auto flex max-w-xl">
           {NAV.map(({ to, labelKey, Icon, end }) => (
