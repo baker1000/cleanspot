@@ -1,30 +1,110 @@
 # CleanSpot
 
-Open-source app for reporting and clearing illegal waste dumps. Citizens report waste with photo + GPS, volunteers and municipal staff clear it.
+Open-source app for reporting and clearing illegal waste dumps. Citizens report waste with photo
+and location, the reports appear on a map, and volunteers or municipal staff clear them. Made to be
+offered to a German municipality (Landkreis) **and** to work as a free public app without one.
 
-> **Status: early development (Milestone 1).** Not usable yet. Full English and German documentation follows with Milestone 1.
+**[Deutsche Version: README.de.md](README.de.md)**
 
-## Development
+## What it does
 
-Requirements: Node.js ≥ 22. Docker Desktop is needed for the local Supabase stack (`npm run db:start`).
+- **Report in under a minute:** 1–3 photos (compressed, EXIF removed on the device), automatic
+  location with an editable pin, category, size, optional comment. No account needed (anonymous
+  sign-in). Works offline: reports are queued and sent later.
+- **Map:** reports coloured by status (Okabe-Ito, colour-blind safe, never colour alone), filters,
+  place search, clustering, list view for keyboard and screen readers.
+- **Clear:** confirm reports, "I'll clear this", after-photo that must be taken within 50 m;
+  hazardous waste (batteries, chemicals, asbestos, needles) shows "Do not touch" and goes to staff
+  only.
+- **Bag pickup:** volunteers report "X bags placed here"; municipal staff get an optimised pickup
+  route for the day.
+- **Multi-tenant:** one installation serves several municipalities (each with its own area,
+  staff and settings) plus the public; reports are routed by location.
+- **DSGVO:** no tracking, no cookies, EU hosting or self-hosting, data export and account
+  deletion in the app, photos public only after review.
+- **Platforms:** website + installable PWA, Android app (Capacitor, ready for Google Play), iOS
+  prepared. German (default), English, Arabic (RTL), French, Turkish, Ukrainian. Accessibility
+  target WCAG 2.1 AA / BITV 2.0.
+
+**Status:** Milestone 1 (MVP) is complete and tested; Milestone 2 (admin dashboard, events,
+notifications, moderation queue, Open311, hotspots, …) is not started. See
+[ROADMAP.md](ROADMAP.md) for every step, its tests and its known limits.
+
+| Document                                           | Content                                                      |
+| -------------------------------------------------- | ------------------------------------------------------------ |
+| [ARCHITECTURE.md](ARCHITECTURE.md)                 | Data model, roles, RLS policies, offline sync, testing       |
+| [deploy/docker/README.md](deploy/docker/README.md) | Self-hosting with Docker                                     |
+| [PLAY_STORE.md](PLAY_STORE.md)                     | Google Play: listing (de/en/ar), Data Safety, closed testing |
+| [IOS_LATER.md](IOS_LATER.md)                       | Remaining steps for an App Store release                     |
+| [PITCH.md](PITCH.md)                               | Pitch for the municipality (German)                          |
+| [docs/PHOTO_BLURRING.md](docs/PHOTO_BLURRING.md)   | How automated face / licence-plate blurring could be added   |
+| [VERIFY_ON_SUPABASE.md](VERIFY_ON_SUPABASE.md)     | Results of the tests against real Supabase                   |
+| [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md)       | What must be done before a public release                    |
+
+## Quick start (local development)
+
+Requirements: Node.js ≥ 22.
 
 ```bash
 npm install
-cp .env.example .env.local   # fill in values from `npx supabase status`
-npm run dev
+npm test          # unit + database tests (PGlite, no Docker needed)
+npm run dev       # http://127.0.0.1:5173 — without a backend: landing page and map only
 ```
 
-| Command                         | What it does                                                         |
-| ------------------------------- | -------------------------------------------------------------------- |
-| `npm test`                      | Unit/component tests (Vitest) + PGlite database tests (no Docker)    |
-| `npm run test:e2e`              | Playwright end-to-end tests (`npx playwright install chromium` once) |
-| `npm run lint`                  | ESLint (incl. jsx-a11y)                                              |
-| `npm run typecheck`             | TypeScript                                                           |
-| `npm run db:start`              | Local Supabase via Docker                                            |
-| `npm run db:reset`              | Re-apply migrations + seed                                           |
-| `npm run db:test`               | pgTAP tests against local Supabase (Docker)                          |
-| `npm run verify:remote`         | DB + API verification against a real Supabase project (see below)    |
-| `npm run i18n:review -- <lang>` | Review sheet for translators in `docs/i18n-review/<lang>.md`         |
+For a backend, either use a Supabase cloud project (next section) and
+`npm run cloud:frontend-env`, or a local Supabase stack with Docker (`npm run db:start`, then copy
+`.env.example` to `.env.local` and fill in the values from `npx supabase status`).
+
+## Deployment
+
+### A. Supabase cloud (EU)
+
+1. Create a project at <https://supabase.com> in **Central EU (Frankfurt)**.
+2. Copy `supabase-cloud.env.example` to `.env.supabase-cloud` (git-ignored) and fill it in; the
+   template says where each value is in the dashboard. `npm run cloud:status` checks the values
+   without printing them.
+3. `npm run cloud:link`, `npm run cloud:push:dry`, `npm run cloud:push` — applies all migrations
+   (schema, functions, RLS, storage bucket, claim expiry job).
+4. `npm run cloud:auth-config -- --apply` — turns on anonymous sign-ins (30 per hour and IP).
+   In the dashboard set **Authentication → URL Configuration → Site URL** to the app's URL and
+   configure SMTP (see [Email](#email-smtp)).
+5. `npm run cloud:maintenance` — deploys the maintenance Edge Function and schedules it hourly.
+6. A municipality: insert it with its area and add staff (SQL in
+   [deploy/docker/README.md, step 4](deploy/docker/README.md#4-municipality-staff-settings); the
+   same statements work in the cloud SQL editor).
+7. Web app: `npm run cloud:frontend-env` writes `.env.local` (public values only), then
+   `npm run build` and host `dist/` on any static host in the EU. Serve `index.html` for every
+   path, and `sw.js` / `manifest.webmanifest` with `Cache-Control: no-cache`
+   (`deploy/docker/nginx.conf` is a complete example).
+8. Before going public: [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) (legal texts, translations,
+   production verification).
+
+This repository uses **two** cloud projects for development, a verify project and a demo project;
+see [Two cloud projects](#two-cloud-projects). A production project is a third one: give it its own env file and target in `scripts/cloud-target.mjs` instead of reusing `.env.supabase-cloud`.
+
+### B. Self-hosting with Docker
+
+The official Supabase Docker setup plus a container for the web app: see
+[deploy/docker/README.md](deploy/docker/README.md). Written but **not yet tested end to end**.
+
+### Android app
+
+See [Android app (Capacitor)](#android-app-capacitor) below and [PLAY_STORE.md](PLAY_STORE.md).
+
+## Development
+
+Docker Desktop is needed only for the local Supabase stack (`npm run db:start`).
+
+| Command                         | What it does                                                           |
+| ------------------------------- | ---------------------------------------------------------------------- |
+| `npm test`                      | Unit/component tests (Vitest) + PGlite database tests (no Docker)      |
+| `npm run test:e2e`              | Playwright end-to-end tests (`npx playwright install chromium` once)   |
+| `npm run lint`                  | ESLint (incl. jsx-a11y)                                                |
+| `npm run typecheck`             | TypeScript                                                             |
+| `npm run db:start`              | Local Supabase via Docker                                              |
+| `npm run db:reset`              | Re-apply all migrations to the local stack (demo data: `npm run demo`) |
+| `npm run verify:remote`         | DB + API verification against a real Supabase project (see below)      |
+| `npm run i18n:review -- <lang>` | Review sheet for translators in `docs/i18n-review/<lang>.md`           |
 
 ### Database tests without Docker
 

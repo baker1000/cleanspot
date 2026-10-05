@@ -30,7 +30,10 @@ been built or run yet: that needs a Mac.
 5. **Version:** set `MARKETING_VERSION` to the `package.json` version and increase
    `CURRENT_PROJECT_VERSION` for every upload (Android does this automatically from
    `package.json`; iOS does not yet).
-6. **Push notifications (Milestone 2):** add the Push Notifications capability and an APNs key;
+6. **Push notifications (Milestone 2):** iOS has no Info.plist usage text for notifications (the
+   permission dialog is a fixed system text), so there is nothing to add there; ask for permission
+   in the app only after explaining why (e.g. "tell me when my report is cleared"). Add the Push
+   Notifications capability and an APNs key;
    `@capacitor/push-notifications` then works with FCM (via APNs) or APNs directly.
 7. **Test on a device:** camera (`Take photo` opens the system camera), location permission
    dialog, data export through the share sheet, safe areas (notch, home indicator), RTL in

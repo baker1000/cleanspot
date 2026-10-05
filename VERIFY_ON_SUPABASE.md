@@ -16,6 +16,11 @@ Every RLS rule, grant and RPC below has so far been tested **only in PGlite** (`
 
 ## Run log
 
+### 2026-10-06 (twelfth run, full) — final test run of Milestone 1 (step 13)
+
+- No new migration. `verify:remote` on the empty verify project: **115 / 115 passed** (7 skipped:
+  demo-data suite, PGlite only). Same day: unit + component + PGlite 389/389, e2e 56/56.
+
 ### 2026-10-05 (eleventh run, full) — first full run on an empty project
 
 - The Ireland project is now **only** for verification: demo data, the 6 demo accounts, the old

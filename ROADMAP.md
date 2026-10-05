@@ -140,11 +140,30 @@ map screen) were done before this file existed; see `git log`.
       `lk-harburg` test tenant and 8 own test reports routed to it (as its own `remove` did); since then the demo lives in its own Frankfurt project (`.env.supabase-demo`, `demo:*` scripts) and the Ireland project is kept empty for verify:remote (115/115, see VERIFY_ON_SUPABASE.md); no local
       `supabase db reset` seed (config.toml's `seed.sql` does not exist; use `npm run demo`
       with `--env`).
-- [ ] **13. Docs + final test run** — ARCHITECTURE.md (data model, RLS), PLAY_STORE.md (listing in
-      de/en/ar, Data Safety answers, closed testing 12+ testers / 14 days), IOS_LATER.md, PITCH.md
-      (German), README in English and German (incl. Supabase cloud and Docker deployment, Android
-      build), Docker Compose self-hosting, documentation of how automated face / licence-plate
-      blurring could be added later; then the full test run (unit, PGlite, e2e, verify:remote).
+- [x] **13. Docs + final test run** — ARCHITECTURE.md (folder structure, multi-tenancy, roles,
+      data model, write functions with their checks, RLS policies per table, public views,
+      photos, DSGVO, offline sync, maintenance, testing); PLAY_STORE.md (release build, listing
+      in de/en/ar within the character limits, app content answers, Data Safety form, closed
+      testing with 12+ testers for 14 days incl. tester instructions, per-release checklist);
+      PITCH.md (German: problem, solution, done vs. Milestone 2, costs, data protection, pilot in
+      4 steps); README.md restructured (what it does, status, documents, quick start, deployment
+      on Supabase cloud and with Docker, Android) and README.de.md; deploy/docker (Dockerfile,
+      nginx.conf with SPA fallback and no-cache for the service worker, docker-compose.web.yml,
+      README for the official Supabase Docker setup + migrations, maintenance function, tenant
+      and staff SQL, TLS proxy, own tiles/geocoder, backups, installation check);
+      docs/PHOTO_BLURRING.md; IOS_LATER.md (notification permission note); RELEASE_CHECKLIST.md
+      updated; Arabic translator review sheet regenerated; removed the `db:test` script (no
+      pgTAP tests exist). All relative links checked. Also in this step: the demo moved to its own
+      Frankfurt project (demo:* scripts), the Ireland project is kept empty for verify:remote, and
+      the demo APK is installed on the phone (Frankfurt, demo mode on).
+      Full test run 2026-10-06: lint, typecheck, format clean; unit + component + PGlite
+      389/389; e2e 56/56; verify:remote 115/115 (7 skipped: demo suite, PGlite only).
+      Known limits: **Docker self-hosting is written but not tested** (no Docker on the
+      development machine); the Play Store listing, Data Safety form and closed test are
+      prepared but nothing was submitted; en/ar listing texts and the PITCH need a native-speaker
+      read; the cost figure in PITCH.md (Supabase paid plan) must be checked against current
+      prices; the native Nominatim User-Agent is only partly done (RELEASE_CHECKLIST.md); legal
+      texts still need a lawyer.
 
 ## Milestone 2
 

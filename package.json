@@ -21,7 +21,6 @@
     "test:e2e": "playwright test",
     "db:start": "supabase start",
     "db:reset": "supabase db reset",
-    "db:test": "supabase test db",
     "db:types": "supabase gen types typescript --local > src/types/database.ts",
     "cloud:link": "node scripts/with-cloud-env.mjs supabase link --project-ref {SUPABASE_PROJECT_REF} --password {SUPABASE_DB_PASSWORD}",
     "cloud:push": "node scripts/with-cloud-env.mjs supabase db push --linked --password {SUPABASE_DB_PASSWORD} --yes",

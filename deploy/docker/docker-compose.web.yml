@@ -1,0 +1,18 @@
+# The CleanSpot web app. Runs next to a self-hosted Supabase (see deploy/docker/README.md);
+# put a TLS reverse proxy (e.g. Caddy, Traefik, nginx) in front of both.
+services:
+  cleanspot-web:
+    build:
+      context: ../..
+      dockerfile: deploy/docker/Dockerfile
+      args:
+        VITE_SUPABASE_URL: ${VITE_SUPABASE_URL:?set VITE_SUPABASE_URL}
+        VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY:?set VITE_SUPABASE_ANON_KEY}
+        VITE_MAP_STYLE_URL: ${VITE_MAP_STYLE_URL:-https://tiles.openfreemap.org/styles/liberty}
+        VITE_GEOCODER_PROVIDER: ${VITE_GEOCODER_PROVIDER:-nominatim}
+        VITE_GEOCODER_URL: ${VITE_GEOCODER_URL:-https://nominatim.openstreetmap.org}
+        VITE_GEOCODER_COUNTRYCODES: ${VITE_GEOCODER_COUNTRYCODES:-de}
+        VITE_PLAY_STORE_URL: ${VITE_PLAY_STORE_URL:-}
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:8080:8080'
