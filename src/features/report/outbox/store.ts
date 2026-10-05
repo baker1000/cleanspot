@@ -1,5 +1,6 @@
 // Reports waiting on this device until they reach the server (offline queue). Entries keep the
 // whole draft including the photo blobs, so nothing depends on the network until sync.
+import { committed, createDbOpener, done, OUTBOX_STORE } from '@/lib/idb';
 import type { ReportDraft, SubmitErrorReason } from '../api';
 
 /** Why the last attempt failed; "session" = no (anonymous) sign-in was possible. */
@@ -37,63 +38,25 @@ export function createMemoryStore(initial: OutboxEntry[] = []): OutboxStore {
   };
 }
 
-const DB_NAME = 'cleanspot';
-const DB_VERSION = 1;
-const OUTBOX = 'outbox';
-
-const done = <T>(request: IDBRequest<T>) =>
-  new Promise<T>((resolve, reject) => {
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-
 /**
- * IndexedDB store. Blobs are stored natively (structured clone), no base64. Opening is lazy and
- * a failed open (e.g. storage blocked) is retried on the next call instead of being cached.
+ * IndexedDB store. Blobs are stored natively (structured clone), no base64. The service worker
+ * opens the same store for Background Sync.
  */
 export function createIndexedDbStore(factory: IDBFactory = indexedDB): OutboxStore {
-  let opening: Promise<IDBDatabase> | null = null;
-
-  const db = () => {
-    opening ??= new Promise<IDBDatabase>((resolve, reject) => {
-      const request = factory.open(DB_NAME, DB_VERSION);
-      request.onupgradeneeded = () => {
-        if (!request.result.objectStoreNames.contains(OUTBOX)) {
-          request.result.createObjectStore(OUTBOX, { keyPath: 'id' });
-        }
-      };
-      request.onsuccess = () => {
-        // Another tab upgrading the schema later must not be blocked by this connection.
-        request.result.onversionchange = () => {
-          request.result.close();
-          opening = null;
-        };
-        resolve(request.result);
-      };
-      request.onerror = () => reject(request.error);
-      request.onblocked = () => reject(new Error('IndexedDB open blocked'));
-    }).catch((error: unknown) => {
-      opening = null;
-      throw error;
-    });
-    return opening;
-  };
+  const db = createDbOpener(factory);
 
   const write = async (fn: (store: IDBObjectStore) => IDBRequest) => {
-    const tx = (await db()).transaction(OUTBOX, 'readwrite');
-    fn(tx.objectStore(OUTBOX));
-    // Resolve only once the transaction is committed, not when the request succeeded.
-    await new Promise<void>((resolve, reject) => {
-      tx.oncomplete = () => resolve();
-      tx.onerror = () => reject(tx.error);
-      tx.onabort = () => reject(tx.error ?? new Error('IndexedDB transaction aborted'));
-    });
+    const tx = (await db()).transaction(OUTBOX_STORE, 'readwrite');
+    fn(tx.objectStore(OUTBOX_STORE));
+    await committed(tx);
   };
 
   return {
     async list() {
-      const tx = (await db()).transaction(OUTBOX, 'readonly');
-      const entries = await done(tx.objectStore(OUTBOX).getAll() as IDBRequest<OutboxEntry[]>);
+      const tx = (await db()).transaction(OUTBOX_STORE, 'readonly');
+      const entries = await done(
+        tx.objectStore(OUTBOX_STORE).getAll() as IDBRequest<OutboxEntry[]>,
+      );
       return entries.sort(byAge);
     },
     put: (entry) => write((s) => s.put(entry)),

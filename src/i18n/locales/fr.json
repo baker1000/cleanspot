@@ -24,7 +24,41 @@
   "landing": {
     "title": "Moins de déchets dans nos paysages",
     "intro": "Avec CleanSpot, vous signalez un dépôt sauvage en moins d’une minute, avec photo et position. Les bénévoles et la commune s’occupent du reste.",
-    "openApp": "Ouvrir l’application"
+    "openApp": "Ouvrir l’application",
+    "install": "Installer l’application",
+    "playStore": "Application Android sur Google Play",
+    "playStoreSoon": "L’application Android arrive bientôt sur Google Play. En attendant, vous pouvez utiliser CleanSpot dans le navigateur et l’installer sur l’écran d’accueil.",
+    "stats": {
+      "title": "CleanSpot en chiffres",
+      "loading": "Chargement des chiffres …",
+      "unavailable": "Les chiffres ne sont pas disponibles pour le moment.",
+      "reports": "signalements",
+      "cleared": "nettoyés",
+      "clearedLast30Days": "nettoyés ces 30 derniers jours",
+      "kgCleared": "kg de déchets enlevés (estimation)",
+      "open": "encore ouverts",
+      "municipalities": "communes participantes"
+    },
+    "how": {
+      "title": "Comment ça marche",
+      "report": {
+        "title": "Signaler",
+        "text": "Prenez une photo, vérifiez la position, choisissez le type et la quantité – même sans compte ni connexion. Le signalement part dès que la connexion revient."
+      },
+      "clear": {
+        "title": "Nettoyer",
+        "text": "Des bénévoles ou la commune prennent en charge le signalement et ajoutent une photo « après » sur place. Les déchets dangereux vont directement à la commune."
+      },
+      "collect": {
+        "title": "Ramasser",
+        "text": "Les sacs pleins sont signalés avec photo et position. La commune reçoit un itinéraire de ramassage pour la journée."
+      }
+    },
+    "municipalities": {
+      "title": "Pour les communes",
+      "text": "Chaque commune dispose de sa propre zone : les signalements qui s’y trouvent vont automatiquement à ses agents. CleanSpot est gratuit et peut fonctionner sur vos propres serveurs."
+    },
+    "principles": "Open source (AGPL-3.0). Pas de publicité, pas de pistage, pas de cookies. Hébergement dans l’UE ou sur vos propres serveurs. Les photos sont vérifiées avant publication."
   },
   "map": {
     "title": "Carte",
@@ -484,5 +518,11 @@
     "germanBinding": "Seule la version allemande fait foi.",
     "onlyGermanEnglish": "Ce texte n’est disponible qu’en allemand et en anglais.",
     "loadError": "Le texte n’a pas pu être chargé. Veuillez réessayer."
+  },
+  "pwa": {
+    "updateAvailable": "Une nouvelle version de CleanSpot est disponible.",
+    "reload": "Mettre à jour",
+    "later": "Plus tard",
+    "offline": "Vous êtes hors ligne. Les zones de carte déjà consultées restent visibles ; les nouveaux signalements sont enregistrés sur l’appareil et envoyés plus tard."
   }
 }

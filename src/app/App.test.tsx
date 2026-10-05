@@ -4,7 +4,9 @@ import { renderApp } from '@/test/render';
 describe('routing and shell', () => {
   it('renders the landing page with a link into the app', async () => {
     const { user } = renderApp({ route: '/' });
-    expect(screen.getByRole('heading', { level: 1, name: 'CleanSpot' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Weniger Müll in unserer Landschaft' }),
+    ).toBeInTheDocument();
     await user.click(screen.getByRole('link', { name: 'App öffnen' }));
     expect(screen.getByRole('heading', { level: 1, name: 'Karte' })).toBeInTheDocument();
   });

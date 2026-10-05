@@ -24,7 +24,41 @@
   "landing": {
     "title": "Weniger Müll in unserer Landschaft",
     "intro": "Mit CleanSpot melden Sie wilde Müllablagerungen in unter einer Minute – mit Foto und Standort. Freiwillige und die Gemeinde kümmern sich darum.",
-    "openApp": "App öffnen"
+    "openApp": "App öffnen",
+    "install": "App installieren",
+    "playStore": "Android-App bei Google Play",
+    "playStoreSoon": "Die Android-App erscheint bald bei Google Play. Bis dahin können Sie CleanSpot im Browser nutzen und auf dem Startbildschirm installieren.",
+    "stats": {
+      "title": "CleanSpot in Zahlen",
+      "loading": "Zahlen werden geladen …",
+      "unavailable": "Die Zahlen sind gerade nicht verfügbar.",
+      "reports": "Meldungen",
+      "cleared": "beseitigt",
+      "clearedLast30Days": "beseitigt in den letzten 30 Tagen",
+      "kgCleared": "kg Müll beseitigt (geschätzt)",
+      "open": "noch offen",
+      "municipalities": "teilnehmende Kommunen"
+    },
+    "how": {
+      "title": "So funktioniert es",
+      "report": {
+        "title": "Melden",
+        "text": "Foto machen, Standort prüfen, Art und Menge wählen – auch ohne Konto und ohne Netz. Die Meldung wird gesendet, sobald wieder Verbindung besteht."
+      },
+      "clear": {
+        "title": "Beseitigen",
+        "text": "Freiwillige oder die Gemeinde übernehmen die Meldung und laden vor Ort ein Nachher-Foto hoch. Gefährliche Abfälle gehen direkt an die Gemeinde."
+      },
+      "collect": {
+        "title": "Abholen",
+        "text": "Gefüllte Müllsäcke werden mit Foto und Standort gemeldet. Die Gemeinde bekommt eine Abholroute für den Tag."
+      }
+    },
+    "municipalities": {
+      "title": "Für Kommunen",
+      "text": "Jede Kommune erhält ihr eigenes Gebiet: Meldungen darin gehen automatisch an ihre Mitarbeitenden. CleanSpot ist kostenlos und kann auf eigenen Servern betrieben werden."
+    },
+    "principles": "Open Source (AGPL-3.0). Keine Werbung, kein Tracking, keine Cookies. Hosting in der EU oder auf eigenen Servern. Fotos werden vor der Veröffentlichung geprüft."
   },
   "map": {
     "title": "Karte",
@@ -478,5 +512,11 @@
     "germanBinding": "Rechtsverbindlich ist nur die deutsche Fassung.",
     "onlyGermanEnglish": "Dieser Text ist nur auf Deutsch und Englisch verfügbar.",
     "loadError": "Der Text konnte nicht geladen werden. Bitte versuchen Sie es erneut."
+  },
+  "pwa": {
+    "updateAvailable": "Eine neue Version von CleanSpot ist verfügbar.",
+    "reload": "Jetzt aktualisieren",
+    "later": "Später",
+    "offline": "Sie sind offline. Bereits angesehene Kartenausschnitte bleiben sichtbar; neue Meldungen werden auf dem Gerät gespeichert und später gesendet."
   }
 }

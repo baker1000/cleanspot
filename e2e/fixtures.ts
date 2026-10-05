@@ -9,7 +9,7 @@ export const SUPABASE_URL = 'https://supabase.e2e.invalid';
 /** Same as DEFAULT_VIEW in MapPage: the map opens centred here. */
 export const MAP_CENTER = { lng: 9.95, lat: 53.4 };
 
-const BLANK_STYLE = {
+export const BLANK_STYLE = {
   version: 8,
   // An empty source that carries attribution, like the real OpenFreeMap style does.
   sources: {
@@ -64,6 +64,15 @@ interface Backend {
   geocoderRequests: { url: URL; at: number }[];
 }
 
+export const PUBLIC_STATS = {
+  reports: 1234,
+  open: 210,
+  cleared: 1024,
+  cleared_last_30_days: 87,
+  kg_cleared: 18450,
+  municipalities: 2,
+};
+
 const CORS = {
   'access-control-allow-origin': '*',
   'access-control-allow-headers': '*',
@@ -87,6 +96,9 @@ async function routeBackend(page: Page, backend: Backend) {
     }
     return reply(route, backend.places);
   });
+  await page.route(`${SUPABASE_URL}/rest/v1/rpc/public_stats*`, (route) =>
+    reply(route, PUBLIC_STATS),
+  );
   await page.route(`${SUPABASE_URL}/rest/v1/rpc/reports_in_bbox*`, (route) =>
     reply(route, backend.reports),
   );

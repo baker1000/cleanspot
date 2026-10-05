@@ -1,32 +1,6 @@
 // Simple pages; each moves to its feature module when it grows.
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import { LanguageSelect } from '@/components/LanguageSelect';
-import { LegalLinks } from '@/features/legal/LegalLinks';
-
-export function LandingPage() {
-  const { t } = useTranslation();
-  return (
-    <main
-      id="main"
-      className="mx-auto flex min-h-dvh max-w-xl flex-col items-center justify-center gap-6 p-6 text-center"
-    >
-      <LanguageSelect />
-      <h1 className="text-3xl font-bold text-brand-900">{t('app.name')}</h1>
-      <p className="text-xl font-semibold">{t('landing.title')}</p>
-      <p className="text-slate-700">{t('landing.intro')}</p>
-      <Link
-        to="/app"
-        className="inline-flex min-h-11 items-center rounded-lg bg-brand-700 px-6 py-2 font-semibold text-white hover:bg-brand-900"
-      >
-        {t('landing.openApp')}
-      </Link>
-      <nav aria-label={t('legal.nav')} className="mt-6">
-        <LegalLinks />
-      </nav>
-    </main>
-  );
-}
 
 export function NotFoundPage() {
   const { t } = useTranslation();

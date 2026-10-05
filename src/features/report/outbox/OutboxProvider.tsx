@@ -8,8 +8,10 @@ import {
   type ReactNode,
 } from 'react';
 import { useAuth } from '@/features/auth/useAuth';
+import { defaultKv } from '@/lib/idb';
 import type { ReportDraft } from '../api';
 import { useReportSubmitApi } from '../ReportSubmitApiContext';
+import { createBrowserBackground, webLock, type OutboxBackground } from './background';
 import {
   createMemoryStore,
   defaultOutboxStore,
@@ -44,14 +46,16 @@ const OutboxContext = createContext<OutboxValue | null>(null);
 
 /** Keeps a timer from firing in a tight loop if the clock and the schedule disagree. */
 const MIN_TIMER_MS = 1000;
-const LOCK_NAME = 'cleanspot-outbox';
 
 export function OutboxProvider({
   store: storeProp,
+  background: backgroundProp,
   children,
 }: {
   /** Inject for tests; `null` = no queue (reports are only sent directly). */
   store?: OutboxStore | null;
+  /** Background Sync through the service worker; inject for tests. */
+  background?: OutboxBackground;
   children: ReactNode;
 }) {
   const api = useReportSubmitApi();
@@ -59,6 +63,7 @@ export function OutboxProvider({
   const [store] = useState(() =>
     storeProp !== undefined ? storeProp : api ? defaultOutboxStore() : null,
   );
+  const [background] = useState(() => backgroundProp ?? createBrowserBackground(defaultKv()));
   const [entries, setEntries] = useState<OutboxEntry[]>([]);
   const [syncing, setSyncing] = useState(false);
   const [sentInBackground, setSentInBackground] = useState(0);
@@ -72,7 +77,7 @@ export function OutboxProvider({
   // sync and a report sent from the form never handle the same entry at the same time.
   const chain = useRef<Promise<unknown>>(Promise.resolve());
   const exclusive = useCallback(<T,>(job: () => Promise<T>): Promise<T> => {
-    const run = () => ('locks' in navigator ? navigator.locks.request(LOCK_NAME, job) : job());
+    const run = () => webLock(job);
     const next = chain.current.then(run, run);
     chain.current = next.catch(() => {});
     return next;
@@ -94,10 +99,12 @@ export function OutboxProvider({
     clearTimeout(timer.current);
     const due = list.filter((e) => e.state === 'pending').map((e) => e.nextAttemptAt);
     if (due.length) {
+      // Lets the service worker send them once there is a connection, even if the app is closed.
+      void background.register();
       const wait = Math.max(MIN_TIMER_MS, Math.min(...due) - Date.now());
       timer.current = setTimeout(() => void syncRef.current(), wait);
     }
-  }, [store]);
+  }, [background, store]);
 
   const sync = useCallback(
     async (force = false) => {
@@ -138,12 +145,17 @@ export function OutboxProvider({
     };
     window.addEventListener('online', onOnline);
     document.addEventListener('visibilitychange', onVisible);
+    const unsubscribe = background.onSyncRequest(onOnline);
+    void background.takeSentWhileClosed().then((n) => {
+      if (n) setSentInBackground((m) => m + n);
+    });
     return () => {
       window.removeEventListener('online', onOnline);
       document.removeEventListener('visibilitychange', onVisible);
+      unsubscribe();
       clearTimeout(timer.current);
     };
-  }, [api, status, store, sync]);
+  }, [api, background, status, store, sync]);
 
   const send = useCallback(
     async (draft: ReportDraft): Promise<SendOutcome> => {

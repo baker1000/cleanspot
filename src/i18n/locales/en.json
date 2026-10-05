@@ -24,7 +24,41 @@
   "landing": {
     "title": "Less litter in our countryside",
     "intro": "With CleanSpot you report illegal waste dumps in under a minute – with a photo and location. Volunteers and the municipality take care of the rest.",
-    "openApp": "Open the app"
+    "openApp": "Open the app",
+    "install": "Install the app",
+    "playStore": "Android app on Google Play",
+    "playStoreSoon": "The Android app is coming to Google Play soon. Until then you can use CleanSpot in the browser and install it on your home screen.",
+    "stats": {
+      "title": "CleanSpot in numbers",
+      "loading": "Loading the numbers …",
+      "unavailable": "The numbers are not available right now.",
+      "reports": "reports",
+      "cleared": "cleared",
+      "clearedLast30Days": "cleared in the last 30 days",
+      "kgCleared": "kg of waste cleared (estimated)",
+      "open": "still open",
+      "municipalities": "participating municipalities"
+    },
+    "how": {
+      "title": "How it works",
+      "report": {
+        "title": "Report",
+        "text": "Take a photo, check the location, choose the type and amount – even without an account or a connection. The report is sent as soon as you are back online."
+      },
+      "clear": {
+        "title": "Clear",
+        "text": "Volunteers or the municipality take on the report and upload an after photo on site. Hazardous waste goes straight to the municipality."
+      },
+      "collect": {
+        "title": "Collect",
+        "text": "Full bags are reported with a photo and location. The municipality gets a pickup route for the day."
+      }
+    },
+    "municipalities": {
+      "title": "For municipalities",
+      "text": "Each municipality gets its own area: reports inside it go to its staff automatically. CleanSpot is free and can run on your own servers."
+    },
+    "principles": "Open source (AGPL-3.0). No ads, no tracking, no cookies. Hosted in the EU or on your own servers. Photos are reviewed before they are published."
   },
   "map": {
     "title": "Map",
@@ -478,5 +512,11 @@
     "germanBinding": "Only the German version is legally binding.",
     "onlyGermanEnglish": "This text is only available in German and English.",
     "loadError": "The text could not be loaded. Please try again."
+  },
+  "pwa": {
+    "updateAvailable": "A new version of CleanSpot is available.",
+    "reload": "Update now",
+    "later": "Later",
+    "offline": "You are offline. Map areas you have already viewed stay visible; new reports are saved on the device and sent later."
   }
 }

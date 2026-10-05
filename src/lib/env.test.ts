@@ -1,4 +1,4 @@
-import { parseEnv, parseMapEnv } from './env';
+import { parseEnv, parseMapEnv, parsePlayStoreUrl } from './env';
 
 const base = { VITE_SUPABASE_URL: 'http://127.0.0.1:54321', VITE_SUPABASE_ANON_KEY: 'anon' };
 
@@ -43,5 +43,16 @@ describe('parseMapEnv', () => {
     expect(env.geocoderUrl).toBe('https://geo.example.org');
     expect(env.geocoderCountryCodes).toBe('de');
     expect(() => parseMapEnv({ VITE_GEOCODER_PROVIDER: 'google' })).toThrow(/must be one of/);
+  });
+});
+
+describe('parsePlayStoreUrl', () => {
+  it('accepts only https Play Store links', () => {
+    const url = 'https://play.google.com/store/apps/details?id=org.cleanspot.app';
+    expect(parsePlayStoreUrl({ VITE_PLAY_STORE_URL: url })).toBe(url);
+    expect(parsePlayStoreUrl({})).toBeNull();
+    expect(parsePlayStoreUrl({ VITE_PLAY_STORE_URL: 'http://play.google.com/x' })).toBeNull();
+    expect(parsePlayStoreUrl({ VITE_PLAY_STORE_URL: 'https://evil.example/x' })).toBeNull();
+    expect(parsePlayStoreUrl({ VITE_PLAY_STORE_URL: 'javascript:alert(1)' })).toBeNull();
   });
 });

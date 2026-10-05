@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { fakeAuthClient, fakeSession } from '@/test/fakeAuth';
 import { renderApp } from '@/test/render';
 import { SubmitError, type ReportDraft, type ReportSubmitApi } from '../api';
+import type { OutboxBackground } from './background';
 import { createMemoryStore, type OutboxEntry } from './store';
 
 const draft = (clientId: string): ReportDraft => ({
@@ -132,5 +133,53 @@ describe('offline queue in the app', () => {
     setup([], offline());
     await screen.findByRole('heading', { level: 1 });
     expect(screen.queryByText(/Meldungen/)).toBeNull();
+  });
+});
+
+describe('offline queue: Background Sync', () => {
+  function fakeBackground(sentWhileClosed = 0) {
+    let request: (() => void) | null = null;
+    return {
+      register: vi.fn(async () => {}),
+      onSyncRequest: vi.fn((cb: () => void) => {
+        request = cb;
+        return () => {
+          request = null;
+        };
+      }),
+      takeSentWhileClosed: vi.fn(async () => sentWhileClosed),
+      fire: () => request?.(),
+    } satisfies OutboxBackground & { fire(): void };
+  }
+
+  it('registers a sync while reports wait; the worker can ask the page to send', async () => {
+    const api = offline();
+    const background = fakeBackground();
+    renderApp({
+      route: '/app/profile',
+      authClient: fakeAuthClient(fakeSession()),
+      submitApi: api,
+      outboxStore: createMemoryStore([entry('a')]),
+      outboxBackground: background,
+    });
+    await screen.findByText('Wartende Meldungen: 1');
+    await waitFor(() => expect(background.register).toHaveBeenCalled());
+
+    api.submit.mockResolvedValue('report-a');
+    act(() => background.fire());
+    await screen.findByText('Gespeicherte Meldungen gesendet: 1');
+  });
+
+  it('tells about reports the service worker sent while the app was closed', async () => {
+    const background = fakeBackground(2);
+    renderApp({
+      route: '/app/profile',
+      authClient: fakeAuthClient(fakeSession()),
+      submitApi: offline(),
+      outboxStore: createMemoryStore(),
+      outboxBackground: background,
+    });
+    expect(await screen.findByText('Gespeicherte Meldungen gesendet: 2')).toBeInTheDocument();
+    expect(background.register).not.toHaveBeenCalled();
   });
 });

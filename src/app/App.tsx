@@ -6,6 +6,8 @@ import { DetailPage } from '@/features/detail/DetailPage';
 import type { PickupsApi } from '@/features/pickups/api';
 import { PickupsApiProvider } from '@/features/pickups/PickupsApiContext';
 import { PickupsPage } from '@/features/pickups/PickupsPage';
+import { LandingProvider } from '@/features/landing/LandingContext';
+import { LandingPage } from '@/features/landing/LandingPage';
 import { LEGAL_ALIASES, LEGAL_PATHS, type LegalDoc } from '@/features/legal/config';
 import { LegalPage } from '@/features/legal/LegalPage';
 import { MapPage } from '@/features/map/MapPage';
@@ -19,7 +21,8 @@ import { OutboxProvider } from '@/features/report/outbox/OutboxProvider';
 import { ReportPage } from '@/features/report/ReportPage';
 import { ReportSubmitApiProvider } from '@/features/report/ReportSubmitApiContext';
 import { AppLayout } from './AppLayout';
-import { LandingPage, NotFoundPage } from './pages';
+import { NotFoundPage } from './pages';
+import { UpdatePrompt } from './UpdatePrompt';
 
 const LEGAL_DOCS = Object.keys(LEGAL_PATHS) as LegalDoc[];
 
@@ -67,9 +70,12 @@ export function App({
             <DetailApiProvider api={detailApi}>
               <PickupsApiProvider api={pickupsApi}>
                 <ProfileApiProvider api={profileApi}>
-                  <BrowserRouter>
-                    <AppRoutes />
-                  </BrowserRouter>
+                  <LandingProvider>
+                    <BrowserRouter>
+                      <AppRoutes />
+                      <UpdatePrompt />
+                    </BrowserRouter>
+                  </LandingProvider>
                 </ProfileApiProvider>
               </PickupsApiProvider>
             </DetailApiProvider>

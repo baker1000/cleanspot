@@ -17,7 +17,7 @@ map screen) were done before this file existed; see `git log`.
       the original time (`p_taken_at`). Reports the server refuses go back to the form, or (from
       the background) are listed with "Discard". Tested: unit, PGlite, e2e in Chromium (offline →
       reload → sent), verify:remote 87/87.
-      Known limits: sends only while the app is open (Background Sync → step 10); queued reports
+      Known limits: sends only while the app is open (Background Sync: step 10); queued reports
       are not shown on the map; without IndexedDB there is no queue (sent directly, errors shown
       as before).
 - [x] **7. Report detail page** — photos (approved ones; own photos under review marked as such),
@@ -65,9 +65,29 @@ map screen) were done before this file existed; see `git log`.
       sign-out request fails after deletion, the stale session stays in local storage until the
       next sign-in attempt; the download uses the browser (Capacitor file save/share → step 11);
       the privacy policy must be adapted to the real operator and services before publication.
-- [ ] **10. PWA** — installable, offline-capable, offline caching of viewed map areas; Background
-      Sync for the offline queue where supported (Chromium/Android); landing page with live
-      statistics and Google Play link.
+- [x] **10. PWA** — vite-plugin-pwa (injectManifest, `src/sw/sw.ts`): manifest (name, icons
+      192/512 + maskable, shortcut "Müll melden"), app shell and all chunks precached (opens
+      offline), map style/TileJSON network-first and tiles/glyphs/sprites cache-first (3000 files,
+      30 days, purged on quota errors), "new version" prompt instead of an automatic reload, offline
+      notice in the app. Background Sync (Chromium/Android): the page registers a sync while
+      reports wait; an open page is asked to send, otherwise the service worker sends the queue
+      itself with the session mirrored into IndexedDB (same outbox lock, same idempotent submit),
+      and the next page start says how many were sent. Landing page rebuilt: live statistics
+      (migration 9 `public_stats`, plain GET, cached for offline), "how it works", for
+      municipalities, install button (when the browser offers it), Google Play link from
+      `VITE_PLAY_STORE_URL` (else "coming soon"). All 6 languages. Tested: unit/component, PGlite
+      (public_stats.test.ts), e2e with the service worker enabled (manifest + icons, offline start,
+      style and tile served from cache, statistics offline, Background Sync with no app page open
+      via DevTools), cloud API F9.
+      Known limits: Background Sync only in Chromium-based browsers (Firefox/Safari send when the
+      app is next open); the browser decides when the sync fires and gives up after a few tries;
+      tiles are cached only from the map style's own host (another style with tiles elsewhere is
+      not cached offline); no explicit "download this area" (only viewed areas, oldest dropped
+      first); reports on the map are not available offline (only the map itself); if a page and
+      the service worker refresh the session at the same moment, Supabase's refresh-token reuse
+      window (10 s) must cover it; the PNG icons are rendered with Playwright (`npm run icons`);
+      the Google Play link uses text, not Google's official badge; Capacitor (step 11) must decide
+      whether the native app uses the service worker; DB suite I1 not yet run on the cloud.
 - [ ] **11. Capacitor + Android build** — camera, geolocation, file system; signed release AAB,
       versioning, icons, splash, adaptive icon; iOS platform added (Info.plist permission texts),
       not published. Needs **JDK 21** (Capacitor 8 / Gradle 8.14.3 do not run on JDK 25).

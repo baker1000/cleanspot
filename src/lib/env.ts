@@ -75,3 +75,15 @@ export function parseEnv(raw: RawEnv): AppEnv {
     demoMode: raw.VITE_DEMO_MODE === 'true' || raw.VITE_DEMO_MODE === true,
   };
 }
+
+/** Google Play listing of the Android app; only a real Play Store URL is accepted. */
+export function parsePlayStoreUrl(raw: RawEnv): string | null {
+  const value = raw.VITE_PLAY_STORE_URL;
+  if (typeof value !== 'string' || value.trim() === '') return null;
+  try {
+    const url = new URL(value.trim());
+    return url.protocol === 'https:' && url.hostname === 'play.google.com' ? url.href : null;
+  } catch {
+    return null;
+  }
+}

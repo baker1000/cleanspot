@@ -47,6 +47,16 @@ Results are tracked in [VERIFY_ON_SUPABASE.md](VERIFY_ON_SUPABASE.md).
 3. Optional: `npm run cloud:staff-test -- setup` creates a test tenant "Landkreis Harburg (Test)" (rough outline) with one staff account and 6 open bag pickups, for trying `/app/pickups`. The login is written to `cloud-staff-login.local` (git-ignored; the password is never printed). `-- status` / `-- remove`; remove it before `npm run verify:remote`.
 4. `npm run dev` and open http://127.0.0.1:5173/app.
 
+## PWA (installable, offline)
+
+- Production builds (`npm run build`, `npm run preview`) include a service worker (`src/sw/sw.ts`, [vite-plugin-pwa](https://vite-pwa-org.netlify.app) / Workbox, both MIT). `npm run dev` runs without it.
+- **Offline:** the app shell and all code are precached, so the app opens without a connection. Map style, tiles, glyphs and sprites of viewed areas are cached (up to 3000 files, 30 days). Reports, photos and other backend answers are not cached; only the landing page's public statistics are.
+- **Offline queue + Background Sync:** reports made offline wait in IndexedDB. Where the browser supports Background Sync (Chromium, Android), the service worker sends them when the connection is back, also when the app is closed; elsewhere they are sent the next time the app is open. For that the auth session is mirrored from localStorage into IndexedDB (`src/lib/authStorage.ts`).
+- **Updates:** a new version waits until the user taps "Update now" (no reload in the middle of a report).
+- **Hosting:** serve `index.html` for every path (SPA fallback), and serve `sw.js` and `manifest.webmanifest` with `Cache-Control: no-cache` so updates are found.
+- **Icons:** edit `public/icons/icon.svg` / `icon-maskable.svg`, then `npm run icons` renders the PNGs (Playwright Chromium).
+- **Landing page:** live numbers from `public_stats` (migration 9). `VITE_PLAY_STORE_URL` (a `https://play.google.com/…` link) shows the Google Play link; without it the page says the Android app is coming soon.
+
 ## Map and place search
 
 - **Map:** [MapLibre GL JS](https://maplibre.org) (BSD-3-Clause) with the free [OpenFreeMap](https://openfreemap.org) style by default (`VITE_MAP_STYLE_URL`). Map data © OpenStreetMap contributors; the attribution is always visible on the map. For self-hosting, point `VITE_MAP_STYLE_URL` at your own style (e.g. PMTiles).

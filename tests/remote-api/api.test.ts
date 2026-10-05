@@ -17,6 +17,7 @@ import {
   createSupabaseDetailApi,
   type DetailClient,
 } from '../../src/features/detail/api';
+import { createPublicStatsApi } from '../../src/features/landing/stats';
 import { createSupabasePickupsApi } from '../../src/features/pickups/api';
 import { createSupabaseProfileApi, type ProfileClient } from '../../src/features/profile/api';
 import {
@@ -513,6 +514,23 @@ describe('A — platform assumptions', () => {
       [own.data],
     );
     expect(report.rows[0]).toEqual({ reporter_id: null, comment: null, status: 'reported' });
+  });
+
+  it('F9: the landing page loads public_stats with a plain GET and only the publishable key', async () => {
+    const response = await fetch(`${URL_}/rest/v1/rpc/public_stats`, {
+      headers: { apikey: PUBLISHABLE, accept: 'application/json' },
+    });
+    expect(response.status).toBe(200);
+    const stats = (await response.json()) as Record<string, unknown>;
+    expect(Object.keys(stats).sort()).toEqual(
+      ['cleared', 'cleared_last_30_days', 'kg_cleared', 'municipalities', 'open', 'reports'].sort(),
+    );
+    // The reports this run created are counted.
+    expect(stats.reports).toEqual(expect.any(Number));
+    expect(stats.reports as number).toBeGreaterThan(0);
+    // The app's client maps the same answer.
+    const api = createPublicStatsApi(URL_, PUBLISHABLE);
+    expect(await api.load()).toMatchObject({ reports: stats.reports });
   });
 
   it('A8: anon cannot read base tables; other users get no rows', async () => {

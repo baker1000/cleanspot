@@ -12,7 +12,11 @@ async function expectNoA11yViolations(page: Page) {
 
 test('landing → app → profile', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', { level: 1, name: 'CleanSpot' })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { level: 1, name: 'Weniger Müll in unserer Landschaft' }),
+  ).toBeVisible();
+  // Live statistics from public_stats.
+  await expect(page.getByText('1.234')).toBeVisible();
   await page.getByRole('link', { name: 'App öffnen' }).click();
   await expect(page.getByRole('heading', { level: 1, name: 'Karte' })).toBeVisible();
 

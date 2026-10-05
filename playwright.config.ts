@@ -14,6 +14,8 @@ export default defineConfig({
     trace: 'on-first-retry',
     // German is the default UI language; tests that need another locale override this.
     locale: 'de-DE',
+    // page.route() does not see requests a service worker makes; e2e/pwa.spec.ts allows it.
+    serviceWorkers: 'block',
   },
   projects: [
     // Low-end Android phone is the primary target.

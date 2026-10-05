@@ -24,7 +24,41 @@
   "landing": {
     "title": "Doğamızda daha az çöp",
     "intro": "CleanSpot ile kaçak çöp dökümlerini bir dakikadan kısa sürede fotoğraf ve konumla bildirirsiniz. Gerisini gönüllüler ve belediye halleder.",
-    "openApp": "Uygulamayı aç"
+    "openApp": "Uygulamayı aç",
+    "install": "Uygulamayı yükle",
+    "playStore": "Google Play’de Android uygulaması",
+    "playStoreSoon": "Android uygulaması yakında Google Play’de. O zamana kadar CleanSpot’u tarayıcıda kullanabilir ve ana ekrana yükleyebilirsiniz.",
+    "stats": {
+      "title": "Rakamlarla CleanSpot",
+      "loading": "Rakamlar yükleniyor …",
+      "unavailable": "Rakamlar şu anda kullanılamıyor.",
+      "reports": "bildirim",
+      "cleared": "temizlendi",
+      "clearedLast30Days": "son 30 günde temizlendi",
+      "kgCleared": "kg çöp temizlendi (tahmini)",
+      "open": "hâlâ açık",
+      "municipalities": "katılan belediye"
+    },
+    "how": {
+      "title": "Nasıl çalışır",
+      "report": {
+        "title": "Bildir",
+        "text": "Fotoğraf çekin, konumu kontrol edin, türü ve miktarı seçin – hesap ve bağlantı olmadan da. Bağlantı gelir gelmez bildirim gönderilir."
+      },
+      "clear": {
+        "title": "Temizle",
+        "text": "Gönüllüler veya belediye bildirimi üstlenir ve yerinde bir “sonra” fotoğrafı yükler. Tehlikeli atıklar doğrudan belediyeye gider."
+      },
+      "collect": {
+        "title": "Topla",
+        "text": "Dolu çöp torbaları fotoğraf ve konumla bildirilir. Belediye gün için bir toplama rotası alır."
+      }
+    },
+    "municipalities": {
+      "title": "Belediyeler için",
+      "text": "Her belediyenin kendi bölgesi olur: oradaki bildirimler otomatik olarak çalışanlarına gider. CleanSpot ücretsizdir ve kendi sunucularınızda çalışabilir."
+    },
+    "principles": "Açık kaynak (AGPL-3.0). Reklam yok, takip yok, çerez yok. AB’de veya kendi sunucularınızda barındırma. Fotoğraflar yayımlanmadan önce incelenir."
   },
   "map": {
     "title": "Harita",
@@ -478,5 +512,11 @@
     "germanBinding": "Yalnızca Almanca sürüm hukuken bağlayıcıdır.",
     "onlyGermanEnglish": "Bu metin yalnızca Almanca ve İngilizce olarak mevcuttur.",
     "loadError": "Metin yüklenemedi. Lütfen tekrar deneyin."
+  },
+  "pwa": {
+    "updateAvailable": "CleanSpot’un yeni bir sürümü var.",
+    "reload": "Şimdi güncelle",
+    "later": "Sonra",
+    "offline": "Çevrimdışısınız. Daha önce baktığınız harita bölümleri görünür kalır; yeni bildirimler cihazda saklanır ve sonra gönderilir."
   }
 }

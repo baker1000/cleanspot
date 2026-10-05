@@ -16,6 +16,12 @@ Every RLS rule, grant and RPC below has so far been tested **only in PGlite** (`
 
 ## Run log
 
+### 2026-10-05 (tenth run, API suite only) — migration 9: public statistics (step 10), same project
+
+- **Migration 9** (`20261005000009_public_stats.sql`) pushed; local = remote for all nine.
+- API suite only: **20 / 20 passed**, including the new **F9** (the landing page's plain `GET /rest/v1/rpc/public_stats` with only the publishable key returns 200 and the six numbers; the app's `createPublicStatsApi` maps the same answer).
+- **DB suite I1–I2 below not run on the cloud** (same reason as the ninth run: the project holds demo data and the staff test tenant).
+
 ### 2026-10-05 (ninth run, API suite only) — migration 8: DSGVO self-service (step 9), same project
 
 - **Migration 8** (`20261005000008_privacy.sql`) pushed; local = remote for all eight.
@@ -227,3 +233,10 @@ If any of these is wrong, rows in B–D may be passing in PGlite for the wrong r
 | H4  | `delete_my_account`: deletes the auth user (cascade), photos, comments; reports anonymous; claims released        | deletes the user, photos and comments…               | ✅ API |
 | H5  | `delete_my_account` also for blocked and anonymous users; not callable by anon                                    | also for blocked and anonymous users / not callable… | ⏸      |
 | H6  | `leave_volunteer_role`: drops volunteer memberships, releases claims except where staff; event by the user        | drops volunteer memberships and gives back claims…   | ✅ API |
+
+## I. Migration 9 — public statistics (`public_stats.test.ts`, API F9)
+
+| #   | Rule / function                                                                                                           | PGlite test                                 | Status |
+| --- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- | ------ |
+| I1  | `public_stats`: counts reports, open, cleared (all / last 30 days), kg cleared, municipalities; no rejected or duplicates | counts open and cleared reports and kg…     | ⏸      |
+| I2  | readable by anon and authenticated, via GET                                                                               | is readable without an account and with one | ✅ API |

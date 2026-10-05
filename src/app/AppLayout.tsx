@@ -7,6 +7,7 @@ import { Alert } from '@/components/ui/Alert';
 import { SkipLink } from '@/components/ui/SkipLink';
 import { useAuth } from '@/features/auth/useAuth';
 import { OutboxStatus } from '@/features/report/outbox/OutboxStatus';
+import { OfflineNotice } from './OfflineNotice';
 
 interface NavItem {
   to: string;
@@ -40,7 +41,8 @@ export function AppLayout() {
       </header>
 
       {/* Reports waiting on this device (offline queue); visible on every app page. */}
-      <div className="px-4 pt-2 empty:hidden">
+      <div className="flex flex-col gap-2 px-4 pt-2 empty:hidden">
+        <OfflineNotice />
         <OutboxStatus />
       </div>
 
