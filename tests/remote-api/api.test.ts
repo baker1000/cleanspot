@@ -98,7 +98,24 @@ async function submitReport(client: SupabaseClient, offsetDeg = 0) {
   });
 }
 
+/**
+ * Every report this suite creates is near SPOT (open sea, no real reports). Some end up in the
+ * public tenant (outside the verify tenant) and keep existing without a reporter after their
+ * account is deleted (F8), so the tenant cleanup alone would leave them behind.
+ */
+async function deleteSpotReports() {
+  const near = `extensions.st_dwithin(r.location,
+    extensions.st_setsrid(extensions.st_makepoint(${SPOT.lng}, ${SPOT.lat}), 4326)::extensions.geography, 20000)`;
+  const photos = await sql.query(
+    `select p.storage_path from public.report_photos p join public.reports r on r.id = p.report_id where ${near}`,
+  );
+  const paths = photos.rows.map((r) => r.storage_path as string);
+  if (paths.length) await admin.storage.from('report-photos').remove(paths);
+  await sql.query(`delete from public.reports r where ${near}`);
+}
+
 async function cleanupLeftovers() {
+  await deleteSpotReports();
   const { rows } = await sql.query(`select id from public.tenants where slug like 'verify-%'`);
   for (const { id } of rows) {
     const photos = await sql.query(
@@ -150,6 +167,7 @@ beforeAll(async () => {
 afterAll(async () => {
   try {
     if (uploaded.length) await admin.storage.from('report-photos').remove(uploaded);
+    await deleteSpotReports();
     if (tenantId) {
       await sql.query(`delete from public.reports where tenant_id = $1`, [tenantId]);
       await sql.query(`delete from public.tenants where id = $1`, [tenantId]);
@@ -514,6 +532,34 @@ describe('A — platform assumptions', () => {
       [own.data],
     );
     expect(report.rows[0]).toEqual({ reporter_id: null, comment: null, status: 'reported' });
+  });
+
+  it('F10: storage delete policy through the Storage API: only own, detached files', async () => {
+    const u = await signedInUser('remover');
+    const other = await signedInUser('bystander');
+    const fileExists = async (path: string) =>
+      (await sql.query(`select count(*)::int as n from storage.objects where name = $1`, [path]))
+        .rows[0].n === 1;
+    const { data: reportId, error } = await submitReport(u.client, 0.07);
+    expect(error).toBeNull();
+    const { path } = await upload(u.client, u.id);
+    expect(
+      (await u.client.rpc('add_report_photo', { p_report_id: reportId, p_path: path })).error,
+    ).toBeNull();
+
+    // Attached to a report: the delete is filtered out by the policy, the file stays.
+    await u.client.storage.from('report-photos').remove([path]);
+    expect(await fileExists(path)).toBe(true);
+
+    // After delete_my_photos the file is detached: someone else still may not delete it ...
+    const detached = await u.client.rpc('delete_my_photos');
+    expect(detached.data).toEqual([path]);
+    await other.client.storage.from('report-photos').remove([path]);
+    expect(await fileExists(path)).toBe(true);
+    // ... the uploader may.
+    const removed = await u.client.storage.from('report-photos').remove([path]);
+    expect(removed.error).toBeNull();
+    expect(await fileExists(path)).toBe(false);
   });
 
   it('F9: the landing page loads public_stats with a plain GET and only the publishable key', async () => {

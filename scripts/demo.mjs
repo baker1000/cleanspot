@@ -9,9 +9,10 @@
 //   npm run demo -- remove-test    deletes all NON-demo reports (own test submissions), so
 //                                  verify:remote can run; their photo files stay in storage
 //
-// Target: the project in .env.supabase-cloud, or another one with `--env <file>` (same variable
-// names: SUPABASE_URL, SUPABASE_SECRET_KEY, SUPABASE_DB_URL). For a local `supabase start` use a
-// file with the values from `npx supabase status`.
+// Target: the demo project (.env.supabase-demo) by default; `--target verify` for the verify
+// project (.env.supabase-cloud), where only remove / status / remove-test are allowed, since
+// verify:remote needs it empty. `--env <file>` for any other project with the same variable
+// names (SUPABASE_URL, SUPABASE_SECRET_KEY, SUPABASE_DB_URL), e.g. a local `supabase start`.
 //
 // The demo password is kept in demo-login.local (git-ignored) and reused on every seed; it is
 // never printed. A demo-mode web build contains it (VITE_DEMO_PASSWORD), so anyone with that
@@ -22,6 +23,7 @@ import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { createClient } from '@supabase/supabase-js';
 import pg from 'pg';
+import { loadCloudTarget } from './cloud-target.mjs';
 
 const root = join(import.meta.dirname, '..');
 const DEMO_DIR = join(root, 'supabase', 'demo');
@@ -36,12 +38,20 @@ const LEGACY_LOGIN_FILE = join(root, 'cloud-staff-login.local');
 const args = process.argv.slice(2);
 const command = args[0];
 const envIndex = args.indexOf('--env');
-const envFile =
-  envIndex >= 0 ? resolve(args[envIndex + 1] ?? '') : join(root, '.env.supabase-cloud');
 if (!['seed', 'remove', 'remove-test', 'status'].includes(command ?? '')) {
-  console.error('Usage: npm run demo -- seed --yes | remove | status | remove-test [--env <file>]');
+  console.error(
+    'Usage: npm run demo -- seed --yes | remove | status | remove-test [--target demo|verify | --env <file>]',
+  );
   process.exit(1);
 }
+let target = 'custom';
+if (envIndex >= 0) process.loadEnvFile(resolve(args[envIndex + 1] ?? ''));
+else target = loadCloudTarget(args, 'demo').name;
+if (command === 'seed' && target === 'verify') {
+  console.error('The verify project stays empty for verify:remote. Seed the demo project instead.');
+  process.exit(1);
+}
+console.log(`Project: ${process.env.SUPABASE_URL} (${target})`);
 if (command === 'seed' && !args.includes('--yes')) {
   console.error(
     [
@@ -53,7 +63,6 @@ if (command === 'seed' && !args.includes('--yes')) {
   process.exit(1);
 }
 
-process.loadEnvFile(envFile);
 const sql = new pg.Client({
   connectionString: process.env.SUPABASE_DB_URL,
   ssl: /@(127\.0\.0\.1|localhost)[:/]/.test(process.env.SUPABASE_DB_URL ?? '')
@@ -68,8 +77,13 @@ const admin = createClient(
   { auth: { persistSession: false, autoRefreshToken: false } },
 );
 
+/** demo-login.local belongs to one project (its `project=` line). */
+const loginIsForThisProject = () =>
+  existsSync(LOGIN_FILE) &&
+  readFileSync(LOGIN_FILE, 'utf8').match(/^project=(.*)$/m)?.[1] === process.env.SUPABASE_URL;
+
 function demoPassword() {
-  if (existsSync(LOGIN_FILE)) {
+  if (loginIsForThisProject()) {
     const line = readFileSync(LOGIN_FILE, 'utf8')
       .split(/\r?\n/)
       .find((l) => l.startsWith('password='));
@@ -164,7 +178,9 @@ async function seed() {
   await status();
   if (photos) console.log(`Removed ${photos} photo files from earlier demo use.`);
   console.log('Logins: demo-login.local (git-ignored; password not printed).');
-  console.log('Account switcher in the app: npm run cloud:frontend-env -- --force --demo');
+  console.log(
+    `Account switcher in the app: ${target === 'demo' ? 'npm run demo:frontend-env' : 'cloud:frontend-env with --demo'}`,
+  );
 }
 
 async function remove() {
@@ -174,7 +190,7 @@ async function remove() {
   await sql.query(readFileSync(join(DEMO_DIR, 'remove.sql'), 'utf8'));
   await sql.query('commit');
   const users = await deleteUsers(`email like $1`, [DEMO_EMAILS]);
-  rmSync(LOGIN_FILE, { force: true });
+  if (loginIsForThisProject()) rmSync(LOGIN_FILE, { force: true });
   console.log(`Removed the demo data, ${users} demo accounts and ${photos} photo files.`);
 }
 
@@ -204,11 +220,20 @@ try {
   else if (command === 'remove') await remove();
   else if (command === 'status') await status();
   else {
-    const { rowCount } = await sql.query(
-      `delete from public.reports where client_id::text not like 'de30de30-%'
-         and tenant_id not in (select id from public.tenants where slug = 'demo-lk-harburg')`,
+    const other = `select id from public.reports where client_id::text not like 'de30de30-%'
+         and tenant_id not in (select id from public.tenants where slug = 'demo-lk-harburg')`;
+    const photos = await sql.query(
+      `select storage_path from public.report_photos where report_id in (${other})`,
     );
-    console.log(`Removed ${rowCount} non-demo reports (photo rows and timeline events with them).`);
+    const paths = photos.rows.map((r) => r.storage_path);
+    for (let i = 0; i < paths.length; i += 100) {
+      const { error } = await admin.storage.from('report-photos').remove(paths.slice(i, i + 100));
+      if (error) throw error;
+    }
+    const { rowCount } = await sql.query(`delete from public.reports where id in (${other})`);
+    console.log(
+      `Removed ${rowCount} non-demo reports and ${paths.length} photo files (timeline events with them).`,
+    );
   }
 } catch (error) {
   await sql.query('rollback').catch(() => {});

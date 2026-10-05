@@ -30,6 +30,20 @@ npm run dev
 
 `supabase/tests/lite/` runs the real migrations in [PGlite](https://pglite.dev) with PostGIS, on a minimal shim of Supabase's `auth` schema and API roles. It catches SQL and RLS logic errors quickly, but does not replace testing against a real Supabase stack.
 
+### Two cloud projects
+
+| Project          | Env file (git-ignored) | Scripts                    | Purpose                                          |
+| ---------------- | ---------------------- | -------------------------- | ------------------------------------------------ |
+| verify (Ireland) | `.env.supabase-cloud`  | `cloud:*`, `verify:remote` | kept **empty**; only for `npm run verify:remote` |
+| demo (Frankfurt) | `.env.supabase-demo`   | `demo:*`, `demo`           | demo and pitch: migrations + demo data           |
+
+Both files use the template `supabase-cloud.env.example`; `npm run cloud:status` /
+`npm run demo:status` check them (shape only, never values, and that they are two different
+projects). Every cloud script takes `--target verify|demo`. Demo project setup:
+`npm run demo:push:dry`, `npm run demo:push`, `npm run demo:auth-config -- --apply` (anonymous
+sign-ins on, 30/h), `npm run demo:maintenance`, `npm run demo -- seed --yes`,
+`npm run demo:frontend-env` (`.env.local` → demo project, demo mode on).
+
 ### Verifying against a Supabase cloud project
 
 1. Copy `supabase-cloud.env.example` to `.env.supabase-cloud` (git-ignored) and fill it in; the example explains where each value is in the dashboard.
@@ -42,7 +56,7 @@ Results are tracked in [VERIFY_ON_SUPABASE.md](VERIFY_ON_SUPABASE.md).
 
 ### Running the frontend against the cloud project
 
-1. `npm run cloud:frontend-env` writes `.env.local` with **only** the project URL and the publishable key (it refuses secret keys). `.env.local` is git-ignored.
+1. `npm run cloud:frontend-env` (verify project) or `npm run demo:frontend-env` (demo project, demo mode on) writes `.env.local` with **only** the project URL and the publishable key (it refuses secret keys). `.env.local` is git-ignored.
 2. Optional: demo data and demo accounts, see [Demo mode](#demo-mode).
 3. `npm run dev` and open http://127.0.0.1:5173/app.
 
@@ -51,7 +65,7 @@ Results are tracked in [VERIFY_ON_SUPABASE.md](VERIFY_ON_SUPABASE.md).
 For a pitch or for trying every role. **Only on a project used for demos**: the demo accounts
 share one password, and a demo-mode build contains it.
 
-- `npm run demo -- seed --yes` creates the demo municipality **Landkreis Harburg (Demo)** (rough
+- `npm run demo -- seed --yes` (on the demo project; the verify project is refused) creates the demo municipality **Landkreis Harburg (Demo)** (rough
   outline, not the official border), 32 reports around Hamburg (public area) and Landkreis
   Harburg in every status (incl. a hazardous report in progress with staff, a duplicate, a
   rejected one, timelines with confirmations, claims and clean-ups), 7 bag pickups (5 open, so
@@ -69,12 +83,13 @@ share one password, and a demo-mode build contains it.
   The password is random, kept in `demo-login.local` (git-ignored, reused on the next seed) and
   never printed. Seeding again resets the demo data (and anything the demo accounts did).
 
-- `npm run cloud:frontend-env -- --force --demo` turns on demo mode in `.env.local`
+- `npm run demo:frontend-env` points `.env.local` at the demo project and turns on demo mode
   (`VITE_DEMO_MODE=true`, `VITE_DEMO_PASSWORD`): every app page says the data is invented, and
   the profile page has one-tap sign-in for each role. Without `--demo` it is off again.
 - `npm run demo -- status` counts the demo data; `npm run demo -- remove` deletes it with the
-  accounts and their photo files. `npm run verify:remote` runs only on a project without data:
-  `remove` first, and `npm run demo -- remove-test` deletes other (own test) reports.
+  accounts and their photo files. `--target verify` does the same on the verify project, and
+  `npm run demo -- remove-test --target verify` deletes other (own test) reports with their
+  photos, since `npm run verify:remote` runs only on a project without data.
 - Another project (e.g. a local `supabase start`): `--env <file>` with `SUPABASE_URL`,
   `SUPABASE_SECRET_KEY` and `SUPABASE_DB_URL`. The data itself is plain SQL in
   `supabase/demo/seed.sql` (`remove.sql`), tested in `supabase/tests/lite/demo.test.ts`.

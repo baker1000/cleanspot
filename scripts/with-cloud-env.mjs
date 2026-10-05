@@ -1,20 +1,16 @@
 #!/usr/bin/env node
-// Runs a command with the variables from .env.supabase-cloud in its environment.
+// Runs a command with the variables of a cloud project's env file in its environment
+// (`--target verify` = .env.supabase-cloud, the default; `--target demo` = .env.supabase-demo).
 // Arguments may contain {VAR} placeholders, replaced from that file. Values are never printed.
 //
 //   node scripts/with-cloud-env.mjs supabase link --project-ref {SUPABASE_PROJECT_REF}
+//   node scripts/with-cloud-env.mjs --target demo supabase db push --db-url {SUPABASE_DB_URL}
 import { spawnSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
 import { join } from 'node:path';
+import { loadCloudTarget } from './cloud-target.mjs';
 
-const ENV_FILE = join(import.meta.dirname, '..', '.env.supabase-cloud');
-if (!existsSync(ENV_FILE)) {
-  console.error('Missing .env.supabase-cloud — copy supabase-cloud.env.example and fill it in.');
-  process.exit(1);
-}
-process.loadEnvFile(ENV_FILE);
-
-const [cmd, ...rawArgs] = process.argv.slice(2);
+const { fileName, args: argv } = loadCloudTarget();
+const [cmd, ...rawArgs] = argv;
 if (!cmd) {
   console.error('Usage: node scripts/with-cloud-env.mjs <command> [args with {VAR}]');
   process.exit(1);
@@ -29,7 +25,7 @@ const args = rawArgs.map((arg) =>
   }),
 );
 if (missing.size) {
-  console.error(`Empty in .env.supabase-cloud: ${[...missing].join(', ')}`);
+  console.error(`Empty in ${fileName}: ${[...missing].join(', ')}`);
   process.exit(1);
 }
 

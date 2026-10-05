@@ -2,7 +2,12 @@
 // Migration 8: export_my_data, delete_my_photos, delete_my_account, leave_volunteer_role and the
 // storage policy for deleting one's own (detached) photo files.
 import { randomUUID } from 'node:crypto';
-import { asActor, createTestDb, createUser, type Actor, type Db } from './harness';
+import { asActor, createTestDb, createUser, DB_TARGET, type Actor, type Db } from './harness';
+
+// Real Supabase refuses SQL deletes on storage.objects ("Use the Storage API instead"), so the
+// storage delete policy is checked here in PGlite only, and on the cloud through the Storage API
+// (tests/remote-api, F10).
+const sqlStorageDeletes = DB_TARGET === 'pglite';
 
 const ME = '30000000-0000-4000-8000-000000000001';
 const OTHER = '30000000-0000-4000-8000-000000000002';
@@ -156,10 +161,14 @@ describe('delete_my_photos + storage delete policy', () => {
     const other = await report(OTHER);
 
     // Attached: the file cannot be deleted through the API.
-    const blocked = await rpc(as(u), `delete from storage.objects where name = $1 returning name`, [
-      r.path,
-    ]);
-    expect(blocked).toEqual([]);
+    if (sqlStorageDeletes) {
+      const blocked = await rpc(
+        as(u),
+        `delete from storage.objects where name = $1 returning name`,
+        [r.path],
+      );
+      expect(blocked).toEqual([]);
+    }
 
     const paths = await rpc<{ p: string }>(as(u), `select delete_my_photos() as p`);
     expect(paths.map((x) => x.p)).toEqual([r.path]);
@@ -171,6 +180,7 @@ describe('delete_my_photos + storage delete policy', () => {
       status: 'reported',
     });
 
+    if (!sqlStorageDeletes) return;
     const deleted = await rpc(as(u), `delete from storage.objects where name = $1 returning name`, [
       r.path,
     ]);
@@ -231,10 +241,11 @@ describe('delete_my_account', () => {
       actor_id: null,
       data: { reason: 'account_deleted' },
     });
-    // The detached file is now an orphan for the maintenance job.
+    // The detached file is now an orphan for the maintenance job. "Older than -1 minute": on the
+    // cloud this file runs in one transaction, where now() stays at the start of the transaction.
     const orphans = await rpc<{ p: string }>(
       { sub: null, role: 'service_role' },
-      `select orphan_photo_paths(interval '0 seconds', 1000) as p`,
+      `select orphan_photo_paths(interval '-1 minute', 1000) as p`,
     );
     expect(orphans.map((o) => o.p)).toContain(own.path);
   });

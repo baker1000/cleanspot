@@ -137,7 +137,7 @@ map screen) were done before this file existed; see `git log`.
       password, so anyone with it can sign in as super admin of that project (demo projects
       only, documented); admin dashboard, moderation, events are Milestone 2, so admin and super
       admin can do little more than staff today; seeding on the cloud also removed the old
-      `lk-harburg` test tenant and 8 own test reports routed to it (as its own `remove` did); verify:remote is blocked until `npm run demo -- remove`; no local
+      `lk-harburg` test tenant and 8 own test reports routed to it (as its own `remove` did); since then the demo lives in its own Frankfurt project (`.env.supabase-demo`, `demo:*` scripts) and the Ireland project is kept empty for verify:remote (115/115, see VERIFY_ON_SUPABASE.md); no local
       `supabase db reset` seed (config.toml's `seed.sql` does not exist; use `npm run demo`
       with `--env`).
 - [ ] **13. Docs + final test run** — ARCHITECTURE.md (data model, RLS), PLAY_STORE.md (listing in

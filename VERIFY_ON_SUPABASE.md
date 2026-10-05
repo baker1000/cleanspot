@@ -1,6 +1,6 @@
 # Verify on real Supabase
 
-Every RLS rule, grant and RPC below has so far been tested **only in PGlite** (`supabase/tests/lite/`), on a hand-written shim of Supabase's `auth` and `storage` schemas and API roles. Each one must be re-run against a real Supabase stack (local Docker or a Supabase cloud project in the EU; the current test project is in West EU / Ireland, eu-west-1) **before Milestone 1 is finished**.
+Every RLS rule, grant and RPC below has so far been tested **only in PGlite** (`supabase/tests/lite/`), on a hand-written shim of Supabase's `auth` and `storage` schemas and API roles. Each one must be re-run against a real Supabase stack (local Docker or a Supabase cloud project in the EU; the verify project is in West EU / Ireland, eu-west-1, `.env.supabase-cloud`, and is kept empty for this; demo data lives in a separate demo project in Frankfurt, `.env.supabase-demo`) **before Milestone 1 is finished**.
 
 **Status legend:** ⬜ PGlite only · ✅ verified on real Supabase · ⏸ blocked, not yet run (see run log) · ❌ failed on real Supabase (see notes)
 
@@ -15,6 +15,31 @@ Every RLS rule, grant and RPC below has so far been tested **only in PGlite** (`
 5. Tick the boxes and note the date + project ref (the ref is not secret).
 
 ## Run log
+
+### 2026-10-05 (eleventh run, full) — first full run on an empty project
+
+- The Ireland project is now **only** for verification: demo data, the 6 demo accounts, the old
+  staff test tenant and all own test reports (with their photo files) were removed
+  (`npm run demo -- remove --target verify`, `remove-test`). Demo and pitch data moved to a new
+  Frankfurt project (eu-central-1): 9 migrations pushed, anonymous sign-ins on (30/h, like here),
+  maintenance function + hourly job, demo data seeded.
+- First attempt: **2 failures in `privacy.test.ts`, both test-harness differences, no app bug**:
+  1. Real Supabase refuses SQL `delete from storage.objects` ("Use the Storage API instead"),
+     so the storage delete policy (H3) cannot be checked at SQL level on the cloud. Those SQL
+     steps now run in PGlite only; new API test **F10** checks the policy through the Storage
+     API (attached file: delete filtered out, file stays; after `delete_my_photos` another user
+     still cannot delete it, the uploader can).
+  2. `orphan_photo_paths(interval '0 seconds')` found nothing: on the cloud a test file runs in
+     one transaction, so `now()` does not advance. The test now asks for files older than
+     -1 minute.
+- Also found: the API suite left one report behind on every run (F8's claimed report in the
+  public tenant, outside the verify tenant, whose reporter is deleted). Cleanup at the start and
+  end of the suite now deletes every report within 20 km of the suite's spot (open sea), with
+  photo files. Earlier "own test submissions" counts likely included such leftovers.
+- Second attempt: **`verify:remote` 115 / 115 passed** (7 skipped: the demo-data suite, PGlite
+  only), incl. the DB suites H1–H6 and I1 for the first time on the cloud. Afterwards the project
+  is empty again (0 reports, 0 tenants besides public, 0 verify users); 1 orphan photo file from
+  earlier runs remains for the hourly orphan cleanup.
 
 ### 2026-10-05 (tenth run, API suite only) — migration 9: public statistics (step 10), same project
 
@@ -229,14 +254,14 @@ If any of these is wrong, rows in B–D may be passing in PGlite for the wrong r
 | --- | ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- | ------ |
 | H1  | `export_my_data`: account (incl. email), profile, memberships, reports by role, own photos, confirmations, events | contains account, profile, memberships… / anonymous… | ✅ API |
 | H2  | `delete_my_photos`: own rows only, returns paths; report stays                                                    | removes own photo rows and returns their paths…      | ✅ API |
-| H3  | `report_photos_delete_own`: own folder, only files no report references; never others' files                      | (same test)                                          | ✅ API |
+| H3  | `report_photos_delete_own`: own folder, only files no report references; never others' files                      | (same test; cloud: API F10)                          | ✅ API |
 | H4  | `delete_my_account`: deletes the auth user (cascade), photos, comments; reports anonymous; claims released        | deletes the user, photos and comments…               | ✅ API |
-| H5  | `delete_my_account` also for blocked and anonymous users; not callable by anon                                    | also for blocked and anonymous users / not callable… | ⏸      |
+| H5  | `delete_my_account` also for blocked and anonymous users; not callable by anon                                    | also for blocked and anonymous users / not callable… | ✅     |
 | H6  | `leave_volunteer_role`: drops volunteer memberships, releases claims except where staff; event by the user        | drops volunteer memberships and gives back claims…   | ✅ API |
 
 ## I. Migration 9 — public statistics (`public_stats.test.ts`, API F9)
 
 | #   | Rule / function                                                                                                           | PGlite test                                 | Status |
 | --- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- | ------ |
-| I1  | `public_stats`: counts reports, open, cleared (all / last 30 days), kg cleared, municipalities; no rejected or duplicates | counts open and cleared reports and kg…     | ⏸      |
+| I1  | `public_stats`: counts reports, open, cleared (all / last 30 days), kg cleared, municipalities; no rejected or duplicates | counts open and cleared reports and kg…     | ✅     |
 | I2  | readable by anon and authenticated, via GET                                                                               | is readable without an account and with one | ✅ API |

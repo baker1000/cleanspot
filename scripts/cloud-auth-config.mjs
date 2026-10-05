@@ -3,10 +3,12 @@
 // The auth config also contains secrets (SMTP password, hook secrets); only the allow-listed,
 // non-secret fields below are ever printed.
 //
-//   npm run cloud:auth-config
-import { join } from 'node:path';
+//   npm run cloud:auth-config                      verify project
+//   npm run demo:auth-config                       demo project
+//   ... -- --apply                                 first sets what CleanSpot needs (REQUIRED)
+import { loadCloudTarget } from './cloud-target.mjs';
 
-process.loadEnvFile(join(import.meta.dirname, '..', '.env.supabase-cloud'));
+const { args } = loadCloudTarget();
 const { SUPABASE_ACCESS_TOKEN: token, SUPABASE_PROJECT_REF: ref } = process.env;
 if (!token || !ref) {
   console.error('SUPABASE_ACCESS_TOKEN and SUPABASE_PROJECT_REF must be filled in.');
@@ -22,6 +24,21 @@ const FIELDS = [
   'mailer_autoconfirm',
   'site_url',
 ];
+
+// Anonymous reporting needs anonymous sign-ins; their rate limit is per hour and IP.
+const REQUIRED = { external_anonymous_users_enabled: true, rate_limit_anonymous_users: 30 };
+if (args.includes('--apply')) {
+  const patch = await fetch(`https://api.supabase.com/v1/projects/${ref}/config/auth`, {
+    method: 'PATCH',
+    headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+    body: JSON.stringify(REQUIRED),
+  });
+  if (!patch.ok) {
+    console.error(`Management API returned HTTP ${patch.status} for the update.`);
+    process.exit(1);
+  }
+  console.log(`Applied: ${JSON.stringify(REQUIRED)}`);
+}
 
 const res = await fetch(`https://api.supabase.com/v1/projects/${ref}/config/auth`, {
   headers: { authorization: `Bearer ${token}` },

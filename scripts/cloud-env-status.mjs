@@ -1,17 +1,15 @@
 #!/usr/bin/env node
-// Reports which variables in .env.supabase-cloud are filled and whether they have the expected
+// Reports which variables in a cloud project's env file are filled and whether they have the expected
 // shape. Prints only "filled"/"empty" and yes/no checks — never a value or any part of one.
 //
-//   npm run cloud:status
+//   npm run cloud:status            verify project (.env.supabase-cloud)
+//   npm run demo:status             demo project (.env.supabase-demo)
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { loadCloudTarget, ROOT as root, TARGETS } from './cloud-target.mjs';
 
-const root = join(import.meta.dirname, '..');
-const ENV_FILE = join(root, '.env.supabase-cloud');
-if (!existsSync(ENV_FILE)) {
-  console.error('Missing .env.supabase-cloud — copy supabase-cloud.env.example and fill it in.');
-  process.exit(1);
-}
+const target = loadCloudTarget();
+console.log(`${target.fileName} (${target.name} project)`);
 
 // The key list comes from the committed template, so it stays in sync with it.
 const KEYS = [
@@ -19,9 +17,17 @@ const KEYS = [
 ].map((m) => m[1]);
 const OPTIONAL = new Set(['SUPABASE_DB_CA_CERT', 'MAINTENANCE_SECRET']);
 
-process.loadEnvFile(ENV_FILE);
 const v = (key) => process.env[key] ?? '';
 const ref = v('SUPABASE_PROJECT_REF');
+
+/** The password inside a connection string (decoded), or null if it cannot be parsed. */
+function urlPassword(url) {
+  try {
+    return decodeURIComponent(new URL(url).password);
+  } catch {
+    return null;
+  }
+}
 
 // Shape checks: each returns true/false; undefined means "nothing to check".
 const CHECKS = {
@@ -34,7 +40,8 @@ const CHECKS = {
       /^postgres(ql)?:\/\//.test(url) &&
       !url.includes('[YOUR-PASSWORD]') &&
       url.includes(`postgres.${ref}:`) &&
-      url.includes('.pooler.supabase.com:5432/')
+      url.includes('.pooler.supabase.com:5432/') &&
+      urlPassword(url) === v('SUPABASE_DB_PASSWORD')
     );
   },
   SUPABASE_URL: () => v('SUPABASE_URL').replace(/\/$/, '') === `https://${ref}.supabase.co`,
@@ -48,7 +55,7 @@ const HINTS = {
   SUPABASE_PROJECT_REF: 'should be 20 lowercase letters/digits',
   SUPABASE_DB_PASSWORD: 'looks like a placeholder',
   SUPABASE_DB_URL:
-    'should be the Session pooler string (port 5432) for this ref, password filled in',
+    'should be the Session pooler string (port 5432) for this ref, with exactly SUPABASE_DB_PASSWORD as the password (no [ ])',
   SUPABASE_URL: 'should be https://<SUPABASE_PROJECT_REF>.supabase.co',
   SUPABASE_PUBLISHABLE_KEY: 'should start with sb_publishable_ (or eyJ for the legacy anon key)',
   SUPABASE_SECRET_KEY: 'should start with sb_secret_ (or eyJ for the legacy service_role key)',
@@ -68,6 +75,16 @@ for (const key of KEYS) {
     if (!ok) problems++;
   }
   console.log(line);
+}
+// The two projects must really be two projects.
+const other = Object.entries(TARGETS).find(([name]) => name !== target.name);
+if (other && existsSync(join(root, other[1]))) {
+  const otherRef = readFileSync(join(root, other[1]), 'utf8').match(
+    /^SUPABASE_PROJECT_REF=(.*)$/m,
+  )?.[1];
+  const same = otherRef?.trim() && otherRef.trim() === ref;
+  console.log(`${same ? 'WRONG ' : 'OK    '}  different project than ${other[1]}`);
+  if (same) problems++;
 }
 console.log(
   problems ? `\n${problems} item(s) need attention.` : '\nAll required values look right.',

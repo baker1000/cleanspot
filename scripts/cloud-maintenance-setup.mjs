@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-// Sets up the `maintenance` Edge Function on the linked cloud project:
-//   1. generates MAINTENANCE_SECRET into .env.supabase-cloud (if empty) — never printed
+// Sets up the `maintenance` Edge Function on a cloud project (`--target verify` = default, or
+// `--target demo`):
+//   1. generates MAINTENANCE_SECRET into that project's env file (if empty) — never printed
 //   2. stores it as a function secret
 //   3. deploys the function (server-side bundling, no Docker needed)
 //   4. stores URL + secret in Vault and schedules the hourly pg_cron job that calls the function
@@ -10,9 +11,9 @@ import { randomBytes } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import pg from 'pg';
+import { loadCloudTarget } from './cloud-target.mjs';
 
-const ENV_FILE = join(import.meta.dirname, '..', '.env.supabase-cloud');
-process.loadEnvFile(ENV_FILE);
+const { file: ENV_FILE, fileName } = loadCloudTarget();
 
 let secret = process.env.MAINTENANCE_SECRET;
 if (!secret) {
@@ -22,7 +23,7 @@ if (!secret) {
     ? content.replace(/^MAINTENANCE_SECRET=.*$/m, `MAINTENANCE_SECRET=${secret}`)
     : `${content.trimEnd()}\nMAINTENANCE_SECRET=${secret}\n`;
   writeFileSync(ENV_FILE, next);
-  console.log('Generated MAINTENANCE_SECRET in .env.supabase-cloud');
+  console.log(`Generated MAINTENANCE_SECRET in ${fileName}`);
 }
 
 const ref = process.env.SUPABASE_PROJECT_REF;
